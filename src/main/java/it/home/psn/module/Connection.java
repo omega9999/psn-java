@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +19,7 @@ import okhttp3.Request;
 public class Connection {
 
 	public Videogame getVideogame(final CoppiaUrl url) throws IOException{
+		randomSleep();
 		final StringBuilder sb = new StringBuilder();
 		System.setProperty("java.net.useSystemProxies", "true");
 		final OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -43,6 +45,14 @@ public class Connection {
 				System.err.println(e.getMessage() + "\n" + sb.toString() + "\n" + url.getJsonUrl() + "\n" + url.getOriginUrl());
 			}
 			return null;
+		}
+	}
+	
+	private static void randomSleep() throws IOException {
+		try {
+			Thread.sleep(RandomUtils.nextLong(1, 500));
+		} catch (InterruptedException e) {
+			throw new IOException(e);
 		}
 	}
 

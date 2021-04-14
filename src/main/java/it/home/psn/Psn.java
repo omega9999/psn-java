@@ -49,9 +49,10 @@ public class Psn {
 
 	private void preferitiInSconto() throws Exception {
 		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-		System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(3 - 1));
+		//System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(3 - 1));
 
-		pw = new PrintWriter(file);
+		output = new PrintWriter(fileOutput);
+		
 		this.config.checkPreferiti();
 
 		final Set<Videogame> videogames = createSet();
@@ -100,38 +101,45 @@ public class Psn {
 		}
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
-				pw.println(videogame + " " + videogame.getCoppia().getOriginUrl());
+				output.println(videogame + " " + videogame.getCoppia().getOriginUrl());
 			}
 		}
-		pw.println("\n\n\n\n\n");
+		output.println("\n\n\n\n\n");
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
-				pw.println(videogame + " " + videogame.getCoppia().getOriginUrl());
+				output.println(videogame + " " + videogame.getCoppia().getOriginUrl());
 			}
 		}
 
-		pw.close();
-		pw = null;
+		output.close();
+		output = null;
 
-		System.err.println("\n\n\n\n");
-		System.err.println("Trovati mid " + trovatiMid);
-		System.err.println("Trovati " + trovati);
+		
+		//write statistics
+		statistics = new PrintWriter(fileStatistics);
+		statistics.println("Trovati mid " + trovatiMid);
+		statistics.println("Trovati " + trovati);
+		statistics.println("# processori " + Runtime.getRuntime().availableProcessors());
+		statistics.println("Mid time: " + ((midTime - startTime) / 1000) + " s");
+		statistics.println("Total time: " + ((endTime - startTime) / 1000) + " s");
+		statistics.println("# threads: " + threads.keySet().size());
+		statistics.println("threads counters: " + threads);
+		statistics.println("Tipi: " + tipo);
+		statistics.println("Generi: " + genere);
+		statistics.println("Screenshot type: " + screenshot);
+		statistics.println("Preview type: " + preview);
+		statistics.close();
+		statistics = null;
 
-		System.err.println("# processori " + Runtime.getRuntime().availableProcessors());
-		System.err.println("Mid time: " + ((midTime - startTime) / 1000) + " s");
-		System.err.println("Total time: " + ((endTime - startTime) / 1000) + " s");
-		System.err.println("# threads: " + threads.keySet().size());
-		System.err.println("threads counters: " + threads);
-		System.err.println("Tipi: " + tipo);
-		System.err.println("Generi: " + genere);
-		System.err.println("Screenshot type: " + screenshot);
-		System.err.println("Preview type: " + preview);
+		
+		System.err.println("\n\n\n\nFINE");
 	}
+	
 
 	@SuppressWarnings("unused")
 	private void elenco() throws Exception {
 		final Set<Videogame> videogames = createSet();
-		pw = new PrintWriter(file);
+		output = new PrintWriter(fileOutput);
 		// this.config.checkPreferiti();
 
 		for (String idRicerca : this.config.getRicercheIds()) {
@@ -157,7 +165,7 @@ public class Psn {
 		final Set<String> screenshot = createSet();
 		final Set<String> preview = createSet();
 		for (Videogame videogame : videogameSorted) {
-			pw.println(videogame);
+			output.println(videogame);
 			for (Genere g : videogame.getGeneri()) {
 				genere.add(g.getName());
 			}
@@ -172,8 +180,8 @@ public class Psn {
 			}
 		}
 
-		pw.close();
-		pw = null;
+		output.close();
+		output = null;
 
 		System.err.println("Tipi: " + tipo);
 		System.err.println("Generi: " + genere);
@@ -218,7 +226,9 @@ public class Psn {
 	}
 
 	final Map<Long, Integer> threads = createMap();
-	private PrintWriter pw = null;
-	private File file = new File("./output.txt");
+	private PrintWriter output = null;
+	private PrintWriter statistics = null;
+	private File fileOutput = new File("./output.txt");
+	private File fileStatistics = new File("./statistics.txt");
 	private final LoadConfig config;
 }

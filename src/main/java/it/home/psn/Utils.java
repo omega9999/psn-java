@@ -2,7 +2,6 @@ package it.home.psn;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +29,7 @@ public class Utils {
 	}
 
 	public static <K,V> Map<K,V> createMap() {
-		return new HashMap<>();//TODO
+		return new ConcurrentHashMap<>();
 	}
 
 	public static <T> List<T> createList() {
@@ -162,7 +161,6 @@ public class Utils {
 			videogame.setPriceFull(convertPrice(defaultSku.optInt("price")));
 			final JSONArray rewards = defaultSku.optJSONArray("rewards");
 			if (rewards != null) {
-				final StringBuilder sb = new StringBuilder();
 				for (int index = 0; index < rewards.length(); index++) {
 					final Sconto sconto = new Sconto();
 					final JSONObject obj = rewards.getJSONObject(index);
@@ -190,6 +188,12 @@ public class Utils {
 				videogame.getTipi().add(tipo);
 			}
 		}
+		if (gameContentTypesList == null || gameContentTypesList.length() == 0) {
+			final Tipo tipo = new Tipo();
+			tipo.setName(UNKNOWN);
+			tipo.setKey(UNKNOWN);
+			videogame.getTipi().add(tipo);
+		}
 	}
 
 	private static void setGenere(final JSONObject response, final Videogame videogame) {
@@ -208,6 +212,13 @@ public class Utils {
 						videogame.getGeneri().add(genere);
 					}
 				}
+				if (genre == null || genre.length() == 0) {
+					final Genere genere = new Genere();
+					genere.setName(UNKNOWN);
+					genere.setCount(1);
+					genere.setKey(UNKNOWN);
+					videogame.getGeneri().add(genere);
+				}
 			}
 		}
 	}
@@ -216,4 +227,5 @@ public class Utils {
 		return new BigDecimal(price).divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
 	}
 
+	private static final String UNKNOWN = "_Sconosciuto";
 }
