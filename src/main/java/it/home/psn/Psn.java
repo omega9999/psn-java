@@ -31,6 +31,7 @@ public class Psn {
 		final Psn psn = new Psn();
 		psn.preferitiInSconto();
 		// psn.elenco();
+		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
 		System.err.println("Fine");
 	}
 
