@@ -102,14 +102,14 @@ public class Psn {
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
 				output.println(videogame);
-				output.println(videogame.getCoppia().getOriginUrl());
+				//output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
 		output.println("\n\n\n\n\n");
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
 				output.println(videogame);
-				output.println(videogame.getCoppia().getOriginUrl());
+				//output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
 

@@ -6,6 +6,8 @@ import static it.home.psn.Utils.createSet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class Videogame implements Comparable<Videogame>{
+	private static List<String> TIPO_TOP = Arrays.asList("Gioco completo","Gioco PSN","Bundle","Gioco","Gioco PS VR","PS Now");
+	
 	public Videogame(String id) {
 		this.id = id;
 	}
@@ -45,6 +49,10 @@ public class Videogame implements Comparable<Videogame>{
 	public int compareTo(Videogame obj) {
 		int res;
 		res = compare(this.getTipo(),obj.getTipo());
+		if (res != 0) {
+			return res;
+		}
+		res = compare(this.getGenere(),obj.getGenere());
 		if (res != 0) {
 			return res;
 		}
@@ -84,6 +92,8 @@ public class Videogame implements Comparable<Videogame>{
 
 	@Override
 	public String toString() {
+		Collections.sort(this.tipi);
+		Collections.sort(this.generi);
 		StringBuilder builder = new StringBuilder();
 		final Sconto tmp = getSconto();
 		if (tmp != null) {
@@ -93,15 +103,16 @@ public class Videogame implements Comparable<Videogame>{
 			builder.append(" , ");
 		}
 		if (getTipi().size() > 0) {
-			builder.append(getTipi().size() == 1 ? getTipi().get(0) : getTipi());
+			builder.append("Tipo ").append(getTipi().size() == 1 ? getTipi().get(0) : getTipi());
 		}
 
-		builder.append(" , ");
-		builder.append(getName());
 		if (getGeneri().size() > 0) {
-			builder.append(" , ");
+			builder.append(" , Genere ");
 			builder.append(getGeneri().size() == 1 ? getGeneri().get(0) : getGeneri());
 		}
+		builder.append(" , ");
+		builder.append(getName());
+
 		builder.append(" , prezzo: ");
 		builder.append(getPriceFull());
 
@@ -111,7 +122,7 @@ public class Videogame implements Comparable<Videogame>{
 		builder.append(getCoppia().getJsonUrl());
 		
 		if (Constants.isExtended()) {
-			if (showScreenshot("Gioco completo","Gioco PSN","Bundle","Gioco","Gioco PS VR")) {
+			if (showScreenshot(TIPO_TOP)) {
 				for(Screenshot screen : getScreenshots()) {
 					builder.append("\n\t").append(screen.getUrl());
 				}
@@ -125,7 +136,7 @@ public class Videogame implements Comparable<Videogame>{
 		return builder.toString().trim();
 	}
 	
-	private boolean showScreenshot(String ... strings ) {
+	private boolean showScreenshot(List<String> strings) {
 		for(String str : strings) {
 			if (getTipi().contains(new Tipo(str))) {
 				return true;
@@ -191,6 +202,12 @@ public class Videogame implements Comparable<Videogame>{
 
 		@Override
 		public int compareTo(Tipo obj) {
+			if (!TIPO_TOP.contains(this.getName()) && TIPO_TOP.contains(obj.getName())) {
+				return +1;
+			}
+			if (TIPO_TOP.contains(this.getName()) && !TIPO_TOP.contains(obj.getName())) {
+				return -1;
+			}
 			return compare(this.getName(),obj.getName());
 		}
 
