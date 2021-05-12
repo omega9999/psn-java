@@ -51,7 +51,7 @@ public class Psn {
 		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
 		//System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(3 - 1));
 
-		output = new PrintWriter(fileOutput);
+		Writer output = new Writer();
 		
 		this.config.checkPreferiti();
 
@@ -101,18 +101,19 @@ public class Psn {
 		}
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
-				output.println(videogame + " " + videogame.getCoppia().getOriginUrl());
+				output.println(videogame);
+				output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
 		output.println("\n\n\n\n\n");
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
-				output.println(videogame + " " + videogame.getCoppia().getOriginUrl());
+				output.println(videogame);
+				output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
 
 		output.close();
-		output = null;
 
 		
 		//write statistics
@@ -139,7 +140,7 @@ public class Psn {
 	@SuppressWarnings("unused")
 	private void elenco() throws Exception {
 		final Set<Videogame> videogames = createSet();
-		output = new PrintWriter(fileOutput);
+		Writer output = new Writer();
 		// this.config.checkPreferiti();
 
 		for (String idRicerca : this.config.getRicercheIds()) {
@@ -224,11 +225,33 @@ public class Psn {
 			videogames.addAll(tmp);
 		}
 	}
+	
+	private static class Writer{
+		private final PrintWriter output;
+		private final PrintWriter outputEsteso;
+		
+		private Writer() throws IOException {
+			output = new PrintWriter(new File("./output.txt"));
+			outputEsteso = new PrintWriter(new File("./output-esteso.txt"));
+		}
+
+		public void close() {
+			output.close();
+			outputEsteso.close();
+		}
+
+		public synchronized void println(Object string) {
+			Constants.setExtended(false);
+			output.println(string);
+			Constants.setExtended(true);
+			outputEsteso.println(string);
+			Constants.setExtended(false);
+		}
+		
+	}
 
 	final Map<Long, Integer> threads = createMap();
-	private PrintWriter output = null;
 	private PrintWriter statistics = null;
-	private File fileOutput = new File("./output.txt");
 	private File fileStatistics = new File("./statistics.txt");
 	private final LoadConfig config;
 }

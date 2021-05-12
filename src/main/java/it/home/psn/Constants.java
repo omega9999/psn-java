@@ -1,10 +1,5 @@
 package it.home.psn;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,5 +7,15 @@ import lombok.NoArgsConstructor;
 public class Constants {
 	public static final boolean DEBUG = true;
 	
-
+	
+	public static boolean isExtended() {
+		return TO_STRING_ESTESO;
+	}
+	
+	public static void setExtended(boolean flag) {
+		TO_STRING_ESTESO = flag;
+	}
+	
+	
+	private static boolean TO_STRING_ESTESO = false;
 }

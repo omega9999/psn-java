@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.home.psn.module.LoadConfig;
 import it.home.psn.module.Videogame;
 import it.home.psn.module.Videogame.Genere;
 import it.home.psn.module.Videogame.Preview;
@@ -88,11 +89,12 @@ public class Utils {
 		}
 		final Videogame videogame = new Videogame(id);
 		videogame.setName(name);
-
+		
 		setGenere(response, videogame);
 		setTipo(response, videogame);
 		setDefaultSku(response, videogame);
 		setLinks(response, videogame);
+		setParentLinks(response, videogame);
 
 		final JSONObject mediaList = response.optJSONObject("mediaList");
 		if (mediaList != null) {
@@ -135,6 +137,26 @@ public class Utils {
 		// System.out.println("Get response json from " + this.serverUrl + "\n" +
 		// sb.toString().length());
 		return videogame;
+	}
+	
+	private static void setParentLinks(final JSONObject response, final Videogame videogame) {
+		
+		final JSONArray links = response.optJSONArray("parent_links");
+		if (links != null) {
+			for (int index = 0; index < links.length(); index++) {
+				final JSONObject obj = links.getJSONObject(index);
+				final String relatedId = obj.optString("id");
+				if (!StringUtils.isEmpty(relatedId)) {
+					videogame.getOtherIds().add(relatedId);
+					videogame.getParentIds().add(relatedId);
+					videogame.getParentUrls().add(LoadConfig.getCoppia(relatedId).getOriginUrl());
+				} else {
+					if (Constants.DEBUG) {
+						System.err.println(obj);
+					}
+				}
+			}
+		}
 	}
 
 	private static void setLinks(final JSONObject response, final Videogame videogame) {

@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.json.JSONException;
@@ -22,11 +24,17 @@ public class Connection {
 		randomSleep();
 		final StringBuilder sb = new StringBuilder();
 		System.setProperty("java.net.useSystemProxies", "true");
-		final OkHttpClient client = new OkHttpClient().newBuilder().build();
+		final OkHttpClient client = new OkHttpClient().newBuilder()
+				.callTimeout(60, TimeUnit.SECONDS)
+				.connectTimeout(60, TimeUnit.SECONDS)
+				.readTimeout(60, TimeUnit.SECONDS)
+				.writeTimeout(60, TimeUnit.SECONDS)
+				.build();
+		
 		final Request request = new Request.Builder().url(url.getJsonUrl()).method("GET", null).build();
 		final InputStream stream = client.newCall(request).execute().body().byteStream();
 
-		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, "utf-8"));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			sb.append(line + "\n");

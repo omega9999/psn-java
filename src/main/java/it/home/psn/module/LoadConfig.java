@@ -16,7 +16,7 @@ public class LoadConfig {
 	
 	private static LoadConfig SINGLETON = new LoadConfig();
 	
-	public static LoadConfig getInstance() {
+	public synchronized static LoadConfig getInstance() {
 		return SINGLETON;
 	}
 	

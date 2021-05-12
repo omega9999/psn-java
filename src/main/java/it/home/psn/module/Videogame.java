@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import it.home.psn.Constants;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,9 @@ public class Videogame implements Comparable<Videogame>{
 	private BigDecimal priceFull;
 	private final List<Sconto> sconti = createList();
 	private final Set<String> otherIds = createSet();
+	private final Set<String> parentIds = createSet();
+	
+	private final Set<String> parentUrls = createSet();
 
 	private final List<Screenshot> screenshots = createList();
 	private final List<Preview> previews = createList();
@@ -105,12 +109,29 @@ public class Videogame implements Comparable<Videogame>{
 		builder.append(getCoppia().getOriginUrl());
 		builder.append(" , ");
 		builder.append(getCoppia().getJsonUrl());
-		if (getTipi().contains(new Tipo("Gioco completo"))) {
-			for(Screenshot screen : getScreenshots()) {
-				builder.append("\n\t").append(screen.getUrl());
+		
+		if (Constants.isExtended()) {
+			if (showScreenshot("Gioco completo","Gioco PSN","Bundle","Gioco","Gioco PS VR")) {
+				for(Screenshot screen : getScreenshots()) {
+					builder.append("\n\t").append(screen.getUrl());
+				}
+			}
+			else {
+				for(String url : getParentUrls()) {
+					builder.append("\n\t").append(url);
+				}
 			}
 		}
 		return builder.toString().trim();
+	}
+	
+	private boolean showScreenshot(String ... strings ) {
+		for(String str : strings) {
+			if (getTipi().contains(new Tipo(str))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public SottoSoglia prezzoSottoSoglia(final BigDecimal soglia) {
