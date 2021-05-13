@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.home.psn.module.Connection;
+import it.home.psn.module.HtmlTemplate;
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
@@ -65,6 +66,9 @@ public class Psn {
 					videogames.add(videogame);
 				}
 			} catch (IOException e) {
+				System.err.println("Problemi di connessione");
+				System.err.println(coppia.getOriginUrl());
+				System.err.println(coppia.getJsonUrl());
 				e.printStackTrace();
 			}
 		});
@@ -99,9 +103,14 @@ public class Psn {
 				add(preview, t.getType());
 			}
 		}
+		final List<Videogame> toHtml = Utils.createList();
 		for (Videogame videogame : videogameSorted) {
+			if (videogame.getJson().contains(".mp4")) {
+				output.mp4(videogame.getJson());
+			}
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
 				output.println(videogame);
+				toHtml.add(videogame);
 				//output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
@@ -113,6 +122,10 @@ public class Psn {
 			}
 		}
 
+		output.html(toHtml);
+		
+		
+		
 		output.close();
 
 		
@@ -182,7 +195,6 @@ public class Psn {
 		}
 
 		output.close();
-		output = null;
 
 		System.err.println("Tipi: " + tipo);
 		System.err.println("Generi: " + genere);
@@ -229,15 +241,34 @@ public class Psn {
 	private static class Writer{
 		private final PrintWriter output;
 		private final PrintWriter outputEsteso;
+		private final PrintWriter outputMp4;
+		private final PrintWriter outputHtml;
+		private final HtmlTemplate htmlTemplate;
 		
 		private Writer() throws IOException {
+			htmlTemplate = new HtmlTemplate();
 			output = new PrintWriter(new File("./output.txt"));
 			outputEsteso = new PrintWriter(new File("./output-esteso.txt"));
+			outputMp4 = new PrintWriter(new File("./mp4.json"));
+			outputHtml = new PrintWriter(new File("./output.html"));
+			outputMp4.println("[");
 		}
 
 		public void close() {
 			output.close();
 			outputEsteso.close();
+			outputHtml.close();
+			
+			outputMp4.println("]");
+			outputMp4.close();
+		}
+		
+		public synchronized void html(final List<Videogame> list) {
+			outputHtml.println(htmlTemplate.createHtml(list));
+		}
+		
+		public synchronized void mp4(String string) {
+			outputMp4.println(string+",");
 		}
 
 		public synchronized void println(Object string) {

@@ -27,8 +27,10 @@ public class Videogame implements Comparable<Videogame>{
 	}
 
 	private String name;
+	private String json;
 	private final List<Tipo> tipi = createList();
 	private final List<Genere> generi = createList();
+	private final List<Genere> subgeneri = createList();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
 	private final List<Sconto> sconti = createList();
@@ -39,11 +41,31 @@ public class Videogame implements Comparable<Videogame>{
 
 	private final List<Screenshot> screenshots = createList();
 	private final List<Preview> previews = createList();
+	private final List<Video> videos = createList();
 
 	private final String id;
 	private CoppiaUrl coppia;
 
 	private Videogame padre;
+	
+	public String getGenereStr() {
+		return String.join(", ",join(getGeneri()));
+	}
+	public String getSubGenereStr() {
+		return String.join(", ",join(getSubgeneri()));
+	}
+	public String getTipoStr() {
+		return String.join(", ",join(getTipi()));
+	}
+	
+	private static String[] join(List<?> list) {
+		final String [] strs = new String[list.size()];
+		int index = 0;
+		for(Object obj : list) {
+			strs[index++] = obj.toString();
+		}
+		return strs;
+	}
 
 	@Override
 	public int compareTo(Videogame obj) {
@@ -89,6 +111,22 @@ public class Videogame implements Comparable<Videogame>{
 		}
 		return tmp;
 	}
+	
+	public BigDecimal getScontoPerc() {
+		final Sconto tmp = getSconto();
+		if (tmp != null) {
+			return BigDecimal.ONE.subtract(tmp.getPrice().divide(getPriceFull(), 2, RoundingMode.HALF_UP))
+					.multiply(new BigDecimal(100));
+		}
+		return null;
+	}
+	
+	public String getParentUrl() {
+		if (!getParentUrls().isEmpty()) {
+			return getParentUrls().stream().findFirst().get();
+		}
+		return getCoppia().getOriginUrl();
+	}
 
 	@Override
 	public String toString() {
@@ -97,18 +135,18 @@ public class Videogame implements Comparable<Videogame>{
 		StringBuilder builder = new StringBuilder();
 		final Sconto tmp = getSconto();
 		if (tmp != null) {
-			builder.append(" (" + BigDecimal.ONE.subtract(tmp.getPrice().divide(getPriceFull(), 2, RoundingMode.HALF_UP)).multiply(new BigDecimal(100))+"%)");
+			builder.append(" (" +  getScontoPerc()+"%)");
 			builder.append(" Sconto: ");
 			builder.append(tmp);
 			builder.append(" , ");
 		}
 		if (getTipi().size() > 0) {
-			builder.append("Tipo ").append(getTipi().size() == 1 ? getTipi().get(0) : getTipi());
+			builder.append("Tipo ").append(getTipoStr());
 		}
 
 		if (getGeneri().size() > 0) {
 			builder.append(" , Genere ");
-			builder.append(getGeneri().size() == 1 ? getGeneri().get(0) : getGeneri());
+			builder.append(getGenereStr());
 		}
 		builder.append(" , ");
 		builder.append(getName());
@@ -272,6 +310,12 @@ public class Videogame implements Comparable<Videogame>{
 		private int order;
 		private String streamUrl;
 		private final List<String> shots = createList();
+	}
+	
+	@Data
+	public static class Video {
+		private String type;
+		private String url;
 	}
 
 	@Override

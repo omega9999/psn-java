@@ -20,6 +20,7 @@ import it.home.psn.module.Videogame.Preview;
 import it.home.psn.module.Videogame.Sconto;
 import it.home.psn.module.Videogame.Screenshot;
 import it.home.psn.module.Videogame.Tipo;
+import it.home.psn.module.Videogame.Video;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -74,6 +75,19 @@ public class Utils {
 		}
 		return list;
 	}
+	
+	private static  List<String> getMetadata(final JSONObject response) {
+		final List<String> sb = createList();
+		if (response != null) {
+			final JSONArray values = response.optJSONArray("values");
+			if (values != null) {
+				for (int index = 0; index < values.length(); index++) {
+					sb.add(values.getString(index));
+				}
+			}
+		}
+		return sb;
+	}
 
 	public static Videogame elaboraJson(final JSONObject response) {
 		//default_sku->entitlements[id==id_link,name,packages[platformName,size],subtitle_language_codes[],voice_language_codes[],metadata->{voiceLanguageCode[],subtitleLanguageCode[]} ]
@@ -89,12 +103,47 @@ public class Utils {
 		}
 		final Videogame videogame = new Videogame(id);
 		videogame.setName(name);
+		videogame.setJson(response.toString());
 		
 		setGenere(response, videogame);
 		setTipo(response, videogame);
 		setDefaultSku(response, videogame);
 		setLinks(response, videogame);
 		setParentLinks(response, videogame);
+		
+		final JSONObject metadata = response.optJSONObject("metadata");
+		if (metadata != null) {
+			final List<String> genre = getMetadata(metadata.optJSONObject("genre"));
+			final List<String> subgenre = getMetadata(metadata.optJSONObject("subgenre"));
+
+			videogame.getGeneri().clear();
+			for(String str : genre) {
+				final Genere genere = new Genere();
+				genere.setName(str);
+				videogame.getGeneri().add(genere);
+			}
+			
+			videogame.getSubgeneri().clear();
+			for(String str : subgenre) {
+				final Genere genere = new Genere();
+				genere.setName(str);
+				videogame.getSubgeneri().add(genere);
+			}
+		}
+		
+		
+		
+		final JSONArray promomedia = response.optJSONArray("promomedia");
+		if (promomedia != null) {
+			for (int index = 0; index < promomedia.length(); index++) {
+				final JSONObject obj = promomedia.getJSONObject(index);
+				final Video video = new Video();
+				video.setType("promomedia");
+				video.setUrl(obj.optString("url"));
+				videogame.getVideos().add(video);
+			}
+		}
+		
 
 		final JSONObject mediaList = response.optJSONObject("mediaList");
 		if (mediaList != null) {
@@ -122,6 +171,11 @@ public class Utils {
 					preview.setType(obj.optString("type"));
 					preview.setTypeId(obj.optString("typeId"));
 					preview.setUrl(obj.optString("url"));
+					
+					final Video video = new Video();
+					video.setType("previews");
+					video.setUrl(obj.optString("url"));
+					videogame.getVideos().add(video);
 
 					final JSONArray shots = obj.optJSONArray("shots");
 					if (shots != null) {
