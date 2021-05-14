@@ -229,6 +229,8 @@ public class Psn {
 							tmp.add(relatedVideogame);
 						}
 					} catch (IOException e) {
+						System.err.println(coppia.getOriginUrl());
+						System.err.println(coppia.getJsonUrl());
 						System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
 					}
 				});
@@ -246,6 +248,7 @@ public class Psn {
 		private final HtmlTemplate htmlTemplate;
 		
 		private Writer() throws IOException {
+			new File("./output.html").renameTo(new File("./output-backup.html"));
 			htmlTemplate = new HtmlTemplate();
 			output = new PrintWriter(new File("./output.txt"));
 			outputEsteso = new PrintWriter(new File("./output-esteso.txt"));

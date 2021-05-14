@@ -2,13 +2,24 @@
 	<td>&euro; {PREZZO_REF}</td>
 	<td>{SCONTO_REF} %</td>
 	<td>&euro; {PREZZO_FULL_REF}</td>
-	<td><input type="button" onclick="myFunction('{ID_RIGA_REF}')"
-					id="id_button_{ID_RIGA_REF}" value="+" />&nbsp;
+	<td>
+	<input type="button" style="display: {BUTTON_DISPLAY_REF};" onclick="myFunction('{ID_RIGA_REF}')" id="id_button_{ID_RIGA_REF}" value="+" />&nbsp;
 	{GIOCO_REF}
-	<div id="id_div_{ID_RIGA_REF}" style="display: none">
-	{IMMAGINI_REF}
-	{VIDEOS_REF}
-	</div>
+	<div id="id_div_{ID_RIGA_REF}" style="display: none"
+			onclick="myFunction('{ID_RIGA_REF}')">
+			<table
+				style="background-color: black; margin-left: auto; margin-right: auto; margin-top: 50px;"
+				onclick="noOp()">
+				<tr>
+					<td><div
+							style="display: block; overflow: auto; height: 800px;">
+							{IMMAGINI_REF}</div></td>
+					<td><div
+							style="display: block; overflow: auto; height: 800px;">
+							{VIDEOS_REF}</div></td>
+				</tr>
+			</table>
+		</div>
 	</td>
 	<td>{TIPO_REF}</td>
 	<td>{GENERE_REF}</td>
@@ -16,7 +27,7 @@
 	<td><a href="{LINK_ORIG_REF}" target="_blank" rel="noopener noreferrer">
 			Link </a></td>
 	<td><a href="{LINK_PARENT_REF}" target="_blank" rel="noopener noreferrer">
-			Link </a></td>
+			Parent </a></td>
 	<td><a href="{LINK_JSON_REF}" target="_blank" rel="noopener noreferrer">
 			Json </a></td>
 </tr>

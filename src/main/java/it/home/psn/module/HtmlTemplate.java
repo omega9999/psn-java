@@ -29,14 +29,18 @@ public class HtmlTemplate {
 		int counter = 0;
 		for(final Videogame videogame : videogames) {
 			final String id = String.format("id%s",counter++);
+			final String immagini = generaImmagini(id, videogame);
+			final String video = generaVideo(id, videogame);
+			
 			sb.append(this.rowTemplate
 					.replace("{PREZZO_REF}", String.valueOf(videogame.getSconto().getPrice()))
 					.replace("{SCONTO_REF}", String.valueOf(videogame.getScontoPerc()))
 					.replace("{PREZZO_FULL_REF}", String.valueOf(videogame.getPriceFull()))
 					.replace(ID_RIGA_REF, id)
+					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
 					.replace("{GIOCO_REF}",videogame.getName())
-					.replace("{IMMAGINI_REF}", generaImmagini(id, videogame))
-					.replace("{VIDEOS_REF}", generaVideo(id, videogame))
+					.replace("{IMMAGINI_REF}", immagini)
+					.replace("{VIDEOS_REF}", video)
 					.replace("{TIPO_REF}", videogame.getTipoStr())
 					.replace("{GENERE_REF}",  videogame.getGenereStr())
 					.replace("{SUBGENERE_REF}",  videogame.getSubGenereStr())
