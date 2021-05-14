@@ -20,6 +20,7 @@ public class SistemaPreferiti {
 	private static final String FILE = "preferiti.properties";
 	//private static final String FILE = "posseduti-fisico.properties";
 	//private static final String FILE = "posseduti-digitale.properties";
+	//private static final String FILE = "posseduti-demo.properties";
 	
 	
 	public static void main(String[] args) throws IOException {
