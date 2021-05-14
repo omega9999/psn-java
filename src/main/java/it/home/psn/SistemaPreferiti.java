@@ -15,17 +15,25 @@ import it.home.psn.module.Videogame;
 
 public class SistemaPreferiti {
 
+	private static final String FILE = "preferiti.properties";
+	//private static final String FILE = "posseduti-fisico.properties";
+	//private static final String FILE = "posseduti-digitale.properties";
+	
+	
 	public static void main(String[] args) throws IOException {
 		new SistemaPreferiti();
 	}
 
 	private SistemaPreferiti() throws IOException {
 		load(config, "config.properties");
-		final InputStream inStream = classLoader.getResourceAsStream("preferiti.properties");
+		final InputStream inStream = classLoader.getResourceAsStream(FILE);
 		List<String> list = new ArrayList<>();
 		try (final BufferedReader br = new BufferedReader(new InputStreamReader(inStream))) {
 			String line;
 			while ((line = br.readLine()) != null) {
+				if (line.isBlank()) {
+					continue;
+				}
 				if (isOk(line)) {
 					add(list,line);
 				} else {
@@ -33,11 +41,19 @@ public class SistemaPreferiti {
 				}
 			}
 		}
-		System.out.println("\n\n\n\n\n\n");
-		//Collections.sort(list);
+		Collections.sort(list, (a,b)->{
+			if (a.startsWith("#") && !b.startsWith("#")) {
+				return -1;
+			}
+			if (!a.startsWith("#") && b.startsWith("#")) {
+				return +1;
+			}
+			return a.toLowerCase().compareTo(b.toLowerCase());
+		});
 		for(String str : list) {
 			System.out.println(str);
 		}
+		System.out.println("\n\n\n\n");
 	}
 	
 	private static void add(List<String> list, String str) {
@@ -59,7 +75,20 @@ public class SistemaPreferiti {
 	private String trasforma(String line) throws IOException {
 		final CoppiaUrl coppia = getUrls(line);
 		final Videogame videogame = new Connection().getVideogame(coppia);
-		return videogame != null ? videogame.getName().replaceAll("[^a-zA-Z\\d]", "_")+"="+line : "# "+line;
+		return videogame != null ? trasformaNome(videogame)+"="+line : "# "+line;
+	}
+
+	private String trasformaNome(final Videogame videogame) {
+		String str = videogame.getName().replaceAll("[^a-zA-Z\\d]", "_");
+		String old = "";
+		while(!str.equals(old)) {
+			old = str;
+			str = str.replace("__", "_");
+			if (str.startsWith("_")) {
+				str = str.substring(1);
+			}
+		}
+		return str;
 	}
 
 	public CoppiaUrl getUrls(final String url) {
