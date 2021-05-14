@@ -128,7 +128,7 @@ public class Utils {
 			videogame.getSubgeneri().clear();
 			for(String str : subgenre) {
 				final Genere genere = new Genere();
-				genere.setName(str);
+				genere.setName(LoadConfig.subGenDecode(str));
 				videogame.getSubgeneri().add(genere);
 			}
 		}

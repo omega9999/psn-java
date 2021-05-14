@@ -136,7 +136,7 @@ public class Psn {
 		
 		output.html(toHtml);
 
-		Collections.sort(toHtmlPosseduti, (a,b)->a.getName().compareTo(b.getName()));
+		Collections.sort(toHtmlPosseduti, (a,b)->a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
 		output.htmlPosseduti(toHtmlPosseduti);
 		
 		

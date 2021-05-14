@@ -3,6 +3,7 @@ package it.home.psn.module;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -89,6 +90,46 @@ public class LoadConfig {
 		prop.load(inStream);
 	}
 	
+	public static String subGenDecode(final String key) {
+		final Map<String, String> decode = Utils.createMap();
+		decode.put("RUN_AND_GUN", "Corri e Tira");
+		decode.put("STEALTH", "Action stealth");
+		decode.put("VEHICULAR_COMBAT", "Combattimento veicoli");
+		decode.put("MYSTERY", "Mistero");
+		decode.put("GRAPHIC_ADVENTURE", "Avventura grafica");
+		decode.put("PHYSICS_GAME", "Gioco di fisica");
+		decode.put("TURN_BASED_STRATEGY", "Strategia a turni");
+		decode.put("TACTICAL", "Tattico");
+		decode.put("2D_FIGHTING", "Combattimento 2D");
+		decode.put("THIRD_PERSON_SHOOTER", "Sparatutto in 3^ pers.");
+		decode.put("PLATFORMER", "Piattaforme");
+		decode.put("DUNGEON_CRAWLER", "GDR dungeon crawler");
+		decode.put("DANCE", "Danza");
+		decode.put("REAL_TIME_STRATEGY", "Strategia in tempo reale");
+		decode.put("SHOOT_EM_UP", "Sparatutto");
+		decode.put("STRATEGY_ROLE_PLAYING_GAME", "GDR Strategico");
+		decode.put("ART/EXPERIMENTAL", "Artistico sperimentale");
+		decode.put("3D_FIGHTING", "Combattimento 3D");
+		decode.put("BOARD_GAME", "Gioco da tavolo");
+		decode.put("FANTASY", "Fantasy");
+		decode.put("TEAM_FIGHTING", "Combattimento a squadre");
+		decode.put("PINBALL", "Flipper");
+		decode.put("MASSIVELY_MULTIPLAYER_ONLINE_ROLE_PLAYING_GAME", "MMORPG");
+		decode.put("COMBAT", "Combattimento");
+		decode.put("EPIC", "Epico");
+		decode.put("TRIVIA/QUIZ", "Quiz");
+		decode.put("FLIGHT_COMBAT", "Combattimento aereo");
+		decode.put("HACK_AND_SLASH", "Hack and slash");
+		decode.put("BEAT_EM_UP", "Beat 'em up");
+		decode.put("TEXT_ADVENTURE", "Avventura testuale");
+		decode.put("FLIGHT_SIMULATION", "Simulatore di volo");
+		decode.put("DEVELOPMENT", "Sviluppo");
+		decode.put("CARD_GAME", "Gioco di carte");
+		decode.put("TOWER_DEFENSE", "Difesa della torre");
+		decode.put("FIRST_PERSON_SHOOTER", "Sparatutto in 1^ pers.");
+		decode.put("CHILDREN'S", "Per bambini");
+		return decode.containsKey(key) ? decode.get(key) : key;
+	}
 	
 	
 	private final Properties preferiti = new Properties();

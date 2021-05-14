@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import it.home.psn.module.Videogame.Screenshot;
 import it.home.psn.module.Videogame.Video;
@@ -38,7 +39,7 @@ public class HtmlTemplate {
 					.replace("{PREZZO_FULL_REF}", String.valueOf(videogame.getPriceFull()))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
-					.replace("{GIOCO_REF}",videogame.getName())
+					.replace("{GIOCO_REF}",StringEscapeUtils.escapeHtml4(videogame.getName().trim()))
 					.replace("{IMMAGINI_REF}", immagini)
 					.replace("{VIDEOS_REF}", video)
 					.replace("{TIPO_REF}", videogame.getTipoStr())
