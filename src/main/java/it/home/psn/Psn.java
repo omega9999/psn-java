@@ -87,11 +87,15 @@ public class Psn {
 
 		final Map<String, Integer> tipo = createMap();
 		final Map<String, Integer> genere = createMap();
+		final Map<String, Integer> subgenere = createMap();
 		final Map<String, Integer> screenshot = createMap();
 		final Map<String, Integer> preview = createMap();
 		for (Videogame videogame : videogameSorted) {
 			for (Genere g : videogame.getGeneri()) {
 				add(genere, g.getName());
+			}
+			for (Genere g : videogame.getSubgeneri()) {
+				add(subgenere, g.getName());
 			}
 			for (Tipo t : videogame.getTipi()) {
 				add(tipo, t.getName());
@@ -104,6 +108,7 @@ public class Psn {
 			}
 		}
 		final List<Videogame> toHtml = Utils.createList();
+		final List<Videogame> toHtmlPosseduti = Utils.createList();
 		for (Videogame videogame : videogameSorted) {
 			if (videogame.getJson().contains(".mp4")) {
 				output.mp4(videogame.getJson());
@@ -121,9 +126,18 @@ public class Psn {
 				//output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
+		for (Videogame videogame : videogameSorted) {
+			if (videogame.isPosseduto()) {
+				toHtmlPosseduti.add(videogame);
+			}
+		}
 
-		output.html(toHtml);
+		System.err.println("videogameSorted "+videogameSorted.size()+" toHtmlPosseduti "+ toHtmlPosseduti.size());
 		
+		output.html(toHtml);
+
+		Collections.sort(toHtmlPosseduti, (a,b)->a.getName().compareTo(b.getName()));
+		output.htmlPosseduti(toHtmlPosseduti);
 		
 		
 		output.close();
@@ -140,6 +154,7 @@ public class Psn {
 		statistics.println("threads counters: " + threads);
 		statistics.println("Tipi: " + tipo);
 		statistics.println("Generi: " + genere);
+		statistics.println("SubGeneri: " + subgenere);
 		statistics.println("Screenshot type: " + screenshot);
 		statistics.println("Preview type: " + preview);
 		statistics.close();
@@ -245,6 +260,7 @@ public class Psn {
 		private final PrintWriter outputEsteso;
 		private final PrintWriter outputMp4;
 		private final PrintWriter outputHtml;
+		private final PrintWriter outputHtmlPosseduti;
 		private final HtmlTemplate htmlTemplate;
 		
 		private Writer() throws IOException {
@@ -254,6 +270,7 @@ public class Psn {
 			outputEsteso = new PrintWriter(new File("./output-esteso.txt"));
 			outputMp4 = new PrintWriter(new File("./mp4.json"));
 			outputHtml = new PrintWriter(new File("./output.html"));
+			outputHtmlPosseduti = new PrintWriter(new File("./output-posseduti.html"));
 			outputMp4.println("[");
 		}
 
@@ -261,6 +278,7 @@ public class Psn {
 			output.close();
 			outputEsteso.close();
 			outputHtml.close();
+			outputHtmlPosseduti.close();
 			
 			outputMp4.println("]");
 			outputMp4.close();
@@ -268,6 +286,9 @@ public class Psn {
 		
 		public synchronized void html(final List<Videogame> list) {
 			outputHtml.println(htmlTemplate.createHtml(list));
+		}
+		public synchronized void htmlPosseduti(final List<Videogame> list) {
+			outputHtmlPosseduti.println(htmlTemplate.createHtml(list));
 		}
 		
 		public synchronized void mp4(String string) {

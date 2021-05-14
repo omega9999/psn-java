@@ -82,11 +82,29 @@ function myFunction(id){
 	div.style.display = "block";
 	div.classList.toggle("overlay-class");
 	button.value = "-"; 
+	
+	var i;
+	var videos = document.getElementsByClassName("source-video_"+id);
+	var images = document.getElementsByClassName("immagine_"+id);
+	for (i = 0; i < videos.length; i++) {
+	  var video = videos[i];
+      video.parentElement.load();
+	}
+	for (i = 0; i < images.length; i++) {
+	  var image = images[i];
+	  image.src = image.dataset.src;
+	}
  }
  else{
  	div.classList.toggle("overlay-class");
 	div.style.display = "none";
 	button.value = "+"; 
+	var i;
+	var videos = document.getElementsByClassName("source-video_"+id);
+	for (i = 0; i < videos.length; i++) {
+	  var video = videos[i];
+      video.parentElement.pause();
+	}
  }
 }
 

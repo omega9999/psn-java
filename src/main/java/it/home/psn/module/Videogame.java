@@ -36,6 +36,7 @@ public class Videogame implements Comparable<Videogame>{
 	private final List<Sconto> sconti = createList();
 	private final Set<String> otherIds = createSet();
 	private final Set<String> parentIds = createSet();
+	private boolean posseduto;
 	
 	private final Set<String> parentUrls = createSet();
 

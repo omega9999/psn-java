@@ -105,6 +105,8 @@ public class Utils {
 		videogame.setName(name);
 		videogame.setJson(response.toString());
 		
+		videogame.setPosseduto(LoadConfig.getInstance().getIdPosseduti().contains(id));
+		
 		setGenere(response, videogame);
 		setTipo(response, videogame);
 		setDefaultSku(response, videogame);

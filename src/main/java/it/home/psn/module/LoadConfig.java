@@ -22,9 +22,17 @@ public class LoadConfig {
 	
 	private LoadConfig() {
 		try {
-			load(preferiti, "preferiti.properties");
 			load(config, "config.properties");
 			load(ricerche, "ricerche.properties");
+			load(preferiti, "preferiti.properties");
+			load(posseduti, "posseduti-digitale.properties");
+			load(posseduti, "posseduti-fisico.properties");
+
+		
+			for(final Object urlObj : this.posseduti.values()) {
+				final String targetUrl = this.config.getProperty("base.html.url");
+				idPosseduti.add(urlObj.toString().replace(targetUrl, ""));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,14 +47,23 @@ public class LoadConfig {
 	}
 	
 	public Set<CoppiaUrl> getUrls(){
-		final String jsonUrl = this.config.getProperty("base.json.url");
-		final String targetUrl = this.config.getProperty("base.html.url");
 		final Set<CoppiaUrl> urls = new HashSet<>();
 		for(final Object urlObj : this.preferiti.values()) {
-			final String url = urlObj.toString();
-			urls.add(new CoppiaUrl(url, url.replace(targetUrl, jsonUrl)));
+			urls.add(create(urlObj));
 		}
+		for(final Object urlObj : this.posseduti.values()) {
+			urls.add(create(urlObj));
+		}
+		System.err.println("Urls da analizzare " + urls.size());
+		System.err.println("Giochi posseduti " + this.posseduti.size());
 		return urls;
+	}
+	
+	private CoppiaUrl create(final Object urlObj) {
+		final String jsonUrl = this.config.getProperty("base.json.url");
+		final String targetUrl = this.config.getProperty("base.html.url");
+		final String url = urlObj.toString();
+		return new CoppiaUrl(url, url.replace(targetUrl, jsonUrl));
 	}
 	
 	public static CoppiaUrl getCoppia(String id) {
@@ -75,12 +92,38 @@ public class LoadConfig {
 	
 	
 	private final Properties preferiti = new Properties();
+	private final Properties posseduti = new Properties();
 	private final Properties config = new Properties();
 	private final Properties ricerche = new Properties();
+	private final Set<String> idPosseduti = Utils.createSet();
 	
 	@Data
 	public static class CoppiaUrl{
 		private final String originUrl;
 		private final String jsonUrl;
+	
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((originUrl == null) ? 0 : originUrl.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CoppiaUrl other = (CoppiaUrl) obj;
+			if (originUrl == null) {
+				if (other.originUrl != null)
+					return false;
+			} else if (!originUrl.equals(other.originUrl))
+				return false;
+			return true;
+		}
 	}
 }

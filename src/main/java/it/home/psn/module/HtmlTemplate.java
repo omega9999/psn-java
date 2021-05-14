@@ -33,8 +33,8 @@ public class HtmlTemplate {
 			final String video = generaVideo(id, videogame);
 			
 			sb.append(this.rowTemplate
-					.replace("{PREZZO_REF}", String.valueOf(videogame.getSconto().getPrice()))
-					.replace("{SCONTO_REF}", String.valueOf(videogame.getScontoPerc()))
+					.replace("{PREZZO_REF}", videogame.getSconto() != null ? String.valueOf(videogame.getSconto().getPrice()) : "")
+					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) : "")
 					.replace("{PREZZO_FULL_REF}", String.valueOf(videogame.getPriceFull()))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
@@ -44,6 +44,7 @@ public class HtmlTemplate {
 					.replace("{TIPO_REF}", videogame.getTipoStr())
 					.replace("{GENERE_REF}",  videogame.getGenereStr())
 					.replace("{SUBGENERE_REF}",  videogame.getSubGenereStr())
+					.replace("{POSSEDUTO_REF}", videogame.isPosseduto() ? "(X) ":"")
 					.replace("{LINK_ORIG_REF}", videogame.getCoppia().getOriginUrl())
 					.replace("{LINK_PARENT_REF}", videogame.getParentUrl())
 					.replace("{LINK_JSON_REF}", videogame.getCoppia().getJsonUrl())
