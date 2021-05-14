@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import it.home.psn.module.Connection;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
@@ -41,19 +43,41 @@ public class SistemaPreferiti {
 				}
 			}
 		}
-		Collections.sort(list, (a,b)->{
-			if (a.startsWith("#") && !b.startsWith("#")) {
-				return -1;
+		
+		List<String> listDistinct = list.stream().distinct().collect(Collectors.toList());
+		
+		Collections.sort(listDistinct, (a,b)->{
+			int tmp = 0;
+			
+			tmp = priorizza(a, b, (x->x.startsWith("#")));
+			if (tmp != 0) {
+				return tmp;
 			}
-			if (!a.startsWith("#") && b.startsWith("#")) {
-				return +1;
+			tmp = priorizza(a, b, (x->x.toLowerCase().contains("_demo=")));
+			if (tmp != 0) {
+				return tmp;
 			}
+			tmp = priorizza(a, b, (x->x.toLowerCase().contains("_demo_")));
+			if (tmp != 0) {
+				return tmp;
+			}
+
 			return a.toLowerCase().compareTo(b.toLowerCase());
 		});
-		for(String str : list) {
+		for(String str : listDistinct) {
 			System.out.println(str);
 		}
 		System.out.println("\n\n\n\n");
+	}
+	
+	private static int priorizza(String a, String b, Function<String, Boolean> function) {
+		if (function.apply(a) && !function.apply(b)) {
+			return -1;
+		}
+		if (!function.apply(a) && function.apply(b)) {
+			return +1;
+		}
+		return 0;
 	}
 	
 	private static void add(List<String> list, String str) {
