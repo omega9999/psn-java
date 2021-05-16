@@ -26,9 +26,10 @@ public class LoadConfig {
 			load(config, "config.properties");
 			load(ricerche, "ricerche.properties");
 			load(preferiti, "preferiti.properties");
+			load(preferiti, "posseduti-demo.properties");
+			
 			load(posseduti, "posseduti-digitale.properties");
 			load(posseduti, "posseduti-fisico.properties");
-
 		
 			for(final Object urlObj : this.posseduti.values()) {
 				final String targetUrl = this.config.getProperty("base.html.url");

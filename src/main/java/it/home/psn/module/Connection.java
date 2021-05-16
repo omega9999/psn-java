@@ -52,7 +52,7 @@ public class Connection {
 			if (Constants.DEBUG) {
 				System.err.println(url.getOriginUrl());
 				System.err.println(url.getJsonUrl());
-				System.err.println(e.getMessage() + "\n" + sb.toString() + "\n" + url.getJsonUrl() + "\n" + url.getOriginUrl());
+				System.err.println(e.getMessage() + "\n" + sb.toString()+"\n-----------------");
 			}
 			return null;
 		}

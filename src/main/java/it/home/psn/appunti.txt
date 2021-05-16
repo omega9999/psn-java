@@ -1,0 +1,51 @@
+@SuppressWarnings("unused")
+	private void elenco() throws Exception {
+		final Set<Videogame> videogames = createSet();
+		Writer output = new Writer();
+		// this.config.checkPreferiti();
+
+		for (String idRicerca : this.config.getRicercheIds()) {
+			final List<Videogame> tmp = new Connection()
+					.ricerca("https://store.playstation.com/chihiro-api/viewfinder/IT/it/999/" + idRicerca);
+			videogames.addAll(tmp);
+			System.err.println(idRicerca + " size set " + tmp.size());
+		}
+
+		// videogames.addAll(new
+		// Connection().ricerca("https://store.playstation.com/chihiro-api/viewfinder/IT/it/999/STORE-MSF75508-GAMELATEST?size=30&gkb=1&start=0&game_content_type=games"));
+
+		// cercaCollegati(videogames);
+
+		System.err.println("\n\n\n\n");
+		System.err.println("Trovati " + videogames.size());
+
+		final List<Videogame> videogameSorted = Arrays.asList(videogames.toArray(new Videogame[0]));
+		Collections.sort(videogameSorted, (obj1, obj2) -> obj1.getName().compareTo(obj2.getName()));
+
+		final Set<String> tipo = createSet();
+		final Set<String> genere = createSet();
+		final Set<String> screenshot = createSet();
+		final Set<String> preview = createSet();
+		for (Videogame videogame : videogameSorted) {
+			output.println(videogame);
+			for (Genere g : videogame.getGeneri()) {
+				genere.add(g.getName());
+			}
+			for (Tipo t : videogame.getTipi()) {
+				tipo.add(t.getName());
+			}
+			for (Screenshot t : videogame.getScreenshots()) {
+				screenshot.add(t.getType());
+			}
+			for (Preview t : videogame.getPreviews()) {
+				preview.add(t.getType());
+			}
+		}
+
+		output.close();
+
+		System.err.println("Tipi: " + tipo);
+		System.err.println("Generi: " + genere);
+		System.err.println("Screenshot type: " + screenshot);
+		System.err.println("Preview type: " + preview);
+	}

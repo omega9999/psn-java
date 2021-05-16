@@ -53,10 +53,10 @@ public class Utils {
 			return 0;
 		}
 		if (obj1 == null) {
-			return -1;
+			return +1;
 		}
 		if (obj2 == null) {
-			return +1;
+			return -1;
 		}
 		return obj1.compareTo(obj2);
 	}
@@ -66,7 +66,7 @@ public class Utils {
 		final JSONArray links = response.optJSONArray("links");
 		if (links != null) {
 			for (int index = 0; index < links.length(); index++) {
-				final JSONObject obj = links.getJSONObject(index);
+				final JSONObject obj = links.optJSONObject(index);
 				final Videogame videogame = elaboraJson(obj);
 				if (videogame != null) {
 					list.add(videogame);
@@ -90,9 +90,6 @@ public class Utils {
 	}
 
 	public static Videogame elaboraJson(final JSONObject response) {
-		//default_sku->entitlements[id==id_link,name,packages[platformName,size],subtitle_language_codes[],voice_language_codes[],metadata->{voiceLanguageCode[],subtitleLanguageCode[]} ]
-		//mediaList->previews[type,typeId,source,url,order,streamUrl,shots[]]
-
 		final String id = response.optString("id");
 		final String name = response.optString("name");
 		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(name)) {
@@ -107,38 +104,21 @@ public class Utils {
 		
 		videogame.setPosseduto(LoadConfig.getInstance().getIdPosseduti().contains(id));
 		
+		setDefaultSku(response.optJSONObject("default_sku"), videogame);
+		setSkus(response.optJSONArray("skus"), videogame);
 		setGenere(response, videogame);
 		setTipo(response, videogame);
-		setDefaultSku(response, videogame);
 		setLinks(response, videogame);
 		setParentLinks(response, videogame);
 		
 		final JSONObject metadata = response.optJSONObject("metadata");
-		if (metadata != null) {
-			final List<String> genre = getMetadata(metadata.optJSONObject("genre"));
-			final List<String> subgenre = getMetadata(metadata.optJSONObject("subgenre"));
-
-			videogame.getGeneri().clear();
-			for(String str : genre) {
-				final Genere genere = new Genere();
-				genere.setName(str);
-				videogame.getGeneri().add(genere);
-			}
-			
-			videogame.getSubgeneri().clear();
-			for(String str : subgenre) {
-				final Genere genere = new Genere();
-				genere.setName(LoadConfig.subGenDecode(str));
-				videogame.getSubgeneri().add(genere);
-			}
-		}
-		
+		elaboraMetadata(videogame, metadata);
 		
 		
 		final JSONArray promomedia = response.optJSONArray("promomedia");
 		if (promomedia != null) {
 			for (int index = 0; index < promomedia.length(); index++) {
-				final JSONObject obj = promomedia.getJSONObject(index);
+				final JSONObject obj = promomedia.optJSONObject(index);
 				final Video video = new Video();
 				video.setType("promomedia");
 				video.setUrl(obj.optString("url"));
@@ -152,7 +132,7 @@ public class Utils {
 			final JSONArray screenshots = mediaList.optJSONArray("screenshots");
 			if (screenshots != null) {
 				for (int index = 0; index < screenshots.length(); index++) {
-					final JSONObject obj = screenshots.getJSONObject(index);
+					final JSONObject obj = screenshots.optJSONObject(index);
 					final Screenshot screenshot = new Screenshot();
 					screenshot.setOrder(obj.optInt("order"));
 					screenshot.setSource(obj.optString("source"));
@@ -165,7 +145,7 @@ public class Utils {
 			final JSONArray previews = mediaList.optJSONArray("previews");
 			if (previews != null) {
 				for (int index = 0; index < previews.length(); index++) {
-					final JSONObject obj = previews.getJSONObject(index);
+					final JSONObject obj = previews.optJSONObject(index);
 					final Preview preview = new Preview();
 					preview.setOrder(obj.optInt("order"));
 					preview.setSource(obj.optString("source"));
@@ -194,13 +174,73 @@ public class Utils {
 		// sb.toString().length());
 		return videogame;
 	}
+
+	private static void elaboraMetadata(final Videogame videogame, final JSONObject metadata) {
+		if (metadata != null) {
+			for (final String tag : metadata.keySet()) {
+				final List<String> list = getMetadata(metadata.optJSONObject(tag));
+				switch (tag) {
+				case "genre":
+					for (String str : list) {
+						final Genere genere = new Genere();
+						genere.setName(str);
+						videogame.getGeneri().add(genere);
+					}
+					break;
+				case "subgenre":
+					for (String str : list) {
+						final Genere genere = new Genere();
+						genere.setName(LoadConfig.subGenDecode(str));
+						videogame.getSubgeneri().add(genere);
+					}
+					break;
+
+				case "cn_vrEnabled":
+					videogame.setEnableVr(elaboraBooleanMetadata(list));
+					break;
+					
+				case "cn_vrRequired":
+					videogame.setRequiredVr(elaboraBooleanMetadata(list));
+					break;
+					
+				default:
+					videogame.getUnKnownMetadata().add(tag);
+					break;
+				}
+
+			}
+		}
+	}
+
+	//TODO aggiungere break?
+	private static Boolean elaboraBooleanMetadata(final List<String> list) {
+		Boolean flag = null;
+		for (String str : list) {
+			if ("TRUE".equals(str)) {
+				flag = true;
+			}
+			if ("FALSE".equals(str)) {
+				flag = false;
+			}
+		}
+		return flag;
+	}
+
+	private static void setSkus(final JSONArray skus, final Videogame videogame) {
+		if (skus != null) {
+			for (int index = 0; index < skus.length(); index++) {
+				final JSONObject obj = skus.optJSONObject(index);
+				setDefaultSku(obj.optJSONObject("default_sku"), videogame);
+			}
+		}
+	}
 	
 	private static void setParentLinks(final JSONObject response, final Videogame videogame) {
 		
 		final JSONArray links = response.optJSONArray("parent_links");
 		if (links != null) {
 			for (int index = 0; index < links.length(); index++) {
-				final JSONObject obj = links.getJSONObject(index);
+				final JSONObject obj = links.optJSONObject(index);
 				final String relatedId = obj.optString("id");
 				if (!StringUtils.isEmpty(relatedId)) {
 					videogame.getOtherIds().add(relatedId);
@@ -219,7 +259,7 @@ public class Utils {
 		final JSONArray links = response.optJSONArray("links");
 		if (links != null) {
 			for (int index = 0; index < links.length(); index++) {
-				final JSONObject obj = links.getJSONObject(index);
+				final JSONObject obj = links.optJSONObject(index);
 				final String relatedId = obj.optString("id");
 				if (!StringUtils.isEmpty(relatedId)) {
 					videogame.getOtherIds().add(relatedId);
@@ -232,25 +272,56 @@ public class Utils {
 		}
 	}
 
-	private static void setDefaultSku(final JSONObject response, final Videogame videogame) {
-		final JSONObject defaultSku = response.optJSONObject("default_sku");
+	private static void setDefaultSku(final JSONObject defaultSku, final Videogame videogame) {
 		if (defaultSku != null) {
 			videogame.setDisplayPrizeFull(defaultSku.optString("display_price"));
 			videogame.setPriceFull(convertPrice(defaultSku.optInt("price")));
-			final JSONArray rewards = defaultSku.optJSONArray("rewards");
-			if (rewards != null) {
-				for (int index = 0; index < rewards.length(); index++) {
-					final Sconto sconto = new Sconto();
-					final JSONObject obj = rewards.getJSONObject(index);
-					sconto.setDiscount(obj.optInt("discount"));
-					sconto.setPrice(convertPrice(obj.optInt("price")));
-					sconto.setDisplayPrice(obj.optString("display_price"));
-					// final String start = obj.optString("start_date");
-					// final String end = obj.optString("end_date");
-					sconto.setPlus(obj.optBoolean("isPlus"));
-					sconto.setEAAccess(obj.optBoolean("isEAAccess"));
-					videogame.getSconti().add(sconto);
+			setRewards(defaultSku.optJSONArray("rewards"), videogame);
+			setEntitlements(defaultSku.optJSONArray("entitlements"), videogame);
+		}
+	}
+
+	private static void setEntitlements(final JSONArray entitlements, final Videogame videogame) {
+		if (entitlements != null) {
+			for (int index = 0; index < entitlements.length(); index++) {
+				final JSONObject obj = entitlements.optJSONObject(index);
+				videogame.getVoices().addAll(jsonArray2ListString(obj.optJSONArray("voice_language_codes")));
+				videogame.getSubtitles().addAll(jsonArray2ListString(obj.optJSONArray("subtitle_language_codes")));
+				final JSONObject metadata = obj.optJSONObject("metadata");
+				if (metadata != null) {
+					videogame.getVoices().addAll(jsonArray2ListString(metadata.optJSONArray("voiceLanguageCode")));
+					videogame.getSubtitles().addAll(jsonArray2ListString(metadata.optJSONArray("subtitleLanguageCode")));
 				}
+			}
+		}
+	}
+	
+	private static List<String> jsonArray2ListString(final JSONArray array){
+		final List<String> list = createList();
+		if (array != null) {
+			for (int index = 0; index < array.length(); index++) {
+				final String str = array.getString(index);
+				if (str != null) {
+					list.add(str);
+				}
+			}
+		}
+		return list;
+	}
+
+	private static void setRewards(final JSONArray rewards, final Videogame videogame) {
+		if (rewards != null) {
+			for (int index = 0; index < rewards.length(); index++) {
+				final Sconto sconto = new Sconto();
+				final JSONObject obj = rewards.optJSONObject(index);
+				sconto.setDiscount(obj.optInt("discount"));
+				sconto.setPrice(convertPrice(obj.optInt("price")));
+				sconto.setDisplayPrice(obj.optString("display_price"));
+				// final String start = obj.optString("start_date");
+				// final String end = obj.optString("end_date");
+				sconto.setPlus(obj.optBoolean("isPlus"));
+				sconto.setEAAccess(obj.optBoolean("isEAAccess"));
+				videogame.getSconti().add(sconto);
 			}
 		}
 	}
@@ -259,18 +330,12 @@ public class Utils {
 		final JSONArray gameContentTypesList = response.optJSONArray("gameContentTypesList");
 		if (gameContentTypesList != null) {
 			for (int index = 0; index < gameContentTypesList.length(); index++) {
-				final JSONObject obj = gameContentTypesList.getJSONObject(index);
+				final JSONObject obj = gameContentTypesList.optJSONObject(index);
 				final Tipo tipo = new Tipo();
 				tipo.setName(obj.optString("name"));
 				tipo.setKey(obj.optString("key"));
 				videogame.getTipi().add(tipo);
 			}
-		}
-		if (gameContentTypesList == null || gameContentTypesList.length() == 0) {
-			final Tipo tipo = new Tipo();
-			tipo.setName(UNKNOWN);
-			tipo.setKey(UNKNOWN);
-			videogame.getTipi().add(tipo);
 		}
 	}
 
@@ -282,20 +347,13 @@ public class Utils {
 				final JSONArray genre = facets.optJSONArray("genre");
 				if (genre != null) {
 					for (int index = 0; index < genre.length(); index++) {
-						final JSONObject obj = genre.getJSONObject(index);
+						final JSONObject obj = genre.optJSONObject(index);
 						final Genere genere = new Genere();
 						genere.setName(obj.optString("name"));
 						genere.setCount(obj.optInt("count"));
 						genere.setKey(obj.optString("key"));
 						videogame.getGeneri().add(genere);
 					}
-				}
-				if (genre == null || genre.length() == 0) {
-					final Genere genere = new Genere();
-					genere.setName(UNKNOWN);
-					genere.setCount(1);
-					genere.setKey(UNKNOWN);
-					videogame.getGeneri().add(genere);
 				}
 			}
 		}
@@ -305,5 +363,4 @@ public class Utils {
 		return new BigDecimal(price).divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
 	}
 
-	private static final String UNKNOWN = "_Sconosciuto";
 }

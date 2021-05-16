@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
+import it.home.psn.Utils;
 import it.home.psn.module.Videogame.Screenshot;
 import it.home.psn.module.Videogame.Video;
 
@@ -25,6 +26,29 @@ public class HtmlTemplate {
 		return this.template.replace("{REPLACE_RIGHE_REF}", generaRighe(videogames));
 	}
 	
+	private String elabMetadati(final Videogame videogame) {
+		final StringBuilder visibile = new StringBuilder();
+		final List<String> tooltip = Utils.createList();
+		if(videogame.isPosseduto()) {
+			visibile.append("[X] ");
+			tooltip.add("Posseduto");
+		}
+		if(Boolean.TRUE.equals(videogame.getEnableVr())) {
+			visibile.append("[VR] ");
+			tooltip.add("VR disponibile");
+		}
+		if(Boolean.TRUE.equals(videogame.getRequiredVr())) {
+			visibile.append("[VR+] ");
+			tooltip.add("VR obbligatoria");
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		if (!visibile.toString().trim().isEmpty()) {
+			sb.append("<div class='tooltip'>").append(visibile.toString()).append("<span class='tooltiptext'>").append(String.join("<br/>", tooltip).trim()).append("</span></div>");
+		}
+		return sb.toString().trim();
+	}
+	
 	private String generaRighe(final List<Videogame> videogames) {
 		final StringBuilder sb = new StringBuilder();
 		int counter = 0;
@@ -34,9 +58,10 @@ public class HtmlTemplate {
 			final String video = generaVideo(id, videogame);
 			
 			sb.append(this.rowTemplate
-					.replace("{PREZZO_REF}", videogame.getSconto() != null ? String.valueOf(videogame.getSconto().getPrice()) : "")
-					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) : "")
-					.replace("{PREZZO_FULL_REF}", String.valueOf(videogame.getPriceFull()))
+					.replace("{PREZZO_REF}", videogame.getSconto() != null ? "&euro; " + videogame.getSconto().getPrice() : "")
+					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) + " %" : "")
+					.replace("{PREZZO_FULL_REF}", "&euro; " + videogame.getPriceFull())
+					.replace("{METADATA_REF}", elabMetadati(videogame))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
 					.replace("{GIOCO_REF}",StringEscapeUtils.escapeHtml4(videogame.getName().trim()))

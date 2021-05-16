@@ -6,8 +6,6 @@ import static it.home.psn.Utils.createSet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -20,17 +18,20 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class Videogame implements Comparable<Videogame>{
-	private static List<String> TIPO_TOP = Arrays.asList("Gioco completo","Gioco PSN","Bundle","Gioco","Gioco PS VR","PS Now");
-	
 	public Videogame(String id) {
 		this.id = id;
 	}
 
 	private String name;
 	private String json;
-	private final List<Tipo> tipi = createList();
-	private final List<Genere> generi = createList();
-	private final List<Genere> subgeneri = createList();
+	
+	private Boolean enableVr;
+	private Boolean requiredVr;
+	
+	private final Set<Tipo> tipi = createSet();
+	private final Set<Genere> generi = createSet();
+	private final Set<Genere> subgeneri = createSet();
+	private final Set<String> unKnownMetadata = createSet();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
 	private final List<Sconto> sconti = createList();
@@ -44,25 +45,33 @@ public class Videogame implements Comparable<Videogame>{
 	private final List<Preview> previews = createList();
 	private final List<Video> videos = createList();
 
+	private final Set<String> voices = createSet();
+	private final Set<String> subtitles = createSet();
+	
 	private final String id;
 	private CoppiaUrl coppia;
 
 	private Videogame padre;
 	
-	public String getGenereStr() {
-		return String.join(", ",join(getGeneri()));
-	}
-	public String getSubGenereStr() {
-		return String.join(", ",join(getSubgeneri()));
-	}
 	public String getTipoStr() {
-		return String.join(", ",join(getTipi()));
+		final Set<Tipo> objs = getTipi();
+		return String.join(", ", join(objs));
 	}
-	
-	private static String[] join(List<?> list) {
+
+	public String getGenereStr() {
+		final Set<Genere> objs = getGeneri();
+		return String.join(", ", join(objs));
+	}
+
+	public String getSubGenereStr() {
+		final Set<Genere> objs = getSubgeneri();
+		return String.join(", ", join(objs));
+	}
+
+	private static String[] join(Set<?> list) {
 		final String [] strs = new String[list.size()];
 		int index = 0;
-		for(Object obj : list) {
+		for(final Object obj : list) {
 			strs[index++] = obj.toString();
 		}
 		return strs;
@@ -85,14 +94,14 @@ public class Videogame implements Comparable<Videogame>{
 	
 	public Tipo getTipo() {
 		if (getTipi().size() > 0) {
-			return getTipi().get(0);
+			return getTipi().iterator().next();
 		}
 		return null;
 	}
 
 	public Genere getGenere() {
 		if (getGeneri().size() > 0) {
-			return getGeneri().get(0);
+			return getGeneri().iterator().next();
 		}
 		return null;
 	}
@@ -131,8 +140,6 @@ public class Videogame implements Comparable<Videogame>{
 
 	@Override
 	public String toString() {
-		Collections.sort(this.tipi);
-		Collections.sort(this.generi);
 		StringBuilder builder = new StringBuilder();
 		final Sconto tmp = getSconto();
 		if (tmp != null) {
@@ -161,7 +168,7 @@ public class Videogame implements Comparable<Videogame>{
 		builder.append(getCoppia().getJsonUrl());
 		
 		if (Constants.isExtended()) {
-			if (showScreenshot(TIPO_TOP)) {
+			if (showScreenshot(Constants.TIPO_TOP)) {
 				for(Screenshot screen : getScreenshots()) {
 					builder.append("\n\t").append(screen.getUrl());
 				}
@@ -241,10 +248,10 @@ public class Videogame implements Comparable<Videogame>{
 
 		@Override
 		public int compareTo(Tipo obj) {
-			if (!TIPO_TOP.contains(this.getName()) && TIPO_TOP.contains(obj.getName())) {
+			if (!Constants.TIPO_TOP.contains(this.getName()) && Constants.TIPO_TOP.contains(obj.getName())) {
 				return +1;
 			}
-			if (TIPO_TOP.contains(this.getName()) && !TIPO_TOP.contains(obj.getName())) {
+			if (Constants.TIPO_TOP.contains(this.getName()) && !Constants.TIPO_TOP.contains(obj.getName())) {
 				return -1;
 			}
 			return compare(this.getName(),obj.getName());
@@ -290,6 +297,31 @@ public class Videogame implements Comparable<Videogame>{
 		@Override
 		public int compareTo(Genere obj) {
 			return compare(this.getName(),obj.getName());
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Genere other = (Genere) obj;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
 		}
 	}
 
