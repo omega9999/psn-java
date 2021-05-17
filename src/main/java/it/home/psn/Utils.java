@@ -205,6 +205,7 @@ public class Utils {
 					
 				default:
 					videogame.getUnKnownMetadata().add(tag);
+					videogame.getUnKnownMetadataValues().put(tag, list);
 					break;
 				}
 

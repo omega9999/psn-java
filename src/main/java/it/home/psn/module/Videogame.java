@@ -2,12 +2,14 @@ package it.home.psn.module;
 
 import static it.home.psn.Utils.compare;
 import static it.home.psn.Utils.createList;
+import static it.home.psn.Utils.createMap;
 import static it.home.psn.Utils.createSet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import it.home.psn.Constants;
@@ -32,6 +34,7 @@ public class Videogame implements Comparable<Videogame>{
 	private final Set<Genere> generi = createSet();
 	private final Set<Genere> subgeneri = createSet();
 	private final Set<String> unKnownMetadata = createSet();
+	private final Map<String,List<String>> unKnownMetadataValues = createMap();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
 	private final List<Sconto> sconti = createList();

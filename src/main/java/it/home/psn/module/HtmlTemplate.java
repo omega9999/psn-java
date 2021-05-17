@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -33,6 +34,33 @@ public class HtmlTemplate {
 			visibile.append("[X] ");
 			tooltip.add("Posseduto");
 		}
+		
+		if (!videogame.getVoices().isEmpty()) {
+			tooltip.add(String.format("Lingue disponibili: %s", String.join(", ", videogame.getVoices().toArray(new String[0]))));
+			if (videogame.getVoices().contains("it")) {
+				visibile.append("[vIT] ");
+			}
+			else if (videogame.getVoices().contains("en")) {
+				visibile.append("[vEN] ");
+			}
+			else {
+				visibile.append("[vOT] ");
+			}
+		}
+		if (!videogame.getSubtitles().isEmpty()) {
+			tooltip.add(String.format("Sottotitoli disponibili: %s", String.join(", ", videogame.getSubtitles().toArray(new String[0]))));	
+			if (videogame.getSubtitles().contains("it")) {
+				visibile.append("[sIT] ");
+			}
+			else if (videogame.getSubtitles().contains("en")) {
+				visibile.append("[sEN] ");
+			}
+			else {
+				visibile.append("[sOT] ");
+			}
+		}
+		
+		
 		if(Boolean.TRUE.equals(videogame.getEnableVr())) {
 			visibile.append("[VR] ");
 			tooltip.add("VR disponibile");
@@ -41,10 +69,21 @@ public class HtmlTemplate {
 			visibile.append("[VR+] ");
 			tooltip.add("VR obbligatoria");
 		}
+		
+		if (!videogame.getUnKnownMetadataValues().isEmpty()) {
+			visibile.append("[?] ");
+			if (!tooltip.isEmpty()) {
+				tooltip.add("");
+				tooltip.add("Altri metadati:");
+			}
+			for(Entry<String,List<String>>entry:videogame.getUnKnownMetadataValues().entrySet()) {
+				tooltip.add(entry.getKey() + ": " + String.join(", ", entry.getValue().toArray(new String[0])));
+			}
+		}
 
 		final StringBuilder sb = new StringBuilder();
 		if (!visibile.toString().trim().isEmpty()) {
-			sb.append("<div class='tooltip'>").append(visibile.toString()).append("<span class='tooltiptext'>").append(String.join("<br/>", tooltip).trim()).append("</span></div>");
+			sb.append("<div class='tooltip'>").append(visibile.toString()).append("<span class='tooltiptext tooltip-right'>").append(String.join("<br/>", tooltip).trim()).append("</span></div>");
 		}
 		return sb.toString().trim();
 	}
