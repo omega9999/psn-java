@@ -99,7 +99,7 @@ public class HtmlTemplate {
 			sb.append(this.rowTemplate
 					.replace("{PREZZO_REF}", videogame.getSconto() != null ? "&euro; " + videogame.getSconto().getPrice() : "")
 					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) + " %" : "")
-					.replace("{PREZZO_FULL_REF}", "&euro; " + videogame.getPriceFull())
+					.replace("{PREZZO_FULL_REF}", videogame.getPriceFull() != null ? "&euro; " + videogame.getPriceFull() : "")
 					.replace("{METADATA_REF}", elabMetadati(videogame))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
