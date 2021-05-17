@@ -33,6 +33,7 @@ public class Videogame implements Comparable<Videogame>{
 	private final Set<Tipo> tipi = createSet();
 	private final Set<Genere> generi = createSet();
 	private final Set<Genere> subgeneri = createSet();
+	private final Set<String> platform = createSet();
 	private final Set<String> unKnownMetadata = createSet();
 	private final Map<String,List<String>> unKnownMetadataValues = createMap();
 	private String displayPrizeFull;
@@ -71,6 +72,11 @@ public class Videogame implements Comparable<Videogame>{
 		return String.join(", ", join(objs));
 	}
 
+	public String getPlatformStr() {
+		final Set<String> objs = getPlatform();
+		return String.join(", ", join(objs));
+	}
+	
 	private static String[] join(Set<?> list) {
 		final String [] strs = new String[list.size()];
 		int index = 0;

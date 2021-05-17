@@ -113,20 +113,25 @@ public class Psn {
 		}
 		final List<Videogame> toHtml = Utils.createList();
 		final List<Videogame> toHtmlPosseduti = Utils.createList();
+		final List<Videogame> toHtmlPreferiti = Utils.createList();
 		for (Videogame videogame : videogameSorted) {
 			if (videogame.getJson().contains(".mp4")) {
-				output.mp4(videogame.getJson());
+				//output.mp4(videogame.getJson());
 			}
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
 				output.println(videogame);
 				toHtml.add(videogame);
 				//output.println(videogame.getCoppia().getOriginUrl());
 			}
+			if (videogame.getTipo() != null && Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
+				toHtmlPreferiti.add(videogame);
+			}
 		}
 		output.println("\n\n\n\n\n");
 		for (Videogame videogame : videogameSorted) {
 			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
 				output.println(videogame);
+				toHtml.add(videogame);
 				//output.println(videogame.getCoppia().getOriginUrl());
 			}
 		}
@@ -143,6 +148,8 @@ public class Psn {
 		Collections.sort(toHtmlPosseduti, (a,b)->a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
 		output.htmlPosseduti(toHtmlPosseduti);
 		
+		Collections.sort(toHtmlPreferiti, (a,b)->a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
+		output.htmlPreferiti(toHtmlPreferiti);
 		
 		output.close();
 
@@ -213,6 +220,7 @@ public class Psn {
 		private final PrintWriter outputMp4;
 		private final PrintWriter outputHtml;
 		private final PrintWriter outputHtmlPosseduti;
+		private final PrintWriter outputHtmlPreferiti;
 		private final HtmlTemplate htmlTemplate;
 		
 		private Writer() throws IOException {
@@ -223,6 +231,7 @@ public class Psn {
 			outputMp4 = new PrintWriter(new File("./mp4.json"));
 			outputHtml = new PrintWriter(new File("./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File("./output-posseduti.html"));
+			outputHtmlPreferiti = new PrintWriter(new File("./output-preferiti.html"));
 			outputMp4.println("[");
 		}
 
@@ -231,6 +240,7 @@ public class Psn {
 			outputEsteso.close();
 			outputHtml.close();
 			outputHtmlPosseduti.close();
+			outputHtmlPreferiti.close();
 			
 			outputMp4.println("]");
 			outputMp4.close();
@@ -241,6 +251,9 @@ public class Psn {
 		}
 		public synchronized void htmlPosseduti(final List<Videogame> list) {
 			outputHtmlPosseduti.println(htmlTemplate.createHtml(list));
+		}
+		public synchronized void htmlPreferiti(final List<Videogame> list) {
+			outputHtmlPreferiti.println(htmlTemplate.createHtml(list));
 		}
 		
 		public synchronized void mp4(String string) {

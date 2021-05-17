@@ -203,6 +203,10 @@ public class Utils {
 					videogame.setRequiredVr(elaboraBooleanMetadata(list));
 					break;
 					
+				case "playable_platform":
+					videogame.getPlatform().addAll(list);
+					break;
+					
 				default:
 					videogame.getUnKnownMetadata().add(tag);
 					videogame.getUnKnownMetadataValues().put(tag, list);

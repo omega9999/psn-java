@@ -101,6 +101,7 @@ public class HtmlTemplate {
 					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) + " %" : "")
 					.replace("{PREZZO_FULL_REF}", videogame.getPriceFull() != null ? "&euro; " + videogame.getPriceFull() : "")
 					.replace("{METADATA_REF}", elabMetadati(videogame))
+					.replace("{CONSOLE_REF}", StringEscapeUtils.escapeHtml4(videogame.getPlatformStr()))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
 					.replace("{GIOCO_REF}",StringEscapeUtils.escapeHtml4(videogame.getName().trim()))
