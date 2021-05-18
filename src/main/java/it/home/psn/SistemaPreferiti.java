@@ -18,9 +18,9 @@ import it.home.psn.module.Videogame;
 public class SistemaPreferiti {
 
 	private static final String FILE = "preferiti.properties";
-	//private static final String FILE = "posseduti-fisico.properties";
 	//private static final String FILE = "posseduti-digitale.properties";
 	//private static final String FILE = "posseduti-demo.properties";
+	//private static final String FILE = "posseduti-fisico.properties";
 	
 	
 	public static void main(String[] args) throws IOException {
