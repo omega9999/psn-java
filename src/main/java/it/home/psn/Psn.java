@@ -66,10 +66,11 @@ public class Psn {
 					videogames.add(videogame);
 				}
 			} catch (IOException e) {
-				System.err.println("Problemi di connessione");
+				System.err.println("\n-----------------");
+				System.err.println("Problemi di connessione " + e.getMessage() + " " + e.getClass());
 				System.err.println(coppia.getOriginUrl());
 				System.err.println(coppia.getJsonUrl());
-				e.printStackTrace();
+				System.err.println("\n-----------------");
 			}
 		});
 
@@ -203,9 +204,11 @@ public class Psn {
 							tmp.add(relatedVideogame);
 						}
 					} catch (IOException e) {
+						System.err.println("\n-----------------");
 						System.err.println(coppia.getOriginUrl());
 						System.err.println(coppia.getJsonUrl());
 						System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
+						System.err.println("\n-----------------");
 					}
 				});
 			});

@@ -50,6 +50,7 @@ public class Connection {
 		}
 		catch (JSONException e) {
 			if (Constants.DEBUG) {
+				System.err.println("\n-----------------");
 				System.err.println(url.getOriginUrl());
 				System.err.println(url.getJsonUrl());
 				System.err.println(e.getMessage() + "\n" + sb.toString()+"\n-----------------");
@@ -85,8 +86,10 @@ public class Connection {
 		}
 		catch (JSONException e) {
 			if (Constants.DEBUG) {
+				System.err.println("\n-----------------");
 				System.err.println(url);
-				System.err.println(e.getMessage() + "\n" + sb.toString() + "\n" + url);
+				System.err.println(e.getMessage() + "\n" + sb.toString());
+				System.err.println("\n-----------------");
 			}
 			return null;
 		}
