@@ -319,10 +319,16 @@ public class Videogame implements Comparable<Videogame> {
 			return result;
 		}
 	}
+	
+	public enum TypeData {
+		IMAGE, OTHER_IMAGE, PROMEDIA, SCREENSHOT, PREVIEW, SHOT;
+	}
 
 	@Data
-	private static class AbstractUrl {
+	public static class AbstractUrl {
 		private String url;
+		private TypeData typeData;
+		private String subTypeData;
 	}
 
 	@Data
@@ -351,7 +357,7 @@ public class Videogame implements Comparable<Videogame> {
 		private String source;
 		private int order;
 		private String streamUrl;
-		private final List<String> shots = createList();
+		private final List<Screenshot> shots = createList();
 
 		@Override
 		public int hashCode() {

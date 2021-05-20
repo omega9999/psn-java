@@ -1,17 +1,26 @@
 package it.home.psn.module;
 
+import static it.home.psn.Utils.createList;
+import static it.home.psn.Utils.createSet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import it.home.psn.Utils;
-import it.home.psn.module.Videogame.Screenshot;
-import it.home.psn.module.Videogame.Video;
+import it.home.psn.module.Videogame.AbstractUrl;
+import it.home.psn.module.Videogame.Preview;
+import it.home.psn.module.Videogame.TypeData;
 
 public class HtmlTemplate {
 
@@ -119,21 +128,56 @@ public class HtmlTemplate {
 		return sb.toString();
 	}
 	
+	private static final List<String> VIDEO = Arrays.asList("mp4");
+	private static final List<TypeData> PRIORITA = Arrays.asList(TypeData.IMAGE,TypeData.SCREENSHOT,TypeData.SHOT,TypeData.PREVIEW, TypeData.OTHER_IMAGE);
+	private Collection<AbstractUrl> getData(final Videogame videogame, final GraficaType type){
+		final Set<AbstractUrl> data = createSet();
+		final List<AbstractUrl> res = createList();
+		CollectionUtils.addAll(data, videogame.getScreenshots());
+		CollectionUtils.addAll(data, videogame.getVideos());
+		CollectionUtils.addAll(data, videogame.getPreviews());
+		
+		for(Preview p : videogame.getPreviews()) {
+			CollectionUtils.addAll(data,p.getShots()); 
+		}
+		for (AbstractUrl t : data) {
+			final String[] str = t.getUrl().split("\\.");
+			final String extension =  str[str.length - 1].toLowerCase();
+			if (type == GraficaType.VIDEO && VIDEO.contains(extension)) {
+				res.add(t);
+			}
+			if(type == GraficaType.IMMAGINE && !VIDEO.contains(extension)) {
+				res.add(t);
+			}
+		}
+		Collections.sort(res, (a,b)->{
+			int indexA = PRIORITA.indexOf(a.getTypeData());
+			int indexB = PRIORITA.indexOf(b.getTypeData());
+			return Integer.compare(indexA, indexB);
+		});
+		return res;
+	}
+	
+	private enum GraficaType{
+		IMMAGINE, VIDEO;
+	}
+	
 	private String generaImmagini(final String id, final Videogame videogame) {
 		final StringBuilder sb = new StringBuilder();
-		for(Screenshot screen : videogame.getScreenshots()) {
+		for(AbstractUrl url : getData(videogame, GraficaType.IMMAGINE)) {
 			sb.append(this.immagineTemplate
 					.replace(ID_RIGA_REF, id)
-					.replace("{IMMAGINE_REF}", screen.getUrl()));
+					.replace("{IMMAGINE_TYPE_REF}", url.getTypeData()+url.getSubTypeData())
+					.replace("{IMMAGINE_REF}", url.getUrl()));
 		}
 		return sb.toString();
 	}
 	private String generaVideo(final String id, final Videogame videogame) {
 		final StringBuilder sb = new StringBuilder();
-		for(Video screen : videogame.getVideos()) {
+		for(AbstractUrl url : getData(videogame, GraficaType.VIDEO)) {
 			sb.append(this.videoTemplate
 					.replace(ID_RIGA_REF, id)
-					.replace("{VIDEO_REF}", screen.getUrl()));
+					.replace("{VIDEO_REF}", url.getUrl()));
 		}
 		return sb.toString();
 	}

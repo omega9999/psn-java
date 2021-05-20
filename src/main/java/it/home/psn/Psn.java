@@ -17,7 +17,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +30,7 @@ import it.home.psn.module.HtmlTemplate;
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
+import it.home.psn.module.Videogame.AbstractUrl;
 import it.home.psn.module.Videogame.Genere;
 import it.home.psn.module.Videogame.Preview;
 import it.home.psn.module.Videogame.Screenshot;
@@ -136,6 +139,9 @@ public class Psn {
 		final Map<String, Integer> subgenere = createMap();
 		final Map<String, Integer> screenshot = createMap();
 		final Map<String, Integer> preview = createMap();
+		final Map<String, Integer> genericDataType = createMap();
+		final Map<String, Integer> genericDataSubType = createMap();
+		final Map<String, String> genericDataSubTypeUrl = createMap();
 		for (Videogame videogame : videogameSorted) {
 			for (Genere g : videogame.getGeneri()) {
 				add(genere, g.getName());
@@ -154,6 +160,17 @@ public class Psn {
 			}
 			for (String t : videogame.getUnKnownMetadata()) {
 				add(unKnownMetadata, t);
+			}
+			
+			final Set<AbstractUrl> data = createSet();
+			CollectionUtils.addAll(data, videogame.getScreenshots());
+			CollectionUtils.addAll(data, videogame.getVideos());
+			CollectionUtils.addAll(data, videogame.getPreviews());
+			for (AbstractUrl t : data) {
+				final String[] str = t.getUrl().split("\\.");
+				add(genericDataType, str[str.length - 1].toLowerCase());
+				add(genericDataSubType, t.getTypeData()+"_"+t.getSubTypeData());
+				genericDataSubTypeUrl.put(t.getTypeData()+"_"+t.getSubTypeData(), t.getUrl());
 			}
 		}
 		final List<Videogame> toHtml = Utils.createList();
@@ -207,9 +224,12 @@ public class Psn {
 		statistics.println("Tipi: " + tipo);
 		statistics.println("Generi: " + genere);
 		statistics.println("SubGeneri: " + subgenere);
+		statistics.println("Tipo di immagini/video type: " + genericDataType);
+		statistics.println("Tipo di immagini sub type: " + genericDataSubType);
 		statistics.println("Screenshot type: " + screenshot);
 		statistics.println("Preview type: " + preview);
 		statistics.println("Unknown metadata: " + unKnownMetadata);
+		statistics.println("esempi di immagini:"+genericDataSubTypeUrl);
 		statistics.close();
 		statistics = null;
 

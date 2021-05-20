@@ -2,6 +2,8 @@ package it.home.psn;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +22,7 @@ import it.home.psn.module.Videogame.Preview;
 import it.home.psn.module.Videogame.Sconto;
 import it.home.psn.module.Videogame.Screenshot;
 import it.home.psn.module.Videogame.Tipo;
+import it.home.psn.module.Videogame.TypeData;
 import it.home.psn.module.Videogame.Video;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -88,6 +91,8 @@ public class Utils {
 		}
 		return sb;
 	}
+	
+	private static final List<String> PRIORITA = Arrays.asList("12", "10", "13", "14", "1", "9", "2");
 
 	public static Videogame elaboraJson(final JSONObject response) {
 		final String id = response.optString("id");
@@ -114,15 +119,51 @@ public class Utils {
 		final JSONObject metadata = response.optJSONObject("metadata");
 		elaboraMetadata(videogame, metadata);
 		
+		final JSONArray images = response.optJSONArray("images");
+		if (images != null) {
+			final List<Screenshot> list = createList();
+			for (int index = 0; index < images.length(); index++) {
+				final JSONObject obj = images.optJSONObject(index);
+				final Integer type = obj.optInt("type");
+				final String url = obj.optString("url");
+				final Screenshot image = new Screenshot();
+				image.setTypeId(String.valueOf(type));
+				image.setType("image");
+				image.setTypeData(TypeData.IMAGE);
+				image.setSubTypeData(String.valueOf(type));
+				image.setUrl(url);
+				if (url != null) {
+					list.add(image);
+				}
+			}
+			if (!list.isEmpty()) {
+				Collections.sort(list, (a,b)->{
+					int indexA = PRIORITA.indexOf(a.getSubTypeData());
+					int indexB = PRIORITA.indexOf(b.getSubTypeData());
+					if (indexA < 0) {
+						indexA = Integer.MAX_VALUE;
+					}
+					if (indexB < 0) {
+						indexB = Integer.MAX_VALUE;
+					}
+					return Integer.compare(indexA, indexB);
+				});
+				//videogame.getScreenshots().addAll(list);
+				videogame.getScreenshots().add(list.get(0));
+			}
+			
+		}
 		
 		final JSONArray promomedia = response.optJSONArray("promomedia");
 		if (promomedia != null) {
 			for (int index = 0; index < promomedia.length(); index++) {
 				final JSONObject obj = promomedia.optJSONObject(index);
 				final Video video = new Video();
-				video.setType("promomedia");
+				video.setTypeData(TypeData.PROMEDIA);
 				video.setUrl(obj.optString("url"));
-				videogame.getVideos().add(video);
+				if (!StringUtils.isBlank(video.getUrl())) {
+					videogame.getVideos().add(video);
+				}
 			}
 		}
 		
@@ -139,6 +180,8 @@ public class Utils {
 					screenshot.setType(obj.optString("type"));
 					screenshot.setTypeId(obj.optString("typeId"));
 					screenshot.setUrl(obj.optString("url"));
+					screenshot.setTypeData(TypeData.SCREENSHOT);
+					screenshot.setSubTypeData(screenshot.getTypeId());
 					videogame.getScreenshots().add(screenshot);
 				}
 			}
@@ -153,16 +196,24 @@ public class Utils {
 					preview.setType(obj.optString("type"));
 					preview.setTypeId(obj.optString("typeId"));
 					preview.setUrl(obj.optString("url"));
+					preview.setTypeData(TypeData.PREVIEW);
+					preview.setSubTypeData(preview.getTypeId());
 					
 					final Video video = new Video();
-					video.setType("previews");
+					video.setTypeData(TypeData.PREVIEW);
 					video.setUrl(obj.optString("url"));
-					videogame.getVideos().add(video);
+					if (!StringUtils.isBlank(video.getUrl())) {
+						videogame.getVideos().add(video);
+					}
 
 					final JSONArray shots = obj.optJSONArray("shots");
 					if (shots != null) {
 						for (int j = 0; j < shots.length(); j++) {
-							preview.getShots().add(shots.getString(j));
+							final Screenshot screenshot = new Screenshot();
+							screenshot.setUrl(shots.getString(j));
+							screenshot.setTypeData(TypeData.SHOT);
+							screenshot.setSubTypeData(String.valueOf(j));
+							preview.getShots().add(screenshot);
 						}
 					}
 					videogame.getPreviews().add(preview);
