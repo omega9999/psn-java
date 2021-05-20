@@ -19,44 +19,44 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class Videogame implements Comparable<Videogame>{
+public class Videogame implements Comparable<Videogame> {
 	public Videogame(String id) {
 		this.id = id;
 	}
 
 	private String name = "";
 	private String json = "";
-	
+
 	private Boolean enableVr;
 	private Boolean requiredVr;
-	
+
 	private final Set<Tipo> tipi = createSet();
 	private final Set<Genere> generi = createSet();
 	private final Set<Genere> subgeneri = createSet();
 	private final Set<String> platform = createSet();
 	private final Set<String> unKnownMetadata = createSet();
-	private final Map<String,List<String>> unKnownMetadataValues = createMap();
+	private final Map<String, List<String>> unKnownMetadataValues = createMap();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
 	private final List<Sconto> sconti = createList();
 	private final Set<String> otherIds = createSet();
 	private final Set<String> parentIds = createSet();
 	private boolean posseduto;
-	
+
 	private final Set<String> parentUrls = createSet();
 
-	private final List<Screenshot> screenshots = createList();
-	private final List<Preview> previews = createList();
-	private final List<Video> videos = createList();
+	private final Set<Screenshot> screenshots = createSet();
+	private final Set<Preview> previews = createSet();
+	private final Set<Video> videos = createSet();
 
 	private final Set<String> voices = createSet();
 	private final Set<String> subtitles = createSet();
-	
+
 	private final String id;
-	private CoppiaUrl coppia = new CoppiaUrl("", "");
+	private CoppiaUrl coppia;
 
 	private Videogame padre;
-	
+
 	public String getTipoStr() {
 		final Set<Tipo> objs = getTipi();
 		return String.join(", ", join(objs));
@@ -76,11 +76,11 @@ public class Videogame implements Comparable<Videogame>{
 		final Set<String> objs = getPlatform();
 		return String.join(", ", join(objs));
 	}
-	
+
 	private static String[] join(Set<?> list) {
-		final String [] strs = new String[list.size()];
+		final String[] strs = new String[list.size()];
 		int index = 0;
-		for(final Object obj : list) {
+		for (final Object obj : list) {
 			strs[index++] = obj.toString();
 		}
 		return strs;
@@ -89,18 +89,18 @@ public class Videogame implements Comparable<Videogame>{
 	@Override
 	public int compareTo(Videogame obj) {
 		int res;
-		res = compare(this.getTipo(),obj.getTipo());
+		res = compare(this.getTipo(), obj.getTipo());
 		if (res != 0) {
 			return res;
 		}
-		res = compare(this.getGenere(),obj.getGenere());
+		res = compare(this.getGenere(), obj.getGenere());
 		if (res != 0) {
 			return res;
 		}
-		res = compare(this.getName(),obj.getName());
+		res = compare(this.getName(), obj.getName());
 		return res;
 	}
-	
+
 	public Tipo getTipo() {
 		if (getTipi().size() > 0) {
 			return getTipi().iterator().next();
@@ -114,7 +114,7 @@ public class Videogame implements Comparable<Videogame>{
 		}
 		return null;
 	}
-	
+
 	public Sconto getSconto() {
 		Sconto tmp = null;
 		for (Sconto s : getSconti()) {
@@ -130,7 +130,7 @@ public class Videogame implements Comparable<Videogame>{
 		}
 		return tmp;
 	}
-	
+
 	public BigDecimal getScontoPerc() {
 		final Sconto tmp = getSconto();
 		if (tmp != null) {
@@ -139,7 +139,7 @@ public class Videogame implements Comparable<Videogame>{
 		}
 		return null;
 	}
-	
+
 	public String getParentUrl() {
 		if (!getParentUrls().isEmpty()) {
 			return getParentUrls().stream().findFirst().get();
@@ -152,7 +152,7 @@ public class Videogame implements Comparable<Videogame>{
 		StringBuilder builder = new StringBuilder();
 		final Sconto tmp = getSconto();
 		if (tmp != null) {
-			builder.append(" (" +  getScontoPerc()+"%)");
+			builder.append(" (" + getScontoPerc() + "%)");
 			builder.append(" Sconto: ");
 			builder.append(tmp);
 			builder.append(" , ");
@@ -175,12 +175,12 @@ public class Videogame implements Comparable<Videogame>{
 		builder.append(getCoppia().getOriginUrl());
 		builder.append(" , ");
 		builder.append(getCoppia().getJsonUrl());
-		
+
 		return builder.toString().trim();
 	}
-	
+
 	public boolean showScreenshot(List<String> strings) {
-		for(String str : strings) {
+		for (String str : strings) {
 			if (getTipi().contains(new Tipo(str))) {
 				return true;
 			}
@@ -199,11 +199,9 @@ public class Videogame implements Comparable<Videogame>{
 		}
 		return SottoSoglia.FALSE;
 	}
-	
-	public enum SottoSoglia{
-		TRUE,
-		FALSE,
-		ZERO;
+
+	public enum SottoSoglia {
+		TRUE, FALSE, ZERO;
 	}
 
 	@Data
@@ -223,7 +221,7 @@ public class Videogame implements Comparable<Videogame>{
 
 		@Override
 		public int compareTo(Sconto obj) {
-			return compare(this.getPrice(),obj.getPrice());
+			return compare(this.getPrice(), obj.getPrice());
 		}
 	}
 
@@ -237,7 +235,7 @@ public class Videogame implements Comparable<Videogame>{
 		public Tipo(String name) {
 			this.name = name;
 		}
-		
+
 		@Override
 		public String toString() {
 			return getName();
@@ -251,7 +249,7 @@ public class Videogame implements Comparable<Videogame>{
 			if (Constants.TIPO_TOP.contains(this.getName()) && !Constants.TIPO_TOP.contains(obj.getName())) {
 				return -1;
 			}
-			return compare(this.getName(),obj.getName());
+			return compare(this.getName(), obj.getName());
 		}
 
 		@Override
@@ -281,7 +279,7 @@ public class Videogame implements Comparable<Videogame>{
 	}
 
 	@Data
-	public static class Genere implements Comparable<Genere>{
+	public static class Genere implements Comparable<Genere> {
 		private String name;
 		private int count;
 		private String key;
@@ -293,7 +291,7 @@ public class Videogame implements Comparable<Videogame>{
 
 		@Override
 		public int compareTo(Genere obj) {
-			return compare(this.getName(),obj.getName());
+			return compare(this.getName(), obj.getName());
 		}
 
 		@Override
@@ -323,29 +321,70 @@ public class Videogame implements Comparable<Videogame>{
 	}
 
 	@Data
-	public static class Screenshot {
-		private String type;
-		private String typeId;
-		private String source;
+	private static class AbstractUrl {
 		private String url;
-		private int order;
 	}
 
 	@Data
-	public static class Preview {
+	public static class Screenshot extends AbstractUrl {
 		private String type;
 		private String typeId;
 		private String source;
-		private String url;
+		private int order;
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.equals(obj);
+		}
+
+	}
+
+	@Data
+	public static class Preview extends AbstractUrl {
+		private String type;
+		private String typeId;
+		private String source;
 		private int order;
 		private String streamUrl;
 		private final List<String> shots = createList();
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.equals(obj);
+		}
 	}
-	
+
 	@Data
-	public static class Video {
+	public static class Video extends AbstractUrl {
+		private static final String CONST = "?country=IT";
 		private String type;
-		private String url;
+
+		public void setUrl(String url) {
+			if (url != null) {
+				super.setUrl(url.replace(CONST, ""));
+			}
+		}
+
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.equals(obj);
+		}
 	}
 
 	@Override
@@ -372,7 +411,5 @@ public class Videogame implements Comparable<Videogame>{
 			return false;
 		return true;
 	}
-
-
 
 }
