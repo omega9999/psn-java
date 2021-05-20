@@ -24,8 +24,8 @@ public class Videogame implements Comparable<Videogame>{
 		this.id = id;
 	}
 
-	private String name;
-	private String json;
+	private String name = "";
+	private String json = "";
 	
 	private Boolean enableVr;
 	private Boolean requiredVr;
@@ -53,7 +53,7 @@ public class Videogame implements Comparable<Videogame>{
 	private final Set<String> subtitles = createSet();
 	
 	private final String id;
-	private CoppiaUrl coppia;
+	private CoppiaUrl coppia = new CoppiaUrl("", "");
 
 	private Videogame padre;
 	
@@ -176,22 +176,10 @@ public class Videogame implements Comparable<Videogame>{
 		builder.append(" , ");
 		builder.append(getCoppia().getJsonUrl());
 		
-		if (Constants.isExtended()) {
-			if (showScreenshot(Constants.TIPO_TOP)) {
-				for(Screenshot screen : getScreenshots()) {
-					builder.append("\n\t").append(screen.getUrl());
-				}
-			}
-			else {
-				for(String url : getParentUrls()) {
-					builder.append("\n\t").append(url);
-				}
-			}
-		}
 		return builder.toString().trim();
 	}
 	
-	private boolean showScreenshot(List<String> strings) {
+	public boolean showScreenshot(List<String> strings) {
 		for(String str : strings) {
 			if (getTipi().contains(new Tipo(str))) {
 				return true;
