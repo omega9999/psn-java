@@ -1,6 +1,7 @@
 package it.home.psn;
 
 import static it.home.psn.Utils.add;
+import static it.home.psn.Utils.createList;
 import static it.home.psn.Utils.createMap;
 import static it.home.psn.Utils.createSet;
 
@@ -17,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -248,6 +248,7 @@ public class Psn {
 				System.err.println("videogames size list " + videogames.size() + " other ids " + contatore);
 			}
 			final Set<Videogame> tmp = createSet();
+			final List<Videogame> errors = createList();
 			videogames.parallelStream().forEach(videogame -> {
 				videogame.getOtherIds().parallelStream().forEach(id -> {
 					addTh();
@@ -256,23 +257,49 @@ public class Psn {
 					if (videogames.contains(check) || tmp.contains(check)) {
 						return;
 					}
-					try {
-						final Videogame relatedVideogame = new Connection().getVideogame(coppia);
-						if (relatedVideogame != null && !videogames.contains(relatedVideogame)) {
-							relatedVideogame.setPadre(videogame);
-							tmp.add(relatedVideogame);
-						}
-					} catch (IOException e) {
-						System.err.println("\n-----------------");
-						System.err.println(coppia.getOriginUrl());
-						System.err.println(coppia.getJsonUrl());
-						System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
-						System.err.println("\n-----------------");
+					boolean isOk = manageParent(videogames, tmp, videogame, coppia);
+					if (!isOk) {
+						errors.add(videogame);
 					}
 				});
 			});
+			while(!errors.isEmpty()) {
+				final Videogame target = errors.remove(0);
+				if (target != null) {
+					final CoppiaUrl coppia = LoadConfig.getCoppia(target.getId());
+					final Videogame check = new Videogame(target.getId());
+					if (videogames.contains(check) || tmp.contains(check)) {
+						continue;
+					}
+					System.err.println("Ripeto estrazione di " + coppia.getOriginUrl());
+					boolean isOk = manageParent(videogames, tmp, target, coppia);
+					if (!isOk) {
+						errors.add(target);
+					}
+				}
+			}
+			
 			fineRicerca = tmp.isEmpty();
 			videogames.addAll(tmp);
+		}
+	}
+
+	private boolean manageParent(final Set<Videogame> videogames, final Set<Videogame> tmp, Videogame videogame,
+			final CoppiaUrl coppia) {
+		try {
+			final Videogame relatedVideogame = new Connection().getVideogame(coppia);
+			if (relatedVideogame != null && !videogames.contains(relatedVideogame)) {
+				relatedVideogame.setPadre(videogame);
+				tmp.add(relatedVideogame);
+			}
+			return true;
+		} catch (IOException e) {
+			System.err.println("\n-----------------");
+			System.err.println(coppia.getOriginUrl());
+			System.err.println(coppia.getJsonUrl());
+			System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
+			System.err.println("\n-----------------");
+			return false;
 		}
 	}
 

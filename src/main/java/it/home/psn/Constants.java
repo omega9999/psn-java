@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class Constants {
 	public static final Test TEST = Test.NO;
 	public static final boolean DEBUG = true;
-	public static List<String> TIPO_TOP = Arrays.asList("Gioco completo", "Gioco PSN", "Bundle", "Gioco", "Gioco PS VR",
+	public static final List<String> TIPO_TOP = Arrays.asList("Gioco completo", "Gioco PSN", "Bundle", "Gioco", "Gioco PS VR",
 			"PS Now");
 
 	public enum Test {
