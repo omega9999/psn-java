@@ -98,6 +98,8 @@ public class LoadConfig {
 		decode.put("VEHICULAR_COMBAT", "Combattimento veicoli");
 		decode.put("MYSTERY", "Mistero");
 		decode.put("GRAPHIC_ADVENTURE", "Avventura grafica");
+		decode.put("BASEBALL", "Baseball");
+		decode.put("SOCCER", "Calcio");
 		decode.put("PHYSICS_GAME", "Gioco di fisica");
 		decode.put("TURN_BASED_STRATEGY", "Strategia a turni");
 		decode.put("TACTICAL", "Tattico");
