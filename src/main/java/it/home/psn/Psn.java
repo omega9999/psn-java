@@ -297,7 +297,7 @@ public class Psn {
 			System.err.println("\n-----------------");
 			System.err.println(coppia.getOriginUrl());
 			System.err.println(coppia.getJsonUrl());
-			System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
+			System.err.println("line 300 Psn " + e.getClass().getSimpleName() + " : " + e.getMessage());
 			System.err.println("\n-----------------");
 			return false;
 		}
