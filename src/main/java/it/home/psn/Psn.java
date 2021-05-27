@@ -38,6 +38,8 @@ import it.home.psn.module.Videogame.SottoSoglia;
 import it.home.psn.module.Videogame.Tipo;
 
 public class Psn {
+	private static final BigDecimal SOGLIA = new BigDecimal("10.00");
+	
 	public static void main(String[] args) throws Exception {
 		System.err.println("Inizio");
 		final Psn psn = new Psn();
@@ -180,7 +182,7 @@ public class Psn {
 			if (videogame.getJson().contains(".mp4")) {
 				// output.mp4(videogame.getJson());
 			}
-			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
+			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(SOGLIA)) {
 				toHtml.add(videogame);
 			}
 			if (videogame.getTipo() != null && Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
@@ -190,7 +192,7 @@ public class Psn {
 		toHtml.addAll(separatore);
 
 		for (Videogame videogame : videogameSorted) {
-			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(new BigDecimal("10.00"))) {
+			if (SottoSoglia.ZERO == videogame.prezzoSottoSoglia(SOGLIA)) {
 				toHtml.add(videogame);
 			}
 		}
