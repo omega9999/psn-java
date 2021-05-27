@@ -200,6 +200,10 @@ public class Videogame implements Comparable<Videogame> {
 		return SottoSoglia.FALSE;
 	}
 
+	public boolean isScontato() {
+		return getSconto() != null;
+	}
+	
 	public enum SottoSoglia {
 		TRUE, FALSE, ZERO;
 	}
@@ -319,7 +323,7 @@ public class Videogame implements Comparable<Videogame> {
 			return result;
 		}
 	}
-	
+
 	public enum TypeData {
 		IMAGE, OTHER_IMAGE, PROMEDIA, SCREENSHOT, PREVIEW, SHOT;
 	}
@@ -380,7 +384,6 @@ public class Videogame implements Comparable<Videogame> {
 				super.setUrl(url.replace(CONST, ""));
 			}
 		}
-
 
 		@Override
 		public int hashCode() {

@@ -39,7 +39,7 @@ import it.home.psn.module.Videogame.Tipo;
 
 public class Psn {
 	private static final BigDecimal SOGLIA = new BigDecimal("10.00");
-	
+
 	public static void main(String[] args) throws Exception {
 		System.err.println("Inizio");
 		final Psn psn = new Psn();
@@ -95,7 +95,7 @@ public class Psn {
 
 		final List<Videogame> separatore = Utils.createList();
 		final Videogame fake = new Videogame("");
-		fake.setCoppia(new CoppiaUrl("",""));
+		fake.setCoppia(new CoppiaUrl("", ""));
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);
@@ -163,7 +163,7 @@ public class Psn {
 			for (String t : videogame.getUnKnownMetadata()) {
 				add(unKnownMetadata, t);
 			}
-			
+
 			final Set<AbstractUrl> data = createSet();
 			CollectionUtils.addAll(data, videogame.getScreenshots());
 			CollectionUtils.addAll(data, videogame.getVideos());
@@ -171,14 +171,19 @@ public class Psn {
 			for (AbstractUrl t : data) {
 				final String[] str = t.getUrl().split("\\.");
 				add(genericDataType, str[str.length - 1].toLowerCase());
-				add(genericDataSubType, t.getTypeData()+"_"+t.getSubTypeData());
-				genericDataSubTypeUrl.put(t.getTypeData()+"_"+t.getSubTypeData(), t.getUrl());
+				add(genericDataSubType, t.getTypeData() + "_" + t.getSubTypeData());
+				genericDataSubTypeUrl.put(t.getTypeData() + "_" + t.getSubTypeData(), t.getUrl());
 			}
 		}
 		final List<Videogame> toHtml = Utils.createList();
 		final List<Videogame> toHtmlPosseduti = Utils.createList();
 		final List<Videogame> toHtmlPreferiti = Utils.createList();
+		final List<Videogame> toHtmlSconto = Utils.createList();
 		for (Videogame videogame : videogameSorted) {
+			if (!videogame.isPosseduto() && videogame.isScontato() && videogame.getTipo() != null
+					&& Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
+				toHtmlSconto.add(videogame);
+			}
 			if (videogame.getJson().contains(".mp4")) {
 				// output.mp4(videogame.getJson());
 			}
@@ -201,6 +206,9 @@ public class Psn {
 				toHtmlPosseduti.add(videogame);
 			}
 		}
+
+		Collections.sort(toHtmlSconto, (a, b) -> a.getSconto().compareTo(b.getSconto()));
+		output.htmlSconto(toHtmlSconto);
 
 		System.err.println("videogameSorted " + videogameSorted.size() + " toHtmlPosseduti " + toHtmlPosseduti.size());
 
@@ -231,7 +239,7 @@ public class Psn {
 		statistics.println("Screenshot type: " + screenshot);
 		statistics.println("Preview type: " + preview);
 		statistics.println("Unknown metadata: " + unKnownMetadata);
-		statistics.println("esempi di immagini:"+genericDataSubTypeUrl);
+		statistics.println("esempi di immagini:" + genericDataSubTypeUrl);
 		statistics.close();
 		statistics = null;
 
@@ -265,7 +273,7 @@ public class Psn {
 					}
 				});
 			});
-			while(!errors.isEmpty()) {
+			while (!errors.isEmpty()) {
 				final Videogame target = errors.remove(0);
 				if (target != null) {
 					final CoppiaUrl coppia = LoadConfig.getCoppia(target.getId());
@@ -280,7 +288,7 @@ public class Psn {
 					}
 				}
 			}
-			
+
 			fineRicerca = tmp.isEmpty();
 			videogames.addAll(tmp);
 		}
@@ -314,6 +322,7 @@ public class Psn {
 		private final PrintWriter outputHtml;
 		private final PrintWriter outputHtmlPosseduti;
 		private final PrintWriter outputHtmlPreferiti;
+		private final PrintWriter outputHtmlSconto;
 		private final HtmlTemplate htmlTemplate;
 
 		private Writer() throws IOException {
@@ -326,6 +335,7 @@ public class Psn {
 			outputHtml = new PrintWriter(new File("./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File("./output-posseduti.html"));
 			outputHtmlPreferiti = new PrintWriter(new File("./output-preferiti.html"));
+			outputHtmlSconto = new PrintWriter(new File("./output-sconto.html"));
 			outputMp4.println("[");
 		}
 
@@ -333,6 +343,7 @@ public class Psn {
 			outputHtml.close();
 			outputHtmlPosseduti.close();
 			outputHtmlPreferiti.close();
+			outputHtmlSconto.close();
 
 			outputMp4.println("]");
 			outputMp4.close();
@@ -348,6 +359,10 @@ public class Psn {
 
 		public synchronized void htmlPreferiti(final List<Videogame> list) {
 			outputHtmlPreferiti.println(htmlTemplate.createHtml(list));
+		}
+
+		public synchronized void htmlSconto(final List<Videogame> list) {
+			outputHtmlSconto.println(htmlTemplate.createHtml(list));
 		}
 
 		public synchronized void mp4(String string) {
