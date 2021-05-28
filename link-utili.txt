@@ -3,3 +3,24 @@ https://github.com/Tustin/psn-php
 https://github.com/jjiko/gumer-psn-php
 https://github.com/dano1066/playstation-store-api
 https://pypi.org/project/psnprices/
+
+
+
+https://github.com/fakeshadow/pixel-psn
+https://github.com/fakeshadow/pxs-psn-api
+
+
+
+
+
+https://store.playstation.com/chihiro-api/bucket-search/IT/it/19/fantasy?size=99&start=0
+"fantasy" è testo libero url encoded
+struttura: 
+"categories"->"games"->"links"->[array di videogames]
+
+
+
+indagare le info che ha 
+https://store.playstation.com/chihiro-api/viewfinder/IT/it/19/EP0700-CUSA03370_00-GE2RBBUNDLE00000
+al posto di
+https://store.playstation.com/store/api/chihiro/00_09_000/container/IT/it/999/EP0700-CUSA03370_00-GE2RBBUNDLE00000
