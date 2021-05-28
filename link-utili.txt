@@ -1,1 +1,5 @@
 https://github.com/elminsterjimmy/PSN-API
+https://github.com/Tustin/psn-php
+https://github.com/jjiko/gumer-psn-php
+https://github.com/dano1066/playstation-store-api
+https://pypi.org/project/psnprices/
