@@ -26,6 +26,8 @@ public class Videogame implements Comparable<Videogame> {
 
 	private String name = "";
 	private String json = "";
+	
+	private String description = "";
 
 	private Boolean enableVr;
 	private Boolean requiredVr;

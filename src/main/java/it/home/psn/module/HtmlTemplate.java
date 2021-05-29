@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import it.home.psn.Utils;
@@ -97,6 +98,52 @@ public class HtmlTemplate {
 		return sb.toString().trim();
 	}
 	
+	private String getDescription(final Videogame videogame) {
+		final String name = StringEscapeUtils.escapeHtml4(videogame.getName().trim());
+		final StringBuilder sb = new StringBuilder();
+		if (!StringUtils.isBlank(videogame.getDescription())) {
+			sb.append("<div class='tooltip'>").append(name).append("<span class='tooltiptext tooltip-right' style='width: 1000px;'>").append(clearDesctipton(videogame.getDescription())).append("</span></div>");
+		}
+		else {
+			sb.append(name);
+		}
+		return sb.toString().trim();
+	}
+	
+	private String clearDesctipton(final String description) {
+		//StringEscapeUtils.escapeHtml4
+		String tmp = description;
+		for(final String str : REMOVE_DESCRIPTION) {
+			tmp = tmp.replace(str, "");
+		}
+		tmp = tmp.replace("<br/>", "<br>");
+		tmp = tmp.replace("<br />", "<br>");
+		tmp = tmp.replace("\s+<br>", "<br>");
+		tmp = tmp.replaceAll("<br>\s+", "<br>");
+		tmp = removeDuplicate(tmp,"<br><br><br>", "<br><br>");
+		tmp = trimHtml(tmp, "<br>");
+		return tmp;
+	}
+	
+	private String removeDuplicate(final String str, final String target, final String replace) {
+		String tmp = str.trim();
+		while(tmp.contains(target)) {
+			tmp = tmp.replace(target, replace);
+		}
+		return tmp;
+	}
+	
+	private String trimHtml(final String str, final String target) {
+		String tmp = str.trim();
+		while (tmp.startsWith(target)) {
+			tmp = tmp.replaceAll("^" + target, "").trim();
+		}
+		while (tmp.endsWith(target)) {
+			tmp = tmp.replaceAll(target + "$", "").trim();
+		}
+		return tmp;
+	}
+	
 	private String generaRighe(final List<Videogame> videogames) {
 		final StringBuilder sb = new StringBuilder();
 		int counter = 0;
@@ -113,7 +160,7 @@ public class HtmlTemplate {
 					.replace("{CONSOLE_REF}", StringEscapeUtils.escapeHtml4(videogame.getPlatformStr()))
 					.replace(ID_RIGA_REF, id)
 					.replace("{BUTTON_DISPLAY_REF}", (!immagini.isBlank() || !video.isBlank()) ? "inline" : "none")
-					.replace("{GIOCO_REF}",StringEscapeUtils.escapeHtml4(videogame.getName().trim()))
+					.replace("{GIOCO_REF}",getDescription(videogame))
 					.replace("{IMMAGINI_REF}", immagini)
 					.replace("{VIDEOS_REF}", video)
 					.replace("{TIPO_REF}", videogame.getTipoStr())
@@ -196,4 +243,20 @@ public class HtmlTemplate {
 	private final String videoTemplate;
 	
 	private static final String ID_RIGA_REF = "{ID_RIGA_REF}";
+	
+	private static final String[] REMOVE_DESCRIPTION = {
+			"Per giocare a questo gioco su PS5, è possibile che tu debba aggiornare il software di sistema alla versione più recente.",
+			"Anche se questo gioco è utilizzabile su PS5, alcune funzioni disponibili su PS4 potrebbero non risultare disponibili.",
+			"Per ulteriori informazioni, consulta la pagina PlayStation.com/bc.",
+			"Prima di usare questo prodotto, leggere attentamente le Avvertenze per la salute.",
+			"Library programs ©Sony Interactive Entertainment Inc. concesso in licenza esclusivamente a Sony Interactive Entertainment Europe.",
+			"Si applicano i Termini d'uso del software.",
+			"Si consiglia di visitare eu.playstation.com/legal per i diritti di utilizzo completi.",
+			"Il download del presente prodotto è soggetto ai Termini di servizio e alle Condizioni d'uso del software di PlayStation Network e a qualsiasi altra condizione supplementare specifica applicabile a questo articolo.",
+			"Se non si desidera accettare questi Termini, non scaricare questo articolo.",
+			"Per maggiori dettagli, consultare i Termini di Servizio.",
+			"Una tantum applicabile per scaricare su più sistemi PS4.",
+			"Si può utilizzare su PS4 pincipale senza effettuare l'accesso a PlayStation Network; l'accesso va effettuato per l'uso su altri sistemi PS4.",
+			"<b></b>",
+			"<b>  </b>"};
 }

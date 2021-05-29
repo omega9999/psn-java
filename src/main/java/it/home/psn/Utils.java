@@ -106,6 +106,7 @@ public class Utils {
 		final Videogame videogame = new Videogame(id);
 		videogame.setName(name);
 		videogame.setJson(response.toString());
+		videogame.setDescription(response.optString("long_desc"));
 		
 		videogame.setPosseduto(LoadConfig.getInstance().getIdPosseduti().contains(id));
 		
