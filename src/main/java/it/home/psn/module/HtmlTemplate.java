@@ -33,8 +33,10 @@ public class HtmlTemplate {
 		this.videoTemplate = getFile("video-template.html");
 	}
 	
-	public String createHtml(final List<Videogame> videogames) {
-		return this.template.replace("{REPLACE_RIGHE_REF}", generaRighe(videogames));
+	public String createHtml(final List<Videogame> videogames, final String titolo) {
+		return this.template
+				.replace("{TITOLO_REF}", titolo)
+				.replace("{REPLACE_RIGHE_REF}", generaRighe(videogames));
 	}
 	
 	private String elabMetadati(final Videogame videogame) {
@@ -90,8 +92,18 @@ public class HtmlTemplate {
 				tooltip.add(entry.getKey() + ": " + String.join(", ", entry.getValue().toArray(new String[0])));
 			}
 		}
+		
+		if (!videogame.getAntenato().equals(videogame)) {
+			if (!tooltip.isEmpty()) {
+				tooltip.add("");
+			}
+			tooltip.add("Antenato: " + videogame.getAntenato().getName());
+		}
 
 		final StringBuilder sb = new StringBuilder();
+		if (visibile.toString().trim().isEmpty() && !tooltip.isEmpty()) {
+			visibile.append("&nbsp;");
+		}
 		if (!visibile.toString().trim().isEmpty()) {
 			sb.append("<div class='tooltip'>").append(visibile.toString()).append("<span class='tooltiptext tooltip-right'>").append(String.join("<br/>", tooltip).trim()).append("</span></div>");
 		}

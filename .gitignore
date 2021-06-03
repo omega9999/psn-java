@@ -8,23 +8,5 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-/output.txt
-/statistics.txt
 
-output-esteso.txt
-
-mp4.json
-
-output.html
-
-output-backup.html
-
-output-posseduti.html
-
-output-preferiti.html
-
-output-esteso.json
-
-output.json
-
-output-sconto.html
+/z-OUTPUT/*.*

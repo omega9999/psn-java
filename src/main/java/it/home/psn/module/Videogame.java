@@ -7,10 +7,15 @@ import static it.home.psn.Utils.createSet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.home.psn.Constants;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
@@ -24,40 +29,155 @@ public class Videogame implements Comparable<Videogame> {
 		this.id = id;
 	}
 
+	private final String id;
 	private String name = "";
-	private String json = "";
-	
-	private String description = "";
 
+	@JsonIgnore
+	private String json = "";
+
+	public String getAntenatoId() {
+		return this.antenato != null ? this.antenato.getId() : null;
+	}
+
+	public String getPadreId() {
+		return this.padre != null ? this.padre.getId() : null;
+	}
+
+	public List<String> getParentsVideogameId() {
+		final List<String> tmp = createList();
+		this.parentsVideogame.stream().forEach(v -> {
+			if (v != null) {
+				tmp.add(v.getId());
+			}
+		});
+		Collections.sort(tmp);
+		return tmp;
+	}
+
+	private String description = "";
+	@JsonIgnore
+	private Videogame padre;
+	@JsonIgnore
+	private final Set<Videogame> parentsVideogame = createSet();
+	@JsonIgnore
+	private Videogame antenato;
 	private Boolean enableVr;
 	private Boolean requiredVr;
 
+	@JsonIgnore
 	private final Set<Tipo> tipi = createSet();
+	@JsonIgnore
 	private final Set<Genere> generi = createSet();
+	@JsonIgnore
 	private final Set<Genere> subgeneri = createSet();
+	@JsonIgnore
 	private final Set<String> platform = createSet();
+	@JsonIgnore
 	private final Set<String> unKnownMetadata = createSet();
 	private final Map<String, List<String>> unKnownMetadataValues = createMap();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
-	private final List<Sconto> sconti = createList();
+	@JsonIgnore
+	private final Set<Sconto> sconti = createSet();
+	@JsonIgnore
 	private final Set<String> otherIds = createSet();
+	@JsonIgnore
 	private final Set<String> parentIds = createSet();
+
 	private boolean posseduto;
 
+	@JsonIgnore
 	private final Set<String> parentUrls = createSet();
 
+	@JsonIgnore
 	private final Set<Screenshot> screenshots = createSet();
+	@JsonIgnore
 	private final Set<Preview> previews = createSet();
+	@JsonIgnore
 	private final Set<Video> videos = createSet();
-
+	@JsonIgnore
 	private final Set<String> voices = createSet();
+	@JsonIgnore
 	private final Set<String> subtitles = createSet();
 
-	private final String id;
 	private CoppiaUrl coppia;
 
-	private Videogame padre;
+	public List<String> getParentsVideogameList() {
+		final List<String> tmp = createList();
+		this.parentsVideogame.stream().forEach(v->tmp.add(v.getId()));
+		Collections.sort(tmp);
+		return tmp;
+	}
+
+	public List<Tipo> getTipiList() {
+		return format(this.tipi);
+	}
+
+	public List<Genere> getGeneriList() {
+		return format(this.generi);
+	}
+
+	public List<Genere> getSubgeneriList() {
+		return format(this.subgeneri);
+	}
+
+
+	
+	public List<String> getPlatformList() {
+		return format(this.platform);
+	}
+
+	public List<String> getUnKnownMetadataList() {
+		return format(this.unKnownMetadata);
+	}
+
+	public Map<String, List<String>> getUnKnownMetadataValues() {
+		this.unKnownMetadataValues.values().forEach(Collections::sort);
+		return this.unKnownMetadataValues;
+	}
+
+	public List<Sconto> getScontiList() {
+		return format(this.sconti);
+	}
+
+	public List<String> getOtherIdsList() {
+		return format(this.otherIds);
+	}
+
+	public List<String> getParentIdsList() {
+		return format(this.parentIds);
+	}
+
+	public List<String> getParentUrlsList() {
+		return format(this.parentUrls);
+	}
+
+	public List<Screenshot> getScreenshotsList() {
+		return format(this.screenshots);
+	}
+
+	public List<Preview> getPreviewsList() {
+		return format(this.previews);
+	}
+
+	public List<Video> getVideosList() {
+		return format(this.videos);
+	}
+
+	public List<String> getVoicesList() {
+		return format(this.voices);
+	}
+
+	public List<String> getSubtitlesList() {
+		return format(this.subtitles);
+	}
+
+	private static <T extends Comparable<? super T>> List<T> format(Set<T> list){
+		final List<T> tmp = createList();
+		tmp.addAll(list);
+		Collections.sort(tmp);
+		return tmp;
+	}
 
 	public String getTipoStr() {
 		final Set<Tipo> objs = getTipi();
@@ -79,7 +199,7 @@ public class Videogame implements Comparable<Videogame> {
 		return String.join(", ", join(objs));
 	}
 
-	private static String[] join(Set<?> list) {
+	private static String[] join(Collection<?> list) {
 		final String[] strs = new String[list.size()];
 		int index = 0;
 		for (final Object obj : list) {
@@ -100,6 +220,10 @@ public class Videogame implements Comparable<Videogame> {
 			return res;
 		}
 		res = compare(this.getName(), obj.getName());
+		if (res != 0) {
+			return res;
+		}
+		res = compare(this.getId(), obj.getId());
 		return res;
 	}
 
@@ -205,7 +329,7 @@ public class Videogame implements Comparable<Videogame> {
 	public boolean isScontato() {
 		return getSconto() != null;
 	}
-	
+
 	public enum SottoSoglia {
 		TRUE, FALSE, ZERO;
 	}
@@ -330,6 +454,31 @@ public class Videogame implements Comparable<Videogame> {
 		IMAGE, OTHER_IMAGE, PROMEDIA, SCREENSHOT, PREVIEW, SHOT;
 	}
 
+	@SafeVarargs
+	@SuppressWarnings("unchecked")
+	private static <T, K extends Comparable<? super K>> int genericCompare(T a, T b, Function<T, ?> ... functions){
+		for(final Function<T, ?> function : functions) {
+			final K valueA = (K) function.apply(a);
+			final K valueB = (K) function.apply(b);
+			
+			if (valueA == null && valueB == null) {
+				return 0;
+			}
+			if (valueA == null) {
+				return -1;
+			}
+			if (valueB == null) {
+				return +1;
+			}
+			
+			final int res = valueA.compareTo(valueB);
+			if (res != 0) {
+				return res;
+			}
+		}
+		return 0;
+	}
+	
 	@Data
 	public static class AbstractUrl {
 		private String url;
@@ -338,7 +487,7 @@ public class Videogame implements Comparable<Videogame> {
 	}
 
 	@Data
-	public static class Screenshot extends AbstractUrl {
+	public static class Screenshot extends AbstractUrl implements Comparable<Screenshot>{
 		private String type;
 		private String typeId;
 		private String source;
@@ -354,10 +503,14 @@ public class Videogame implements Comparable<Videogame> {
 			return super.equals(obj);
 		}
 
+		@Override
+		public int compareTo(Screenshot arg0) {
+			return genericCompare(this, arg0, Screenshot::getOrder, Screenshot::getType, Screenshot::getTypeId, Screenshot::getSource, AbstractUrl::getUrl, AbstractUrl::getTypeData, AbstractUrl::getSubTypeData);
+		}
 	}
 
 	@Data
-	public static class Preview extends AbstractUrl {
+	public static class Preview extends AbstractUrl implements Comparable<Preview> {
 		private String type;
 		private String typeId;
 		private String source;
@@ -365,6 +518,11 @@ public class Videogame implements Comparable<Videogame> {
 		private String streamUrl;
 		private final List<Screenshot> shots = createList();
 
+		public List<Screenshot> getShots() {
+			Collections.sort(this.shots);
+			return this.shots;
+		}
+
 		@Override
 		public int hashCode() {
 			return super.hashCode();
@@ -374,10 +532,15 @@ public class Videogame implements Comparable<Videogame> {
 		public boolean equals(Object obj) {
 			return super.equals(obj);
 		}
+
+		@Override
+		public int compareTo(Preview arg0) {
+			return genericCompare(this, arg0, Preview::getOrder, Preview::getType, Preview::getTypeId, Preview::getSource, Preview::getStreamUrl, AbstractUrl::getUrl, AbstractUrl::getTypeData, AbstractUrl::getSubTypeData);
+		}
 	}
 
 	@Data
-	public static class Video extends AbstractUrl {
+	public static class Video extends AbstractUrl implements Comparable<Video>  {
 		private static final String CONST = "?country=IT";
 		private String type;
 
@@ -395,6 +558,11 @@ public class Videogame implements Comparable<Videogame> {
 		@Override
 		public boolean equals(Object obj) {
 			return super.equals(obj);
+		}
+
+		@Override
+		public int compareTo(Video arg0) {
+			return genericCompare(this, arg0, Video::getType, AbstractUrl::getSubTypeData, AbstractUrl::getTypeData, AbstractUrl::getUrl);
 		}
 	}
 

@@ -293,7 +293,6 @@ public class Utils {
 	}
 	
 	private static void setParentLinks(final JSONObject response, final Videogame videogame) {
-		
 		final JSONArray links = response.optJSONArray("parent_links");
 		if (links != null) {
 			for (int index = 0; index < links.length(); index++) {
