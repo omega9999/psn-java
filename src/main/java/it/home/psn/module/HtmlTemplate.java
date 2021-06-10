@@ -42,7 +42,7 @@ public class HtmlTemplate {
 	private String elabMetadati(final Videogame videogame) {
 		final StringBuilder visibile = new StringBuilder();
 		final List<String> tooltip = Utils.createList();
-		if(videogame.isPosseduto()) {
+		if(videogame.getPosseduto().booleanValue()) {
 			visibile.append("[X] ");
 			tooltip.add("Posseduto");
 		}
@@ -128,6 +128,7 @@ public class HtmlTemplate {
 		for(final String str : REMOVE_DESCRIPTION) {
 			tmp = tmp.replace(str, "");
 		}
+		tmp = tmp.replace("‚óè", "‚Ä¢ ");
 		tmp = tmp.replace("<br/>", "<br>");
 		tmp = tmp.replace("<br />", "<br>");
 		tmp = tmp.replace("\s+<br>", "<br>");
@@ -178,7 +179,7 @@ public class HtmlTemplate {
 					.replace("{TIPO_REF}", videogame.getTipoStr())
 					.replace("{GENERE_REF}",  videogame.getGenereStr())
 					.replace("{SUBGENERE_REF}",  videogame.getSubGenereStr())
-					.replace("{POSSEDUTO_REF}", videogame.isPosseduto() ? "(X) ":"")
+					.replace("{POSSEDUTO_REF}", Boolean.TRUE.equals(videogame.getPosseduto()) ? "(X) ":"")
 					.replace("{LINK_ORIG_REF}", videogame.getCoppia().getOriginUrl())
 					.replace("{LINK_PARENT_REF}", videogame.getParentUrl())
 					.replace("{LINK_JSON_REF}", videogame.getCoppia().getJsonUrl())
@@ -257,18 +258,18 @@ public class HtmlTemplate {
 	private static final String ID_RIGA_REF = "{ID_RIGA_REF}";
 	
 	private static final String[] REMOVE_DESCRIPTION = {
-			"Per giocare a questo gioco su PS5, Ë possibile che tu debba aggiornare il software di sistema alla versione pi˘ recente.",
-			"Anche se questo gioco Ë utilizzabile su PS5, alcune funzioni disponibili su PS4 potrebbero non risultare disponibili.",
+			"Per giocare a questo gioco su PS5, √® possibile che tu debba aggiornare il software di sistema alla versione pi√π recente.",
+			"Anche se questo gioco √® utilizzabile su PS5, alcune funzioni disponibili su PS4 potrebbero non risultare disponibili.",
 			"Per ulteriori informazioni, consulta la pagina PlayStation.com/bc.",
 			"Prima di usare questo prodotto, leggere attentamente le Avvertenze per la salute.",
-			"Library programs ©Sony Interactive Entertainment Inc. concesso in licenza esclusivamente a Sony Interactive Entertainment Europe.",
+			"Library programs ¬©Sony Interactive Entertainment Inc. concesso in licenza esclusivamente a Sony Interactive Entertainment Europe.",
 			"Si applicano i Termini d'uso del software.",
 			"Si consiglia di visitare eu.playstation.com/legal per i diritti di utilizzo completi.",
-			"Il download del presente prodotto Ë soggetto ai Termini di servizio e alle Condizioni d'uso del software di PlayStation Network e a qualsiasi altra condizione supplementare specifica applicabile a questo articolo.",
+			"Il download del presente prodotto √® soggetto ai Termini di servizio e alle Condizioni d'uso del software di PlayStation Network e a qualsiasi altra condizione supplementare specifica applicabile a questo articolo.",
 			"Se non si desidera accettare questi Termini, non scaricare questo articolo.",
 			"Per maggiori dettagli, consultare i Termini di Servizio.",
-			"Una tantum applicabile per scaricare su pi˘ sistemi PS4.",
-			"Si puÚ utilizzare su PS4 pincipale senza effettuare l'accesso a PlayStation Network; l'accesso va effettuato per l'uso su altri sistemi PS4.",
+			"Una tantum applicabile per scaricare su pi√π sistemi PS4.",
+			"Si pu√≤ utilizzare su PS4 pincipale senza effettuare l'accesso a PlayStation Network; l'accesso va effettuato per l'uso su altri sistemi PS4.",
 			"<b></b>",
 			"<b>  </b>"};
 }

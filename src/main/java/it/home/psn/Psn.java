@@ -48,7 +48,7 @@ import it.home.psn.module.Videogame.Tipo;
 import lombok.AllArgsConstructor;
 
 public class Psn {
-	private static final BigDecimal SOGLIA = new BigDecimal("10.00");
+	private static final BigDecimal SOGLIA = new BigDecimal("16.00");
 
 	public static void main(String[] args) throws Exception {
 		System.err.println("Inizio");
@@ -145,22 +145,25 @@ public class Psn {
 		separatore.add(fake);
 		separatore.add(fake);
 
-		final List<Videogame> videogameSorted = Arrays.asList(videogames.toArray(new Videogame[0]));
+		final List<Videogame> videogameSorted = createList();
+		videogameSorted.addAll(videogames);
+		System.err.println("videogameSorted.size() "+videogameSorted.size());
 		Collections.sort(videogameSorted, (a, b) -> {
-			if (a.showScreenshot(Constants.TIPO_TOP) && !b.showScreenshot(Constants.TIPO_TOP)) {
-				return -1;
-			}
-			if (!a.showScreenshot(Constants.TIPO_TOP) && b.showScreenshot(Constants.TIPO_TOP)) {
-				return +1;
-			}
+			int tmp;
 
-			if (a.isPosseduto() && !b.isPosseduto()) {
-				return +1;
+			tmp = a.showScreenshot().compareTo(b.showScreenshot());
+			if (tmp != 0) {
+				return -1*tmp;
 			}
-			if (!a.isPosseduto() && b.isPosseduto()) {
-				return -1;
+			
+			tmp = a.getPosseduto().compareTo(b.getPosseduto());
+			if (tmp != 0) {
+				return tmp;
 			}
-
+			tmp = getSconto(a).compareTo(getSconto(b));
+			if (tmp != 0) {
+				return tmp;
+			}
 			return a.compareTo(b);
 		});
 
@@ -211,7 +214,7 @@ public class Psn {
 		final List<Videogame> toHtmlSconto = Utils.createList();
 		final List<Videogame> toHtmlScontoDlc = Utils.createList();
 		for (Videogame videogame : videogameSorted) {
-			if (!videogame.isPosseduto() && videogame.isScontato()) {
+			if (!videogame.getPosseduto() && videogame.isScontato()) {
 				if (videogame.getTipo() != null
 						&& Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
 					toHtmlSconto.add(videogame);
@@ -236,7 +239,7 @@ public class Psn {
 			}
 		}
 		for (Videogame videogame : videogameSorted) {
-			if (videogame.isPosseduto()) {
+			if (videogame.getPosseduto()) {
 				toHtmlPosseduti.add(videogame);
 			}
 		}
@@ -317,6 +320,16 @@ public class Psn {
 		System.err.println("\n\n\n\nFINE");
 	}
 
+	private static BigDecimal getSconto(final Videogame videogame) {
+		if (videogame.getSconto() != null && videogame.getSconto().getPrice() != null) {
+			return videogame.getSconto().getPrice();
+		}
+		if (videogame.getPriceFull() != null) {
+			return videogame.getPriceFull();
+		}
+		return new BigDecimal(Long.MAX_VALUE);
+	} 
+	
 	private static final List<String> PRIORITA_ANTENATI = Arrays.asList("Gioco completo", "Gioco", "Gioco PSN", "Bundle", "Gioco PS VR","PS Now");
 	private void calcolaAntenati(final Set<Videogame> videogames) {
 		

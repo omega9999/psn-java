@@ -84,7 +84,7 @@ public class Videogame implements Comparable<Videogame> {
 	@JsonIgnore
 	private final Set<String> parentIds = createSet();
 
-	private boolean posseduto;
+	private Boolean posseduto = Boolean.FALSE;
 
 	@JsonIgnore
 	private final Set<String> parentUrls = createSet();
@@ -312,6 +312,10 @@ public class Videogame implements Comparable<Videogame> {
 			}
 		}
 		return false;
+	}
+	
+	public Boolean showScreenshot() {
+		return showScreenshot(Constants.TIPO_TOP);
 	}
 
 	public SottoSoglia prezzoSottoSoglia(final BigDecimal soglia) {
