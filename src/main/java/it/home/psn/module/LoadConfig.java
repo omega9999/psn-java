@@ -1,5 +1,6 @@
 package it.home.psn.module;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -8,6 +9,9 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+
+import it.home.psn.SistemaPreferiti;
 import it.home.psn.Utils;
 import lombok.Data;
 import lombok.Getter;
@@ -25,11 +29,11 @@ public class LoadConfig {
 		try {
 			load(config, "config.properties");
 			load(ricerche, "ricerche.properties");
-			load(preferiti, "preferiti.properties");
-			load(preferiti, "posseduti-demo.properties");
+			load(preferiti, new File(SistemaPreferiti.root, "preferiti.properties"));
+			load(preferiti, new File(SistemaPreferiti.root, "posseduti-demo.properties"));
 			
-			load(posseduti, "posseduti-digitale.properties");
-			load(posseduti, "posseduti-fisico.properties");
+			load(posseduti, new File(SistemaPreferiti.root, "posseduti-digitale.properties"));
+			load(posseduti, new File(SistemaPreferiti.root, "posseduti-fisico.properties"));
 		
 			for(final Object urlObj : this.posseduti.values()) {
 				final String targetUrl = this.config.getProperty("base.html.url");
@@ -87,8 +91,14 @@ public class LoadConfig {
 	
 	private void load(final Properties prop, final String fileName) throws IOException {
 		final ClassLoader classLoader = getClass().getClassLoader();
-		final InputStream inStream = classLoader.getResourceAsStream(fileName);
-		prop.load(inStream);
+		try(final InputStream inStream = classLoader.getResourceAsStream(fileName)){
+			prop.load(inStream);
+		}
+	}
+	private void load(final Properties prop, final File file) throws IOException {
+		try(final InputStream inStream = FileUtils.openInputStream(file)){
+			prop.load(inStream);
+		}
 	}
 	
 	public static String subGenDecode(final String key) {

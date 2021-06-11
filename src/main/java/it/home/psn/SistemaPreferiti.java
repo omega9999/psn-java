@@ -1,9 +1,11 @@
 package it.home.psn;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,27 +13,33 @@ import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
+
 import it.home.psn.module.Connection;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
 
 public class SistemaPreferiti {
 
-	private static final String FILE = "preferiti.properties";
-	//private static final String FILE = "posseduti-digitale.properties";
-	//private static final String FILE = "posseduti-demo.properties";
-	//private static final String FILE = "posseduti-fisico.properties";
+	public static final File root = new File("./preferiti/");
+	private static final String[] FILES = {
+			"preferiti.properties",
+			"posseduti-digitale.properties",
+			"posseduti-demo.properties",
+			"posseduti-fisico.properties"
+	};
 	
 	
 	public static void main(String[] args) throws IOException {
-		new SistemaPreferiti();
+		for(String fileName : FILES) {
+			new SistemaPreferiti(new File(root,fileName));
+		}
 	}
 
-	private SistemaPreferiti() throws IOException {
+	private SistemaPreferiti(File file) throws IOException {
 		load(config, "config.properties");
-		final InputStream inStream = classLoader.getResourceAsStream(FILE);
 		List<String> list = new ArrayList<>();
-		try (final BufferedReader br = new BufferedReader(new InputStreamReader(inStream))) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.isBlank()) {
@@ -65,10 +73,24 @@ public class SistemaPreferiti {
 
 			return a.toLowerCase().compareTo(b.toLowerCase());
 		});
+		
+		File temp = File.createTempFile(file.getName(), ".properties");
+		System.err.println(temp.getAbsolutePath());
+		PrintWriter out = new PrintWriter(temp);
+		
 		for(String str : listDistinct) {
+			out.println(str);
 			System.out.println(str);
 		}
-		System.out.println("\n\n\n\n");
+		out.println("\n\n\n\n");
+		
+		out.flush();
+		out.close();
+
+		
+		FileUtils.copyFile(temp, file);
+		
+		System.err.println("FINE " + file);
 	}
 	
 	private static int priorizza(String a, String b, Function<String, Boolean> function) {
