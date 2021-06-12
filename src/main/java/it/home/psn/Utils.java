@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.Videogame;
+import it.home.psn.module.Videogame.Flag;
 import it.home.psn.module.Videogame.Genere;
 import it.home.psn.module.Videogame.Preview;
 import it.home.psn.module.Videogame.Sconto;
@@ -254,7 +255,11 @@ public class Utils {
 				case "cn_vrRequired":
 					videogame.setRequiredVr(elaboraBooleanMetadata(list));
 					break;
-					
+
+				case "cn_onlinePlayMode":
+					videogame.setOnline(elaboraBooleanMetadata(list));
+					break;
+
 				case "playable_platform":
 					videogame.getPlatform().addAll(list);
 					break;
@@ -269,16 +274,11 @@ public class Utils {
 		}
 	}
 
-	//TODO aggiungere break?
-	private static Boolean elaboraBooleanMetadata(final List<String> list) {
-		Boolean flag = null;
+	private static Flag elaboraBooleanMetadata(final List<String> list) {
+		Flag flag = null;
 		for (String str : list) {
-			if ("TRUE".equals(str)) {
-				flag = true;
-			}
-			if ("FALSE".equals(str)) {
-				flag = false;
-			}
+			flag = Flag.valueOf(str);
+			break;
 		}
 		return flag;
 	}

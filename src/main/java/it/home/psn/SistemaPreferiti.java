@@ -35,6 +35,7 @@ public class SistemaPreferiti {
 			new SistemaPreferiti(new File(root,fileName));
 		}
 	}
+	
 
 	private SistemaPreferiti(File file) throws IOException {
 		load(config, "config.properties");
@@ -45,11 +46,7 @@ public class SistemaPreferiti {
 				if (line.isBlank()) {
 					continue;
 				}
-				if (isOk(line)) {
-					add(list,line);
-				} else {
-					add(list,trasforma(line));
-				}
+				elaboraLinea(list, line);
 			}
 		}
 		
@@ -80,7 +77,6 @@ public class SistemaPreferiti {
 		
 		for(String str : listDistinct) {
 			out.println(str);
-			System.out.println(str);
 		}
 		out.println("\n\n\n\n");
 		
@@ -91,6 +87,21 @@ public class SistemaPreferiti {
 		FileUtils.copyFile(temp, file);
 		
 		System.err.println("FINE " + file);
+	}
+
+
+	private void elaboraLinea(List<String> list, String line) throws IOException {
+		if (isOk(line)) {
+			if (!line.startsWith("#")) {
+				add(list,line);
+			}
+			else {
+				String line1 = line.substring(1).trim();
+				elaboraLinea(list, line1);
+			}
+		} else {
+			add(list,trasforma(line));
+		}
 	}
 	
 	private static int priorizza(String a, String b, Function<String, Boolean> function) {

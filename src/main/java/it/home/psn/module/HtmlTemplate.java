@@ -20,6 +20,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import it.home.psn.Utils;
 import it.home.psn.module.Videogame.AbstractUrl;
+import it.home.psn.module.Videogame.Flag;
 import it.home.psn.module.Videogame.Preview;
 import it.home.psn.module.Videogame.TypeData;
 
@@ -73,13 +74,21 @@ public class HtmlTemplate {
 		}
 		
 		
-		if(Boolean.TRUE.equals(videogame.getEnableVr())) {
+		if(Flag.TRUE.equals(videogame.getEnableVr())) {
 			visibile.append("[VR] ");
 			tooltip.add("VR disponibile");
 		}
-		if(Boolean.TRUE.equals(videogame.getRequiredVr())) {
+		if(Flag.TRUE.equals(videogame.getRequiredVr())) {
 			visibile.append("[VR+] ");
 			tooltip.add("VR obbligatoria");
+		}
+		if(Flag.REQUIRED.equals(videogame.getOnline())) {
+			visibile.append("[ON+] ");
+			tooltip.add("Online obbligatorio");
+		}
+		if(Flag.OPTIONAL.equals(videogame.getOnline())) {
+			visibile.append("[ON] ");
+			tooltip.add("Online opzionale");
 		}
 		
 		if (!videogame.getUnKnownMetadataValues().isEmpty()) {
