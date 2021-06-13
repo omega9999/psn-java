@@ -46,6 +46,8 @@ public class SistemaPreferiti {
 				if (line.isBlank()) {
 					continue;
 				}
+				line = line.replace("__", "_");
+				line = line.replaceFirst("_=", "=");
 				elaboraLinea(list, line);
 			}
 		}
