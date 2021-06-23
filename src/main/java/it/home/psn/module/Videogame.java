@@ -267,11 +267,11 @@ public class Videogame implements Comparable<Videogame> {
 
 	public BigDecimal getScontoPerc() {
 		final Sconto tmp = getSconto();
-		if (tmp != null) {
+		if (tmp != null && getPriceFull() != null && getPriceFull().compareTo(BigDecimal.ZERO) != 0) {
 			return BigDecimal.ONE.subtract(tmp.getPrice().divide(getPriceFull(), 2, RoundingMode.HALF_UP))
 					.multiply(new BigDecimal(100));
 		}
-		return null;
+		return BigDecimal.ZERO;
 	}
 
 	public String getParentUrl() {
