@@ -5,6 +5,7 @@ import static it.home.psn.Utils.createSet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import it.home.psn.Utils;
 import it.home.psn.module.Videogame.AbstractUrl;
 import it.home.psn.module.Videogame.Flag;
 import it.home.psn.module.Videogame.Preview;
+import it.home.psn.module.Videogame.Sconto;
 import it.home.psn.module.Videogame.TypeData;
 
 public class HtmlTemplate {
@@ -166,6 +168,14 @@ public class HtmlTemplate {
 		return tmp;
 	}
 	
+	private static boolean printImporto(final BigDecimal value) {
+		return value != null && value.compareTo(BigDecimal.ZERO) != 0;
+	}
+	
+	private boolean printImporto(Sconto sconto) {
+		return sconto != null && printImporto(sconto.getPrice());
+	}
+	
 	private String generaRighe(final List<Videogame> videogames) {
 		final StringBuilder sb = new StringBuilder();
 		int counter = 0;
@@ -175,9 +185,9 @@ public class HtmlTemplate {
 			final String video = generaVideo(id, videogame);
 			
 			sb.append(this.rowTemplate
-					.replace("{PREZZO_REF}", videogame.getSconto() != null ? "&euro; " + videogame.getSconto().getPrice() : "")
-					.replace("{SCONTO_REF}", videogame.getScontoPerc() != null ? String.valueOf(videogame.getScontoPerc()) + " %" : "")
-					.replace("{PREZZO_FULL_REF}", videogame.getPriceFull() != null ? "&euro; " + videogame.getPriceFull() : "")
+					.replace("{PREZZO_REF}", printImporto(videogame.getSconto()) ? "&euro; " + videogame.getSconto().getPrice() : "")
+					.replace("{SCONTO_REF}", printImporto(videogame.getScontoPerc()) ? String.valueOf(videogame.getScontoPerc()) + " %" : "")
+					.replace("{PREZZO_FULL_REF}", printImporto(videogame.getPriceFull()) ? "&euro; " + videogame.getPriceFull() : "")
 					.replace("{METADATA_REF}", elabMetadati(videogame))
 					.replace("{CONSOLE_REF}", StringEscapeUtils.escapeHtml4(videogame.getPlatformStr()))
 					.replace(ID_RIGA_REF, id)
