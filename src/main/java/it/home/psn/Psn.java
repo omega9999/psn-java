@@ -48,7 +48,7 @@ import it.home.psn.module.Videogame.Tipo;
 import lombok.AllArgsConstructor;
 
 public class Psn {
-	private static final BigDecimal SOGLIA = new BigDecimal("16.00");
+	private static final BigDecimal SOGLIA = new BigDecimal("20.00");
 
 	public static void main(String[] args) throws Exception {
 		System.err.println("Inizio");
