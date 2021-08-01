@@ -78,8 +78,6 @@ public class Psn {
 
 		Writer output = new Writer();
 
-		this.config.checkPreferiti();
-
 		final Set<Videogame> videogames = createSet();
 		final long startTime = new Date().getTime();
 
@@ -112,7 +110,6 @@ public class Psn {
 			videogames.addAll(output.read());
 		}
 
-
 		final long midTime = new Date().getTime();
 		final int trovatiMid = videogames.size();
 
@@ -137,7 +134,7 @@ public class Psn {
 		final Videogame fake = new Videogame("fake");
 		fake.setPadre(fake);
 		fake.setAntenato(fake);
-		fake.setCoppia(new CoppiaUrl("", ""));
+		fake.setCoppia(new CoppiaUrl("", "", ""));
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);

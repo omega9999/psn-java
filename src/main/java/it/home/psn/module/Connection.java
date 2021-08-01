@@ -40,11 +40,13 @@ public class Connection {
 			sb.append(line + "\n");
 		}
 		br.close();
-		// System.out.println("new Test" + sb.toString());
 		try {
 			Videogame videogame = Utils.elaboraJson(new JSONObject(sb.toString()));
 			if (videogame != null) {
 				videogame.setCoppia(url);
+			}
+			else {
+				System.err.println("Non trovo " + url.getJsonUrl());
 			}
 			return videogame;
 		}

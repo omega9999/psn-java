@@ -47,7 +47,11 @@ public class HtmlTemplate {
 		final List<String> tooltip = Utils.createList();
 		if(videogame.getPosseduto().booleanValue()) {
 			visibile.append("[X] ");
-			tooltip.add("Posseduto");
+			tooltip.add("Posseduto ");
+		}
+		if(!videogame.getCoppia().getFiles().isEmpty()) {
+			visibile.append("[*] ");
+			tooltip.add("Link Originale: " + String.join(", ", videogame.getCoppia().getFiles()) + " ");
 		}
 		
 		if (!videogame.getVoices().isEmpty()) {

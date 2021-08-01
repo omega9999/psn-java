@@ -3,7 +3,10 @@ package it.home.psn.module;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -18,69 +21,74 @@ import lombok.Getter;
 
 @Getter
 public class LoadConfig {
-	
-	private static LoadConfig SINGLETON = new LoadConfig();
-	
-	public synchronized static LoadConfig getInstance() {
-		return SINGLETON;
-	}
-	
-	private LoadConfig() {
+
+	private static final LoadConfig SINGLETON = new LoadConfig();
+	static {
 		try {
-			load(config, "config.properties");
-			load(ricerche, "ricerche.properties");
-			load(preferiti, new File(SistemaPreferiti.root, "preferiti.properties"));
-			load(preferiti, new File(SistemaPreferiti.root, "posseduti-demo.properties"));
-			
-			load(posseduti, new File(SistemaPreferiti.root, "posseduti-digitale.properties"));
-			load(posseduti, new File(SistemaPreferiti.root, "posseduti-fisico.properties"));
-		
-			for(final Object urlObj : this.posseduti.values()) {
-				final String targetUrl = this.config.getProperty("base.html.url");
-				idPosseduti.add(urlObj.toString().replace(targetUrl, ""));
+			load(getInstance().config, "config.properties");
+			load(getInstance().ricerche, "ricerche.properties");
+			load(getInstance().preferiti, new File(SistemaPreferiti.root, "preferiti.properties"));
+			load(getInstance().preferiti, new File(SistemaPreferiti.root, "posseduti-demo.properties"));
+			load(getInstance().preferiti, new File(SistemaPreferiti.root, "posseduti-digitale.properties"));
+			load(getInstance().preferiti, new File(SistemaPreferiti.root, "posseduti-fisico.properties"));
+
+			load(getInstance().posseduti, new File(SistemaPreferiti.root, "posseduti-digitale.properties"));
+			load(getInstance().posseduti, new File(SistemaPreferiti.root, "posseduti-fisico.properties"));
+
+			for (final CoppiaUrl urlObj : getInstance().posseduti.values()) {
+				getInstance().idPosseduti.add(urlObj.getId());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public Set<String> getRicercheIds(){
+
+	public static synchronized LoadConfig getInstance() {
+		return SINGLETON;
+	}
+
+	private LoadConfig() {
+
+	}
+
+	public Set<String> getRicercheIds() {
 		final Set<String> res = Utils.createSet();
-		for(String key : this.ricerche.stringPropertyNames()) {
+		for (String key : this.ricerche.stringPropertyNames()) {
 			res.add(this.ricerche.getProperty(key));
 		}
 		return res;
 	}
-	
-	public Set<CoppiaUrl> getUrls(){
+
+	public Set<CoppiaUrl> getUrls() {
 		final Set<CoppiaUrl> urls = new HashSet<>();
-		for(final Object urlObj : this.preferiti.values()) {
-			urls.add(create(urlObj));
+		for (final CoppiaUrl urlObj : this.preferiti.values()) {
+			urls.add(urlObj);
 		}
-		for(final Object urlObj : this.posseduti.values()) {
-			urls.add(create(urlObj));
+		for (final CoppiaUrl urlObj : this.posseduti.values()) {
+			urls.add(urlObj);
 		}
 		System.err.println("Urls da analizzare " + urls.size());
 		System.err.println("Giochi posseduti " + this.posseduti.size());
 		return urls;
 	}
-	
-	private CoppiaUrl create(final Object urlObj) {
-		final String jsonUrl = this.config.getProperty("base.json.url");
-		final String targetUrl = this.config.getProperty("base.html.url");
-		final String url = urlObj.toString();
-		return new CoppiaUrl(url, url.replace(targetUrl, jsonUrl));
+
+	private static CoppiaUrl create(final String urlObj) {
+		final String[] str = urlObj.split("\\?");
+		String s = str[0].trim();
+		s = s.endsWith("/") ? s.substring(0, s.length() - 1) : s;
+		final String[] ss = s.split("/");
+		final String id = ss[ss.length - 1];
+		return getCoppia(id);
 	}
-	
+
 	public static CoppiaUrl getCoppia(String id) {
 		final String jsonUrl = getInstance().config.getProperty("base.json.url");
 		final String targetUrl = getInstance().config.getProperty("base.html.url");
-		return new CoppiaUrl(targetUrl+id, jsonUrl+id);
+		return new CoppiaUrl(id, targetUrl + id, jsonUrl + id);
 	}
 
-
-	public void checkPreferiti() throws IOException {
-		for(final Entry<Object, Object> entry : this.preferiti.entrySet()) {
+	public static void checkPreferiti(final Properties prop) throws IOException {
+		for (final Entry<Object, Object> entry : prop.entrySet()) {
 			final String key = entry.getKey().toString();
 			final String value = entry.getValue().toString();
 			if (!value.startsWith("http")) {
@@ -88,22 +96,34 @@ public class LoadConfig {
 			}
 		}
 	}
-	
-	private void load(final Properties prop, final String fileName) throws IOException {
-		final ClassLoader classLoader = getClass().getClassLoader();
-		try(final InputStream inStream = classLoader.getResourceAsStream(fileName)){
+
+	private static void load(final Properties prop, final String fileName) throws IOException {
+		final ClassLoader classLoader = LoadConfig.class.getClassLoader();
+		try (final InputStream inStream = classLoader.getResourceAsStream(fileName)) {
 			prop.load(inStream);
 		}
 	}
-	private void load(final Properties prop, final File file) throws IOException {
-		try(final InputStream inStream = FileUtils.openInputStream(file)){
+
+	private static void load(final Map<String, CoppiaUrl> urls, final File file) throws IOException {
+		final MyProperties prop = new MyProperties();
+		try (final InputStream inStream = FileUtils.openInputStream(file)) {
 			prop.load(inStream);
 		}
+		checkPreferiti(prop);
+		for (final String urlObj : prop.valuesAsString()) {
+			CoppiaUrl create = create(urlObj);
+			if (!urls.containsKey(create.getId())) {
+				urls.put(create.getId(), create);
+			} else {
+				create = urls.get(create.getId());
+			}
+			create.getFiles().add(file.getName());
+		}
 	}
-	
+
 	public static String subGenDecode(final String key) {
 		final Map<String, String> decode = Utils.createMap();
-		decode.put("RUN_AND_GUN", "Corri e Tira");
+		decode.put("RUN_AND_GUN", "Corri e Spara");
 		decode.put("STEALTH", "Action stealth");
 		decode.put("VEHICULAR_COMBAT", "Combattimento veicoli");
 		decode.put("MYSTERY", "Mistero");
@@ -143,26 +163,34 @@ public class LoadConfig {
 		decode.put("CHILDREN'S", "Per bambini");
 		return decode.containsKey(key) ? decode.get(key) : key;
 	}
-	
-	
-	private final Properties preferiti = new Properties();
-	private final Properties posseduti = new Properties();
-	private final Properties config = new Properties();
-	private final Properties ricerche = new Properties();
+
+	private final Map<String, CoppiaUrl> preferiti = Utils.createMap();
+	private final Map<String, CoppiaUrl> posseduti = Utils.createMap();
+	private final MyProperties config = new MyProperties();
+	private final MyProperties ricerche = new MyProperties();
 	private final Set<String> idPosseduti = Utils.createSet();
-	
+
 	@Data
-	public static class CoppiaUrl{
+	public static class CoppiaUrl {
+		private final List<String> files = new ArrayList<>();
+		private final String id;
 		private final String originUrl;
 		private final String jsonUrl;
-	
+
+		public CoppiaUrl(String id, String originUrl, String jsonUrl) {
+			this.id = id;
+			this.originUrl = originUrl;
+			this.jsonUrl = jsonUrl;
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((originUrl == null) ? 0 : originUrl.hashCode());
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -172,12 +200,23 @@ public class LoadConfig {
 			if (getClass() != obj.getClass())
 				return false;
 			CoppiaUrl other = (CoppiaUrl) obj;
-			if (originUrl == null) {
-				if (other.originUrl != null)
+			if (id == null) {
+				if (other.id != null)
 					return false;
-			} else if (!originUrl.equals(other.originUrl))
+			} else if (!id.equals(other.id))
 				return false;
 			return true;
+		}
+	}
+
+	@SuppressWarnings("serial")
+	private static class MyProperties extends Properties {
+		public Collection<String> valuesAsString() {
+			final List<String> list = Utils.createList();
+			for (final String key : this.stringPropertyNames()) {
+				list.add(this.getProperty(key));
+			}
+			return list;
 		}
 	}
 }
