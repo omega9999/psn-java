@@ -72,7 +72,7 @@ public class LoadConfig {
 		return urls;
 	}
 
-	private static CoppiaUrl create(final String urlObj) {
+	public static CoppiaUrl create(final String urlObj) {
 		final String[] str = urlObj.split("\\?");
 		String s = str[0].trim();
 		s = s.endsWith("/") ? s.substring(0, s.length() - 1) : s;

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 import it.home.psn.module.Connection;
+import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
 
@@ -152,9 +153,7 @@ public class SistemaPreferiti {
 	}
 
 	public CoppiaUrl getUrls(final String url) {
-		final String jsonUrl = this.config.getProperty("base.json.url");
-		final String targetUrl = this.config.getProperty("base.html.url");
-		return new CoppiaUrl(url, url.replace(targetUrl, jsonUrl));
+		return LoadConfig.create(url);
 	}
 
 	private void load(final Properties prop, final String fileName) throws IOException {
