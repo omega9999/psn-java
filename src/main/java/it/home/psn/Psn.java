@@ -25,13 +25,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import it.home.psn.Constants.Test;
 import it.home.psn.module.Connection;
@@ -81,20 +78,21 @@ public class Psn {
 		final Set<Videogame> videogames = createSet();
 		final long startTime = new Date().getTime();
 
-		final Map<String,Videogame> mappaFromFile = createMap(); 
+		final Map<String, Videogame> mappaFromFile = createMap();
 		if (Constants.TEST != Test.NO) {
-			for(final Videogame videogame : output.readEsteso()) {
+			for (final Videogame videogame : output.readEsteso()) {
 				mappaFromFile.put(videogame.getId(), videogame);
 			}
 		}
-		
-		final RelateVideogameManager manager = Constants.TEST == Test.NO ? new RelateVideogameManagerConn() : new RelateVideogameManagerFile(mappaFromFile);
-		
+
+		final RelateVideogameManager manager = Constants.TEST == Test.NO ? new RelateVideogameManagerConn()
+				: new RelateVideogameManagerFile(mappaFromFile);
+
 		if (Constants.TEST == Test.NO) {
 			this.config.getUrls().parallelStream().forEach(coppia -> {
 				addTh();
 				try {
-					final Videogame videogame = ((RelateVideogameManagerConn)manager).getVideogame(coppia);
+					final Videogame videogame = ((RelateVideogameManagerConn) manager).getVideogame(coppia);
 					if (videogame != null) {
 						videogames.add(videogame);
 					}
@@ -124,10 +122,9 @@ public class Psn {
 		final long endTime = new Date().getTime();
 
 		final int trovati = videogames.size();
-		
-		
+
 		calcolaAntenati(videogames);
-		
+
 		output.writeSerializzato(videogames);
 
 		final List<Videogame> separatore = Utils.createList();
@@ -138,21 +135,18 @@ public class Psn {
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);
-		separatore.add(fake);
-		separatore.add(fake);
-		separatore.add(fake);
 
 		final List<Videogame> videogameSorted = createList();
 		videogameSorted.addAll(videogames);
-		System.err.println("videogameSorted.size() "+videogameSorted.size());
+		System.err.println("videogameSorted.size() " + videogameSorted.size());
 		Collections.sort(videogameSorted, (a, b) -> {
 			int tmp;
 
-			tmp = a.showScreenshot().compareTo(b.showScreenshot());
+			tmp = Boolean.valueOf(a.showScreenshot()).compareTo(b.showScreenshot());
 			if (tmp != 0) {
-				return -1*tmp;
+				return -1 * tmp;
 			}
-			
+
 			tmp = a.getPosseduto().compareTo(b.getPosseduto());
 			if (tmp != 0) {
 				return tmp;
@@ -210,13 +204,14 @@ public class Psn {
 		final List<Videogame> toHtmlPreferiti = Utils.createList();
 		final List<Videogame> toHtmlSconto = Utils.createList();
 		final List<Videogame> toHtmlScontoDlc = Utils.createList();
+		Videogame videogamePrec = videogameSorted.get(0);
+		boolean firstSeparatore = false;
+		boolean secondSeparatore = false;
 		for (Videogame videogame : videogameSorted) {
 			if (!videogame.getPosseduto() && videogame.isScontato()) {
-				if (videogame.getTipo() != null
-						&& Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
+				if (isPrincipalGame(videogame)) {
 					toHtmlSconto.add(videogame);
-				}
-				else {
+				} else {
 					toHtmlScontoDlc.add(videogame);
 				}
 			}
@@ -224,10 +219,19 @@ public class Psn {
 				// output.mp4(videogame.getJson());
 			}
 			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(SOGLIA)) {
+				if (!firstSeparatore && !videogamePrec.getPosseduto() && videogame.getPosseduto()) {
+					toHtml.addAll(separatore);
+					firstSeparatore = true;
+				}
+				if (!secondSeparatore && isPrincipalGame(videogamePrec) && !isPrincipalGame(videogame)) {
+					toHtml.addAll(separatore);
+					secondSeparatore = true;
+				}
 				toHtml.add(videogame);
 			}
 			toHtmlPreferitiTmp.add(videogame);
 		}
+		toHtml.addAll(separatore);
 		toHtml.addAll(separatore);
 
 		for (Videogame videogame : videogameSorted) {
@@ -282,7 +286,7 @@ public class Psn {
 			return tmp;
 		});
 		Videogame ancestorPrec = null;
-		for(final Videogame pref : toHtmlPreferitiTmp) {
+		for (final Videogame pref : toHtmlPreferitiTmp) {
 			if (ancestorPrec != null && !ancestorPrec.equals(pref.getAntenato())) {
 				toHtmlPreferiti.add(fake);
 			}
@@ -290,9 +294,6 @@ public class Psn {
 			ancestorPrec = pref.getAntenato();
 		}
 		output.htmlPreferiti(toHtmlPreferiti);
-		
-		
-		
 
 		output.close();
 
@@ -317,6 +318,13 @@ public class Psn {
 		System.err.println("\n\n\n\nFINE");
 	}
 
+	private boolean isPrincipalGame(final Videogame videogame) {
+		if (videogame.getTipo() != null && Constants.TIPO_TOP.contains(videogame.getTipo().getName())) {
+			return true;
+		}
+		return false;
+	}
+
 	private static BigDecimal getSconto(final Videogame videogame) {
 		if (videogame.getSconto() != null && videogame.getSconto().getPrice() != null) {
 			return videogame.getSconto().getPrice();
@@ -325,28 +333,30 @@ public class Psn {
 			return videogame.getPriceFull();
 		}
 		return new BigDecimal(Long.MAX_VALUE);
-	} 
-	
-	private static final List<String> PRIORITA_ANTENATI = Arrays.asList("Gioco completo", "Gioco", "Gioco PSN", "Bundle", "Gioco PS VR","PS Now");
+	}
+
+	private static final List<String> PRIORITA_ANTENATI = Arrays.asList("Gioco completo", "Gioco", "Gioco PSN",
+			"Bundle", "Gioco PS VR", "PS Now");
+
 	private void calcolaAntenati(final Set<Videogame> videogames) {
-		
-		final Map<String,Videogame> mappa = createMap(); 
-		for(final Videogame videogame : videogames) {
+
+		final Map<String, Videogame> mappa = createMap();
+		for (final Videogame videogame : videogames) {
 			mappa.put(videogame.getId(), videogame);
 		}
-		
-		for(final Videogame videogame : videogames) {
-			for(final String id : videogame.getParentIds()) {
+
+		for (final Videogame videogame : videogames) {
+			for (final String id : videogame.getParentIds()) {
 				if (mappa.containsKey(id)) {
 					videogame.getParentsVideogame().add(mappa.get(id));
 				}
 			}
 		}
-		for(final Videogame videogame: videogames) {
+		for (final Videogame videogame : videogames) {
 			if (!videogame.getParentsVideogame().isEmpty()) {
 				final List<Videogame> list = createList();
 				list.addAll(videogame.getParentsVideogame());
-				Collections.sort(list,(a,b)->{
+				Collections.sort(list, (a, b) -> {
 					int indexA = PRIORITA_ANTENATI.indexOf(a.getTipoStr());
 					int indexB = PRIORITA_ANTENATI.indexOf(b.getTipoStr());
 					if (indexA < 0) {
@@ -358,19 +368,19 @@ public class Psn {
 					return Integer.compare(indexA, indexB);
 				});
 				videogame.setAntenato(list.get(0));
-			}
-			else {
+			} else {
 				videogame.setAntenato(videogame);
 			}
 		}
 		int isRerun = 1;
-		final Set<Pair<Videogame,Videogame>> ciclycBreak = createSet();
-		while(isRerun > 0) {
+		final Set<Pair<Videogame, Videogame>> ciclycBreak = createSet();
+		while (isRerun > 0) {
 			isRerun = 0;
-			for(final Videogame videogame: videogames) {
-				if (!videogame.getAntenato().equals(videogame.getAntenato().getAntenato()) && !videogame.getAntenato().equals(videogame)) {
+			for (final Videogame videogame : videogames) {
+				if (!videogame.getAntenato().equals(videogame.getAntenato().getAntenato())
+						&& !videogame.getAntenato().equals(videogame)) {
 					final Videogame antenato = videogame.getAntenato().getAntenato();
-					final Pair<Videogame,Videogame> pair = Pair.of(videogame,antenato);
+					final Pair<Videogame, Videogame> pair = Pair.of(videogame, antenato);
 					if (!videogame.equals(antenato) && antenato != null && !ciclycBreak.contains(pair)) {
 						ciclycBreak.add(pair);
 						videogame.setAntenato(antenato);
@@ -397,7 +407,7 @@ public class Psn {
 			videogames.parallelStream().forEach(videogame -> {
 				videogame.getOtherIds().parallelStream().forEach(id -> {
 					addTh();
-					
+
 					final Videogame check = new Videogame(id);
 					if (videogames.contains(check) || tmp.contains(check)) {
 						return;
@@ -428,8 +438,8 @@ public class Psn {
 		}
 	}
 
-	private boolean manageParent(final RelateVideogameManager manager, final Set<Videogame> videogames, final Set<Videogame> tmp, Videogame videogame,
-			final String id) {
+	private boolean manageParent(final RelateVideogameManager manager, final Set<Videogame> videogames,
+			final Set<Videogame> tmp, Videogame videogame, final String id) {
 		try {
 			final Videogame relatedVideogame = manager.getVideogame(id);
 			if (relatedVideogame != null && !videogames.contains(relatedVideogame)) {
@@ -446,25 +456,26 @@ public class Psn {
 			return false;
 		}
 	}
-	
-	private interface RelateVideogameManager{
+
+	private interface RelateVideogameManager {
 		Videogame getVideogame(final String id) throws IOException;
 	}
-	
-	private static class RelateVideogameManagerConn implements RelateVideogameManager{
+
+	private static class RelateVideogameManagerConn implements RelateVideogameManager {
 		@Override
 		public Videogame getVideogame(String id) throws IOException {
 			return getVideogame(LoadConfig.getCoppia(id));
 		}
-		
+
 		public Videogame getVideogame(CoppiaUrl coppia) throws IOException {
 			return new Connection().getVideogame(coppia);
 		}
 	}
-	
+
 	@AllArgsConstructor
-	private static class RelateVideogameManagerFile implements RelateVideogameManager{
+	private static class RelateVideogameManagerFile implements RelateVideogameManager {
 		private final Map<String, Videogame> mappaFromFile;
+
 		@Override
 		public Videogame getVideogame(String id) throws IOException {
 			return mappaFromFile.get(id);
@@ -473,9 +484,9 @@ public class Psn {
 
 	private static class Writer {
 		private final File root = new File("./z-OUTPUT");
-		private final File fileTest = new File(root,"./output.json");
-		private final File fileTestEsteso = new File(root,"./output-esteso.json");
-		private final File fileStatistics = new File(root,"./statistics.txt");
+		private final File fileTest = new File(root, "./output.json");
+		private final File fileTestEsteso = new File(root, "./output-esteso.json");
+		private final File fileStatistics = new File(root, "./statistics.txt");
 		private final String fileTestContent;
 		private final String fileTestEstesoContent;
 		private final PrintWriter outputMp4;
@@ -486,22 +497,22 @@ public class Psn {
 		private final PrintWriter outputHtmlScontoDlc;
 		private final PrintWriter statistics;
 		private final HtmlTemplate htmlTemplate;
-		
-		private final File serializzato = new File(root,"./serializzato-"+Constants.TEST+".json");
+
+		private final File serializzato = new File(root, "./serializzato-" + Constants.TEST + ".json");
 
 		private Writer() throws IOException {
 			fileTestContent = FileUtils.readFileToString(fileTest, Charset.defaultCharset());
 			fileTestEstesoContent = FileUtils.readFileToString(fileTestEsteso, Charset.defaultCharset());
 
-			new File(root,"./output.html").renameTo(new File(root,"./output-backup.html"));
+			new File(root, "./output.html").renameTo(new File(root, "./output-backup.html"));
 			htmlTemplate = new HtmlTemplate();
-			outputMp4 = new PrintWriter(new File(root,"./mp4.json"));
+			outputMp4 = new PrintWriter(new File(root, "./mp4.json"));
 			statistics = new PrintWriter(fileStatistics);
 			outputHtml = new PrintWriter(new File(root, "./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File(root, "./output-posseduti.html"));
-			outputHtmlPreferiti = new PrintWriter(new File(root,"./output-preferiti.html"));
-			outputHtmlSconto = new PrintWriter(new File(root,"./output-sconto.html"));
-			outputHtmlScontoDlc = new PrintWriter(new File(root,"./output-sconto-dlc.html"));
+			outputHtmlPreferiti = new PrintWriter(new File(root, "./output-preferiti.html"));
+			outputHtmlSconto = new PrintWriter(new File(root, "./output-sconto.html"));
+			outputHtmlScontoDlc = new PrintWriter(new File(root, "./output-sconto-dlc.html"));
 			outputMp4.println("[");
 		}
 
@@ -512,12 +523,11 @@ public class Psn {
 			outputHtmlSconto.close();
 			outputHtmlScontoDlc.close();
 			statistics.close();
-			
-			
+
 			outputMp4.println("]");
 			outputMp4.close();
 		}
-		
+
 		public void statistics(final String str) {
 			statistics.println(str);
 		}
@@ -553,19 +563,19 @@ public class Psn {
 		public List<Videogame> readEsteso() throws IOException {
 			return fromJSONArray(new JSONArray(fileTestEstesoContent));
 		}
-		
+
 		public synchronized void writeSerializzato(final Collection<Videogame> list) throws IOException {
 			final ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-			
+
 			final DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter(" ", "\n");
 			final DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
 			printer.indentObjectsWith(indenter);
 			printer.indentArraysWith(indenter);
-			
+
 			final List<Videogame> tmp = createList();
 			tmp.addAll(list);
-			Collections.sort(tmp,(a,b)->a.getId().compareTo(b.getId()));
+			Collections.sort(tmp, (a, b) -> a.getId().compareTo(b.getId()));
 			objectMapper.writer(printer).writeValue(serializzato, tmp);
 		}
 
@@ -608,7 +618,6 @@ public class Psn {
 	}
 
 	final Map<Long, Integer> threads = createMap();
-	
-	
+
 	private final LoadConfig config;
 }

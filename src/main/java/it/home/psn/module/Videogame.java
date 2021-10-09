@@ -322,7 +322,7 @@ public class Videogame implements Comparable<Videogame> {
 		return false;
 	}
 	
-	public Boolean showScreenshot() {
+	public boolean showScreenshot() {
 		return showScreenshot(Constants.TIPO_TOP);
 	}
 
