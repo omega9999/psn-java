@@ -142,15 +142,16 @@ public class Psn {
 		Collections.sort(videogameSorted, (a, b) -> {
 			int tmp;
 
-			tmp = Boolean.valueOf(a.showScreenshot()).compareTo(b.showScreenshot());
-			if (tmp != 0) {
-				return -1 * tmp;
-			}
-
 			tmp = a.getPosseduto().compareTo(b.getPosseduto());
 			if (tmp != 0) {
 				return tmp;
 			}
+
+			tmp = Boolean.valueOf(isPrincipalGame(a)).compareTo(isPrincipalGame(b));
+			if (tmp != 0) {
+				return -1 * tmp;
+			}
+
 			tmp = getSconto(a).compareTo(getSconto(b));
 			if (tmp != 0) {
 				return tmp;
