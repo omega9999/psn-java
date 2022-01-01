@@ -44,6 +44,9 @@ import it.home.psn.module.Videogame.SottoSoglia;
 import it.home.psn.module.Videogame.Tipo;
 import lombok.AllArgsConstructor;
 
+/**
+ * https://www.baeldung.com/guide-to-okhttp
+ */
 public class Psn {
 	private static final BigDecimal SOGLIA = new BigDecimal("20.00");
 
