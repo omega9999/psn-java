@@ -107,6 +107,10 @@ public class HtmlTemplate {
 				tooltip.add(entry.getKey() + ": " + String.join(", ", entry.getValue().toArray(new String[0])));
 			}
 		}
+		if (videogame.getBitmaskUrlSconti() != 0) {
+			visibile.append("[!] ");
+			tooltip.add("Bitmask url sconti: " + videogame.getBitmaskUrlSconti());
+		}
 		
 		if (!videogame.getAntenato().equals(videogame)) {
 			if (!tooltip.isEmpty()) {
@@ -206,6 +210,7 @@ public class HtmlTemplate {
 					.replace("{LINK_ORIG_REF}", videogame.getCoppia().getOriginUrl())
 					.replace("{LINK_PARENT_REF}", videogame.getParentUrl())
 					.replace("{LINK_JSON_REF}", videogame.getCoppia().getJsonUrl())
+					.replace("{LINK_PRICE_JSON_REF}", videogame.getCoppia().getPriceJsonUrl())
 					);
 		}
 		return sb.toString();

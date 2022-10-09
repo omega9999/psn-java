@@ -134,7 +134,7 @@ public class Psn {
 		final Videogame fake = new Videogame("fake");
 		fake.setPadre(fake);
 		fake.setAntenato(fake);
-		fake.setCoppia(new CoppiaUrl("", "", ""));
+		fake.setCoppia(new CoppiaUrl("", "", "", ""));
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);

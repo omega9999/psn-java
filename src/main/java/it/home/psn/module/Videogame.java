@@ -61,6 +61,9 @@ public class Videogame implements Comparable<Videogame> {
 	private final Set<Videogame> parentsVideogame = createSet();
 	@JsonIgnore
 	private Videogame antenato;
+	
+	private int bitmaskUrlSconti = 0;
+	
 	private Flag enableVr;
 	private Flag requiredVr;
 	private Flag online;

@@ -94,6 +94,55 @@ public class Utils {
 	}
 	
 	private static final List<String> PRIORITA = Arrays.asList("12", "10", "13", "14", "1", "9", "2");
+	
+	public static Videogame aggiungiPrezzi(Videogame videogame, final JSONObject response) {
+		JSONObject data = response.optJSONObject("data");
+		if (data != null) {
+			JSONObject productRetrieve = data.optJSONObject("productRetrieve");
+			if (productRetrieve != null) {
+				JSONArray webctas = productRetrieve.optJSONArray("webctas");
+				for (int index = 0; index < webctas.length(); index++) {
+					final JSONObject webcta = webctas.optJSONObject(index);
+					JSONObject price = webcta.optJSONObject("price");
+					String type = webcta.optString("type");
+					if (List.of("DOWNLOAD_TRIAL", "UPSELL_PS_PLUS_GAME_CATALOG", "UPSELL_PS_PLUS_FREE",
+							"UPSELL_PS_PLUS_CLASSIC_GAME_COLLECTION", "UPSELL_EA_ACCESS_FREE").contains(type)) {
+						// non considero questi sconti
+						continue;
+					}
+					String discountedValue = price.optString("discountedValue", null);
+					String basePriceValue = price.optString("basePriceValue", null);
+					String currencyCode = price.optString("currencyCode");
+					if (discountedValue != null && !discountedValue.equals(basePriceValue)) {
+						final Sconto sconto = new Sconto();
+						if (!StringUtils.equals("EUR", currencyCode)) {
+							videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 1));
+							double ratio = Double.valueOf(discountedValue) / Double.valueOf(basePriceValue);
+							if (String.valueOf(ratio).equalsIgnoreCase("NaN")) {
+								videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 2));
+								sconto.setPrice(BigDecimal.valueOf(-1));
+							}
+							else {
+								sconto.setPrice(videogame.getPriceFull().multiply(BigDecimal.valueOf(ratio)).divide(BigDecimal.ONE, 2, RoundingMode.HALF_DOWN));
+							}
+						}
+						else {
+							sconto.setPrice(convertPrice(Integer.valueOf(discountedValue)));
+						}
+						//sconto.setDiscount(null);
+						sconto.setDisplayPrice(price.optString("discountedPrice"));
+						//sconto.setPlus(obj.optBoolean("isPlus"));
+						//sconto.setEAAccess(obj.optBoolean("isEAAccess"));
+						videogame.getSconti().add(sconto);
+					}
+				}
+			}
+			else {
+				videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 0));
+			}
+		}
+		return videogame;
+	}
 
 	public static Videogame elaboraJson(final JSONObject response) {
 		final String id = response.optString("id");

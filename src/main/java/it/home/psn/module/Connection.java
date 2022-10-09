@@ -22,28 +22,13 @@ public class Connection {
 
 	public Videogame getVideogame(final CoppiaUrl url) throws IOException{
 		randomSleep();
-		final StringBuilder sb = new StringBuilder();
-		System.setProperty("java.net.useSystemProxies", "true");
-		final OkHttpClient client = new OkHttpClient().newBuilder()
-				.callTimeout(60, TimeUnit.SECONDS)
-				.connectTimeout(60, TimeUnit.SECONDS)
-				.readTimeout(60, TimeUnit.SECONDS)
-				.writeTimeout(60, TimeUnit.SECONDS)
-				.build();
-		
-		final Request request = new Request.Builder().url(url.getJsonUrl()).method("GET", null).build();
-		final InputStream stream = client.newCall(request).execute().body().byteStream();
-
-		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-		String line = null;
-		while ((line = br.readLine()) != null) {
-			sb.append(line + "\n");
-		}
-		br.close();
+		final String sb = getJson(url.getJsonUrl());
+		final String priceSb = getJson(url.getPriceJsonUrl());
 		try {
-			Videogame videogame = Utils.elaboraJson(new JSONObject(sb.toString()));
+			Videogame videogame = Utils.elaboraJson(new JSONObject(sb));
 			if (videogame != null) {
 				videogame.setCoppia(url);
+				Utils.aggiungiPrezzi(videogame, new JSONObject(priceSb));
 			}
 			else {
 				System.err.println("Non trovo " + url.getJsonUrl());
@@ -59,6 +44,30 @@ public class Connection {
 			}
 			return null;
 		}
+	}
+
+	private static String getJson(final String url) throws IOException {
+		final StringBuilder sb = new StringBuilder();
+		System.setProperty("java.net.useSystemProxies", "true");
+		final OkHttpClient client = new OkHttpClient().newBuilder()
+				.callTimeout(60, TimeUnit.SECONDS)
+				.connectTimeout(60, TimeUnit.SECONDS)
+				.readTimeout(60, TimeUnit.SECONDS)
+				.writeTimeout(60, TimeUnit.SECONDS)
+				.build();
+		
+		final Request request = new Request.Builder().url(url).method("GET", null)
+				.addHeader("x-psn-store-locale-override", "IT-IT")
+				.build();
+		final InputStream stream = client.newCall(request).execute().body().byteStream();
+
+		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		br.close();
+		return sb.toString();
 	}
 	
 	private static void randomSleep() throws IOException {

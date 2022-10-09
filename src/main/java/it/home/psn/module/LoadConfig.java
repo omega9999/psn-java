@@ -18,6 +18,7 @@ import it.home.psn.SistemaPreferiti;
 import it.home.psn.Utils;
 import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 public class LoadConfig {
@@ -82,9 +83,15 @@ public class LoadConfig {
 	}
 
 	public static CoppiaUrl getCoppia(String id) {
-		final String jsonUrl = getInstance().config.getProperty("base.json.url");
-		final String targetUrl = getInstance().config.getProperty("base.html.url");
-		return new CoppiaUrl(id, targetUrl + id, jsonUrl + id);
+		final String sha256Hash = getInstance().config.getProperty("sha256Hash");
+		final String jsonUrl = replace(getInstance().config.getProperty("base.json.url"), "id", id);
+		final String targetUrl = replace(getInstance().config.getProperty("base.html.url"), "id", id);
+		final String priceUrl = replace(replace(getInstance().config.getProperty("base.json.price.url"), "id", id), "sha256Hash", sha256Hash);
+		return new CoppiaUrl(id, targetUrl, jsonUrl, priceUrl);
+	}
+	
+	private static String replace(String target, String label, String value) {
+		return target.replace("{" + label + "}", value);
 	}
 
 	public static void checkPreferiti(final Properties prop) throws IOException {
@@ -171,17 +178,13 @@ public class LoadConfig {
 	private final Set<String> idPosseduti = Utils.createSet();
 
 	@Data
+	@RequiredArgsConstructor
 	public static class CoppiaUrl {
 		private final List<String> files = new ArrayList<>();
 		private final String id;
 		private final String originUrl;
 		private final String jsonUrl;
-
-		public CoppiaUrl(String id, String originUrl, String jsonUrl) {
-			this.id = id;
-			this.originUrl = originUrl;
-			this.jsonUrl = jsonUrl;
-		}
+		private final String priceJsonUrl;
 
 		@Override
 		public int hashCode() {
