@@ -62,6 +62,9 @@ public class HtmlTemplate {
 			else if (videogame.getVoices().contains("en")) {
 				visibile.append("[vEN] ");
 			}
+			else if (videogame.getVoices().contains("ja")) {
+				visibile.append("[vJA] ");
+			}
 			else {
 				visibile.append("[vOT] ");
 			}

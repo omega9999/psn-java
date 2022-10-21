@@ -27,7 +27,9 @@ import it.home.psn.module.Videogame.TypeData;
 import it.home.psn.module.Videogame.Video;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 	public static <T> Set<T> createSet() {
@@ -149,7 +151,7 @@ public class Utils {
 		final String name = response.optString("name");
 		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(name)) {
 			if (Constants.DEBUG) {
-				System.err.println(response);
+				log.error(response);
 			}
 			return null;
 		}
@@ -353,7 +355,7 @@ public class Utils {
 					videogame.getParentUrls().add(LoadConfig.getCoppia(relatedId).getOriginUrl());
 				} else {
 					if (Constants.DEBUG) {
-						System.err.println(obj);
+						log.error(obj);
 					}
 				}
 			}
@@ -370,7 +372,7 @@ public class Utils {
 					videogame.getOtherIds().add(relatedId);
 				} else {
 					if (Constants.DEBUG) {
-						System.err.println(obj);
+						log.error(obj);
 					}
 				}
 			}

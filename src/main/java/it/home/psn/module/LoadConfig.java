@@ -19,7 +19,9 @@ import it.home.psn.Utils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Getter
 public class LoadConfig {
 
@@ -68,8 +70,8 @@ public class LoadConfig {
 		for (final CoppiaUrl urlObj : this.posseduti.values()) {
 			urls.add(urlObj);
 		}
-		System.err.println("Urls da analizzare " + urls.size());
-		System.err.println("Giochi posseduti " + this.posseduti.size());
+		log.info("Urls da analizzare " + urls.size());
+		log.info("Giochi posseduti " + this.posseduti.size());
 		return urls;
 	}
 
@@ -87,10 +89,11 @@ public class LoadConfig {
 		final String jsonUrl = replace(getInstance().config.getProperty("base.json.url"), "id", id);
 		final String targetUrl = replace(getInstance().config.getProperty("base.html.url"), "id", id);
 		final String priceUrl = replace(replace(getInstance().config.getProperty("base.json.price.url"), "id", id), "sha256Hash", sha256Hash);
-		return new CoppiaUrl(id, targetUrl, jsonUrl, priceUrl);
+		final String addictionalUrl = replace(replace(getInstance().config.getProperty("base.json.addictional.url"), "id", id), "sha256Hash", sha256Hash);
+		return new CoppiaUrl(id, targetUrl, jsonUrl, priceUrl, addictionalUrl);
 	}
 	
-	private static String replace(String target, String label, String value) {
+	public static String replace(String target, String label, String value) {
 		return target.replace("{" + label + "}", value);
 	}
 
@@ -185,6 +188,7 @@ public class LoadConfig {
 		private final String originUrl;
 		private final String jsonUrl;
 		private final String priceJsonUrl;
+		private final String addictionalJsonUrl;
 
 		@Override
 		public int hashCode() {
@@ -213,7 +217,7 @@ public class LoadConfig {
 	}
 
 	@SuppressWarnings("serial")
-	private static class MyProperties extends Properties {
+	public static class MyProperties extends Properties {
 		public Collection<String> valuesAsString() {
 			final List<String> list = Utils.createList();
 			for (final String key : this.stringPropertyNames()) {

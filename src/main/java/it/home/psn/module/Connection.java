@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -13,11 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.home.psn.Constants;
+import it.home.psn.SistemaPreferiti;
 import it.home.psn.Utils;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
+@Log4j
+@RequiredArgsConstructor
 public class Connection {
 
 	public Videogame getVideogame(final CoppiaUrl url) throws IOException{
@@ -29,18 +35,21 @@ public class Connection {
 			if (videogame != null) {
 				videogame.setCoppia(url);
 				Utils.aggiungiPrezzi(videogame, new JSONObject(priceSb));
+				idErrori.remove(url.getId());
 			}
 			else {
-				System.err.println("Non trovo " + url.getJsonUrl());
+				idErrori.add(url.getId());
+				log.error("Non trovo " + url.getJsonUrl());
 			}
 			return videogame;
 		}
 		catch (JSONException e) {
+			idErrori.add(url.getId());
 			if (Constants.DEBUG) {
-				System.err.println("\n-----------------");
-				System.err.println(url.getOriginUrl());
-				System.err.println(url.getJsonUrl());
-				System.err.println(e.getMessage() + "\n" + sb.toString()+"\n-----------------");
+				log.error("\n-----------------");
+				log.error(url.getOriginUrl());
+				log.error(url.getJsonUrl());
+				log.error(e.getMessage() + "\n" + sb.toString()+"\n-----------------");
 			}
 			return null;
 		}
@@ -97,12 +106,14 @@ public class Connection {
 		}
 		catch (JSONException e) {
 			if (Constants.DEBUG) {
-				System.err.println("\n-----------------");
-				System.err.println(url);
-				System.err.println(e.getMessage() + "\n" + sb.toString());
-				System.err.println("\n-----------------");
+				log.error("\n-----------------");
+				log.error(url);
+				log.error(e.getMessage() + "\n" + sb.toString());
+				log.error("\n-----------------");
 			}
 			return null;
 		}
 	}
+	
+	private final Set<String> idErrori;
 }

@@ -1,15 +1,9 @@
 package it.home.psn;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import static it.home.psn.Utils.createSet;
+
+import java.io.*;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,7 +13,10 @@ import it.home.psn.module.Connection;
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
+import lombok.extern.log4j.Log4j;
 
+
+@Log4j
 public class SistemaPreferiti {
 
 	public static final File root = new File("./preferiti/");
@@ -33,7 +30,8 @@ public class SistemaPreferiti {
 	
 	public static void main(String[] args) throws IOException {
 		for(String fileName : FILES) {
-			new SistemaPreferiti(new File(root,fileName));
+			SistemaPreferiti s = new SistemaPreferiti(new File(root,fileName));
+			s.connection.remove();
 		}
 	}
 	
@@ -75,7 +73,7 @@ public class SistemaPreferiti {
 		});
 		
 		File temp = File.createTempFile(file.getName(), ".properties");
-		System.err.println(temp.getAbsolutePath());
+		log.info(temp.getAbsolutePath());
 		PrintWriter out = new PrintWriter(temp);
 		
 		for(String str : listDistinct) {
@@ -89,7 +87,7 @@ public class SistemaPreferiti {
 		
 		FileUtils.copyFile(temp, file);
 		
-		System.err.println("FINE " + file);
+		log.info("FINE " + file);
 	}
 
 
@@ -135,7 +133,7 @@ public class SistemaPreferiti {
 
 	private String trasforma(String line) throws IOException {
 		final CoppiaUrl coppia = getUrls(line);
-		final Videogame videogame = new Connection().getVideogame(coppia);
+		final Videogame videogame = connection.get().getVideogame(coppia);
 		return videogame != null ? trasformaNome(videogame)+"="+line : "# "+line;
 	}
 
@@ -161,6 +159,8 @@ public class SistemaPreferiti {
 		prop.load(inStream);
 	}
 
+	private final Set<String> idErrori = createSet();
+	private final ThreadLocal<Connection> connection = ThreadLocal.withInitial(() -> new Connection(idErrori));
 	private final ClassLoader classLoader = getClass().getClassLoader();
 	private final Properties config = new Properties();
 }

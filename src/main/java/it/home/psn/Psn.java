@@ -5,12 +5,10 @@ import static it.home.psn.Utils.createList;
 import static it.home.psn.Utils.createMap;
 import static it.home.psn.Utils.createSet;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -43,20 +42,26 @@ import it.home.psn.module.Videogame.Screenshot;
 import it.home.psn.module.Videogame.SottoSoglia;
 import it.home.psn.module.Videogame.Tipo;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * https://www.baeldung.com/guide-to-okhttp
  */
+@Log4j
 public class Psn {
 	private static final BigDecimal SOGLIA = new BigDecimal("20.00");
 
 	public static void main(String[] args) throws Exception {
-		System.err.println("Inizio");
+		log.info("Inizio");
 		final Psn psn = new Psn();
 		psn.preferitiInSconto();
 		// psn.elenco();
 		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-		System.err.println("Fine");
+		psn.connection.remove();
+		log.info("Fine");
 	}
 
 	public Psn() {
@@ -77,7 +82,6 @@ public class Psn {
 		// String.valueOf(3 - 1));
 
 		Writer output = new Writer();
-
 		final Set<Videogame> videogames = createSet();
 		final long startTime = new Date().getTime();
 
@@ -88,7 +92,7 @@ public class Psn {
 			}
 		}
 
-		final RelateVideogameManager manager = Constants.TEST == Test.NO ? new RelateVideogameManagerConn()
+		final RelateVideogameManager manager = Constants.TEST == Test.NO ? new RelateVideogameManagerConn(connection)
 				: new RelateVideogameManagerFile(mappaFromFile);
 
 		if (Constants.TEST == Test.NO) {
@@ -100,11 +104,12 @@ public class Psn {
 						videogames.add(videogame);
 					}
 				} catch (IOException e) {
-					System.err.println("\n-----------------");
-					System.err.println("Problemi di connessione " + e.getMessage() + " " + e.getClass());
-					System.err.println(coppia.getOriginUrl());
-					System.err.println(coppia.getJsonUrl());
-					System.err.println("\n-----------------");
+					idErrori.add(coppia.getId());
+					log.error("\n-----------------");
+					log.error("Problemi di connessione " + e.getMessage() + " " + e.getClass());
+					log.error(coppia.getOriginUrl());
+					log.error(coppia.getJsonUrl());
+					log.error("\n-----------------");
 				}
 			});
 		} else {
@@ -134,14 +139,14 @@ public class Psn {
 		final Videogame fake = new Videogame("fake");
 		fake.setPadre(fake);
 		fake.setAntenato(fake);
-		fake.setCoppia(new CoppiaUrl("", "", "", ""));
+		fake.setCoppia(new CoppiaUrl("", "", "", "", ""));
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);
 
 		final List<Videogame> videogameSorted = createList();
 		videogameSorted.addAll(videogames);
-		System.err.println("videogameSorted.size() " + videogameSorted.size());
+		log.info("videogameSorted.size() " + videogameSorted.size());
 		Collections.sort(videogameSorted, (a, b) -> {
 			int tmp;
 
@@ -256,7 +261,7 @@ public class Psn {
 		Collections.sort(toHtmlScontoDlc, (a, b) -> -1 * a.getScontoPerc().compareTo(b.getScontoPerc()));
 		output.htmlScontoDlc(toHtmlScontoDlc);
 
-		System.err.println("videogameSorted " + videogameSorted.size() + " toHtmlPosseduti " + toHtmlPosseduti.size());
+		log.info("videogameSorted " + videogameSorted.size() + " toHtmlPosseduti " + toHtmlPosseduti.size());
 
 		output.html(toHtml);
 
@@ -299,8 +304,17 @@ public class Psn {
 		}
 		output.htmlPreferiti(toHtmlPreferiti);
 
-		output.close();
 
+		idErrori.forEach(id -> {
+			output.errori(id);
+			try {
+				String response = getAddictionalJson(id, output.erroriJsonResponse);
+			}
+			catch(Exception e) {
+				System.err.println("Id errori " + id);
+				e.printStackTrace();
+			}
+		});
 		// write statistics
 		output.statistics("Trovati mid " + trovatiMid);
 		output.statistics("Trovati " + trovati);
@@ -319,7 +333,39 @@ public class Psn {
 		output.statistics("Unknown metadata: " + unKnownMetadata);
 		output.statistics("esempi di immagini:" + genericDataSubTypeUrl);
 
-		System.err.println("\n\n\n\nFINE");
+		output.close();
+
+		log.info("\n\n\n\nFINE");
+	}
+	
+	private static String getAddictionalJson(final String id, PrintWriter erroriJsonResponse) throws IOException {
+		final String sha256Hash = LoadConfig.getInstance().getConfig().getProperty("sha256Hash");
+		final String addictionalUrl = LoadConfig.replace(LoadConfig.replace(LoadConfig.getInstance().getConfig().getProperty("base.json.addictional.url"), "id", id), "sha256Hash", sha256Hash);
+		final StringBuilder sb = new StringBuilder();
+		System.setProperty("java.net.useSystemProxies", "true");
+		final OkHttpClient client = new OkHttpClient().newBuilder()
+				.callTimeout(60, TimeUnit.SECONDS)
+				.connectTimeout(60, TimeUnit.SECONDS)
+				.readTimeout(60, TimeUnit.SECONDS)
+				.writeTimeout(60, TimeUnit.SECONDS)
+				.build();
+		
+		final Request request = new Request.Builder().url(addictionalUrl).method("GET", null)
+				.addHeader("x-psn-store-locale-override", "IT-IT")
+				.build();
+		final InputStream stream = client.newCall(request).execute().body().byteStream();
+
+		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		br.close();
+		String response = sb.toString();
+		erroriJsonResponse.println(id);
+		erroriJsonResponse.println(addictionalUrl);
+		erroriJsonResponse.println(response);
+		return response;
 	}
 
 	private boolean isPrincipalGame(final Videogame videogame) {
@@ -404,7 +450,7 @@ public class Psn {
 				contatore += videogame.getOtherIds().size();
 			}
 			if (Constants.DEBUG) {
-				System.err.println("videogames size list " + videogames.size() + " other ids " + contatore);
+				log.info("videogames size list " + videogames.size() + " other ids " + contatore);
 			}
 			final Set<Videogame> tmp = createSet();
 			final List<Videogame> errors = createList();
@@ -429,7 +475,7 @@ public class Psn {
 					if (videogames.contains(check) || tmp.contains(check)) {
 						continue;
 					}
-					System.err.println("Ripeto estrazione di " + target.getId());
+					log.warn("Ripeto estrazione di " + target.getId());
 					boolean isOk = manageParent(manager, videogames, tmp, target, target.getId());
 					if (!isOk) {
 						errors.add(target);
@@ -452,11 +498,13 @@ public class Psn {
 			}
 			return true;
 		} catch (IOException e) {
-			System.err.println("\n-----------------");
-			System.err.println(LoadConfig.getCoppia(id).getOriginUrl());
-			System.err.println(LoadConfig.getCoppia(id).getJsonUrl());
-			System.err.println("line 382 Psn " + e.getClass().getSimpleName() + " : " + e.getMessage());
-			System.err.println("\n-----------------");
+			CoppiaUrl coppia = LoadConfig.getCoppia(id);
+			idErrori.add(coppia.getId());
+			log.error("\n-----------------");
+			log.error(coppia.getOriginUrl());
+			log.error(coppia.getJsonUrl());
+			log.error(e.getClass().getSimpleName() + " : " + e.getMessage());
+			log.error("\n-----------------");
 			return false;
 		}
 	}
@@ -465,6 +513,7 @@ public class Psn {
 		Videogame getVideogame(final String id) throws IOException;
 	}
 
+	@RequiredArgsConstructor
 	private static class RelateVideogameManagerConn implements RelateVideogameManager {
 		@Override
 		public Videogame getVideogame(String id) throws IOException {
@@ -472,11 +521,12 @@ public class Psn {
 		}
 
 		public Videogame getVideogame(CoppiaUrl coppia) throws IOException {
-			return new Connection().getVideogame(coppia);
+			return connection.get().getVideogame(coppia);
 		}
+		private final ThreadLocal<Connection> connection;
 	}
 
-	@AllArgsConstructor
+	@RequiredArgsConstructor
 	private static class RelateVideogameManagerFile implements RelateVideogameManager {
 		private final Map<String, Videogame> mappaFromFile;
 
@@ -490,7 +540,6 @@ public class Psn {
 		private final File root = new File("./z-OUTPUT");
 		private final File fileTest = new File(root, "./output.json");
 		private final File fileTestEsteso = new File(root, "./output-esteso.json");
-		private final File fileStatistics = new File(root, "./statistics.txt");
 		private final String fileTestContent;
 		private final String fileTestEstesoContent;
 		private final PrintWriter outputMp4;
@@ -500,6 +549,8 @@ public class Psn {
 		private final PrintWriter outputHtmlSconto;
 		private final PrintWriter outputHtmlScontoDlc;
 		private final PrintWriter statistics;
+		private final PrintWriter errori;
+		private final PrintWriter erroriJsonResponse;
 		private final HtmlTemplate htmlTemplate;
 
 		private final File serializzato = new File(root, "./serializzato-" + Constants.TEST + ".json");
@@ -511,7 +562,9 @@ public class Psn {
 			new File(root, "./output.html").renameTo(new File(root, "./output-backup.html"));
 			htmlTemplate = new HtmlTemplate();
 			outputMp4 = new PrintWriter(new File(root, "./mp4.json"));
-			statistics = new PrintWriter(fileStatistics);
+			statistics = new PrintWriter(new File(root, "./statistics.txt"));
+			errori = new PrintWriter(new File(root, "./errori.txt"));
+			erroriJsonResponse = new PrintWriter(new File(root, "./errori-response.json"));
 			outputHtml = new PrintWriter(new File(root, "./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File(root, "./output-posseduti.html"));
 			outputHtmlPreferiti = new PrintWriter(new File(root, "./output-preferiti.html"));
@@ -527,9 +580,14 @@ public class Psn {
 			outputHtmlSconto.close();
 			outputHtmlScontoDlc.close();
 			statistics.close();
-
+			errori.close();
+			erroriJsonResponse.close();
 			outputMp4.println("]");
 			outputMp4.close();
+		}
+
+		public void errori(final String str) {
+			errori.println(str);
 		}
 
 		public void statistics(final String str) {
@@ -588,7 +646,7 @@ public class Psn {
 
 			output.print(toJSONArray(list).toString());
 			output.close();
-			System.err.println("Scritto e chiuso file di test json");
+			log.info("Scritto e chiuso file di test json");
 		}
 
 		public synchronized void writeCloseEsteso(final Collection<Videogame> list) throws FileNotFoundException {
@@ -596,7 +654,7 @@ public class Psn {
 
 			outputEsteso.print(toJSONArray(list).toString());
 			outputEsteso.close();
-			System.err.println("Scritto e chiuso file di test esteso json");
+			log.info("Scritto e chiuso file di test esteso json");
 		}
 
 		private static synchronized JSONArray toJSONArray(final Collection<Videogame> list) {
@@ -621,7 +679,8 @@ public class Psn {
 
 	}
 
-	final Map<Long, Integer> threads = createMap();
-
+	private final Map<Long, Integer> threads = createMap();
+	private final Set<String> idErrori = createSet();
+	private final ThreadLocal<Connection> connection = ThreadLocal.withInitial(() -> new Connection(idErrori));
 	private final LoadConfig config;
 }
