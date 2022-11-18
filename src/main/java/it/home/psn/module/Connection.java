@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,6 +36,11 @@ public class Connection {
 			if (videogame != null) {
 				videogame.setCoppia(url);
 				Utils.aggiungiPrezzi(videogame, new JSONObject(priceSb));
+				Utils.aggiungiPrezziExt(videogame, new JSONObject(getJson(url.getAddictionalJsonUrl())));
+				String urlStr = url.getImageJsonUrl(videogame);
+				if (StringUtils.isNotBlank(urlStr)) {
+					Utils.aggiungiImmagini(videogame, new JSONObject(getJson(urlStr)));
+				}
 				idErrori.remove(url.getId());
 			}
 			else {

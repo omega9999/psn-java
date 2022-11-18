@@ -19,9 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.home.psn.Constants;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 public class Videogame implements Comparable<Videogame> {
@@ -31,6 +29,8 @@ public class Videogame implements Comparable<Videogame> {
 
 	private final String id;
 	private String name = "";
+	
+	private String conceptId;
 
 	@JsonIgnore
 	private String json = "";
@@ -62,7 +62,12 @@ public class Videogame implements Comparable<Videogame> {
 	@JsonIgnore
 	private Videogame antenato;
 	
-	private int bitmaskUrlSconti = 0;
+	@Setter(value = AccessLevel.PRIVATE)
+	private int bitmaskProblemi = 0;
+	
+	public void setBitmaskProblemi(Problema value) {
+		this.bitmaskProblemi = this.bitmaskProblemi | (0x1 << value.getBit());
+	}
 	
 	private Flag enableVr;
 	private Flag requiredVr;
@@ -604,6 +609,20 @@ public class Videogame implements Comparable<Videogame> {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	@Getter
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	public enum Problema{
+		PRODUCT_RETRIEVE_NULLO(0),
+		SCONTO_NON_EUR(1),
+		RATIO_SCONTO_NAN(2),
+		CONCEPT_ID_NULLO(3),
+		IMMAGINI_AGGIUNTIVE_ERRORE(4),
+		PREZZO_AGGIUNTIVO_ERRORE(5),
+		;
+		
+		private final int bit;
 	}
 
 }

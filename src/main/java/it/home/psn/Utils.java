@@ -1,13 +1,9 @@
 package it.home.psn;
+import static it.home.psn.module.Videogame.Problema.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,14 +13,7 @@ import org.json.JSONObject;
 
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.Videogame;
-import it.home.psn.module.Videogame.Flag;
-import it.home.psn.module.Videogame.Genere;
-import it.home.psn.module.Videogame.Preview;
-import it.home.psn.module.Videogame.Sconto;
-import it.home.psn.module.Videogame.Screenshot;
-import it.home.psn.module.Videogame.Tipo;
-import it.home.psn.module.Videogame.TypeData;
-import it.home.psn.module.Videogame.Video;
+import it.home.psn.module.Videogame.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -102,6 +91,13 @@ public class Utils {
 		if (data != null) {
 			JSONObject productRetrieve = data.optJSONObject("productRetrieve");
 			if (productRetrieve != null) {
+				JSONObject concept = productRetrieve.optJSONObject("concept");
+				if (concept != null) {
+					videogame.setConceptId(concept.optString("id"));
+				}
+				if (videogame.getConceptId() == null) {
+					videogame.setBitmaskProblemi(CONCEPT_ID_NULLO);
+				}
 				JSONArray webctas = productRetrieve.optJSONArray("webctas");
 				for (int index = 0; index < webctas.length(); index++) {
 					final JSONObject webcta = webctas.optJSONObject(index);
@@ -118,10 +114,10 @@ public class Utils {
 					if (discountedValue != null && !discountedValue.equals(basePriceValue)) {
 						final Sconto sconto = new Sconto();
 						if (!StringUtils.equals("EUR", currencyCode)) {
-							videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 1));
+							videogame.setBitmaskProblemi(SCONTO_NON_EUR);
 							double ratio = Double.valueOf(discountedValue) / Double.valueOf(basePriceValue);
 							if (String.valueOf(ratio).equalsIgnoreCase("NaN")) {
-								videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 2));
+								videogame.setBitmaskProblemi(RATIO_SCONTO_NAN);
 								sconto.setPrice(BigDecimal.valueOf(-1));
 							}
 							else {
@@ -140,10 +136,84 @@ public class Utils {
 				}
 			}
 			else {
-				videogame.setBitmaskUrlSconti(videogame.getBitmaskUrlSconti() | (0x1 << 0));
+				videogame.setBitmaskProblemi(PRODUCT_RETRIEVE_NULLO);
 			}
 		}
 		return videogame;
+	}
+	
+	public static void aggiungiImmagini(Videogame videogame, JSONObject response) {
+		if (response == null || response.optJSONObject("errors") != null) {
+			videogame.setBitmaskProblemi(IMMAGINI_AGGIUNTIVE_ERRORE);
+		}
+		JSONObject data = response.optJSONObject("data");
+		if (data != null) {
+			JSONObject conceptRetrieve = data.optJSONObject("conceptRetrieve");
+			if (conceptRetrieve != null) {
+				
+				setMedias(videogame, "media", conceptRetrieve.optJSONArray("media"));
+				JSONArray products = conceptRetrieve.optJSONArray("products");
+				if (products != null) {
+					for (int index = 0; index < products.length(); index++) {
+						final JSONObject product = products.optJSONObject(index);
+						setMedias(videogame, "product-media",  product.optJSONArray("media"));
+					}
+				}
+			}
+		}
+		
+		
+	}
+
+	private static void setMedias(Videogame videogame, final String prefix, JSONArray medias) {
+		if (medias != null) {
+			for (int index = 0; index < medias.length(); index++) {
+				final JSONObject media = medias.optJSONObject(index);
+				setMedia(videogame, prefix, media);
+			}
+		}
+	}
+
+	private static void setMedia(Videogame videogame, final String prefix, final JSONObject media) {
+		String role = media.optString("role");
+		String type = media.optString("type");
+		String url = media.optString("url");
+		
+		switch (type) {
+		case "VIDEO":
+			Video video = new Video();
+			video.setType(prefix + "-" + role);
+			video.setUrl(url);
+			videogame.getVideos().add(video);
+			break;
+
+		default:
+			if ("SCREENSHOT".equalsIgnoreCase(role)) {
+				Screenshot image = new Screenshot();
+				image.setType(prefix + "-" + type + "-" + role);
+				image.setUrl(url);
+				//image.setTypeData(TypeData.IMAGE);
+				//image.setSubTypeData(String.valueOf(type));
+				videogame.getScreenshots().add(image);
+			}
+			else {
+				Preview image = new Preview();
+				image.setType(prefix + "-" + type + "-" + role);
+				image.setUrl(url);
+				//image.setTypeData(TypeData.IMAGE);
+				//image.setSubTypeData(String.valueOf(type));
+				videogame.getPreviews().add(image);
+			}
+			break;
+		}
+	}
+	
+	public static void aggiungiPrezziExt(Videogame videogame, JSONObject response) {
+		if (response == null || response.optJSONObject("errors") != null) {
+			videogame.setBitmaskProblemi(PREZZO_AGGIUNTIVO_ERRORE);
+		}
+		// TODO Auto-generated method stub ???
+		
 	}
 
 	public static Videogame elaboraJson(final JSONObject response) {
@@ -469,5 +539,6 @@ public class Utils {
 	private static BigDecimal convertPrice(final int price) {
 		return new BigDecimal(price).divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
 	}
+
 
 }

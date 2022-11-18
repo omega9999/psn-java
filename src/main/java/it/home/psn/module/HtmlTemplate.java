@@ -110,9 +110,9 @@ public class HtmlTemplate {
 				tooltip.add(entry.getKey() + ": " + String.join(", ", entry.getValue().toArray(new String[0])));
 			}
 		}
-		if (videogame.getBitmaskUrlSconti() != 0) {
+		if (videogame.getBitmaskProblemi() != 0) {
 			visibile.append("[!] ");
-			tooltip.add("Bitmask url sconti: " + videogame.getBitmaskUrlSconti());
+			tooltip.add("Bitmask url sconti: " + videogame.getBitmaskProblemi());
 		}
 		
 		if (!videogame.getAntenato().equals(videogame)) {
@@ -214,6 +214,8 @@ public class HtmlTemplate {
 					.replace("{LINK_PARENT_REF}", videogame.getParentUrl())
 					.replace("{LINK_JSON_REF}", videogame.getCoppia().getJsonUrl())
 					.replace("{LINK_PRICE_JSON_REF}", videogame.getCoppia().getPriceJsonUrl())
+					.replace("{LINK_AD_PRICE_JSON_REF}", videogame.getCoppia().getAddictionalJsonUrl())
+					.replace("{LINK_IMAGE_JSON_REF}", videogame.getCoppia().getImageJsonUrl(videogame))
 					);
 		}
 		return sb.toString();

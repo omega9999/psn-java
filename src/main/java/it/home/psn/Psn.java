@@ -35,12 +35,7 @@ import it.home.psn.module.HtmlTemplate;
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
-import it.home.psn.module.Videogame.AbstractUrl;
-import it.home.psn.module.Videogame.Genere;
-import it.home.psn.module.Videogame.Preview;
-import it.home.psn.module.Videogame.Screenshot;
-import it.home.psn.module.Videogame.SottoSoglia;
-import it.home.psn.module.Videogame.Tipo;
+import it.home.psn.module.Videogame.*;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -139,7 +134,7 @@ public class Psn {
 		final Videogame fake = new Videogame("fake");
 		fake.setPadre(fake);
 		fake.setAntenato(fake);
-		fake.setCoppia(new CoppiaUrl("", "", "", "", ""));
+		fake.setCoppia(new CoppiaUrl("", "", "", "", "", ""));
 		separatore.add(fake);
 		separatore.add(fake);
 		separatore.add(fake);
@@ -173,6 +168,7 @@ public class Psn {
 		final Map<String, Integer> subgenere = createMap();
 		final Map<String, Integer> screenshot = createMap();
 		final Map<String, Integer> preview = createMap();
+		final Map<String, Integer> videos = createMap();
 		final Map<String, Integer> genericDataType = createMap();
 		final Map<String, Integer> genericDataSubType = createMap();
 		final Map<String, String> genericDataSubTypeUrl = createMap();
@@ -191,6 +187,9 @@ public class Psn {
 			}
 			for (Preview t : videogame.getPreviews()) {
 				add(preview, t.getType());
+			}
+			for (Video t : videogame.getVideos()) {
+				add(videos, t.getType()+"");
 			}
 			for (String t : videogame.getUnKnownMetadata()) {
 				add(unKnownMetadata, t);
@@ -339,8 +338,8 @@ public class Psn {
 	}
 	
 	private static String getAddictionalJson(final String id, PrintWriter erroriJsonResponse) throws IOException {
-		final String sha256Hash = LoadConfig.getInstance().getConfig().getProperty("sha256Hash");
-		final String addictionalUrl = LoadConfig.replace(LoadConfig.replace(LoadConfig.getInstance().getConfig().getProperty("base.json.addictional.url"), "id", id), "sha256Hash", sha256Hash);
+		final String sha256Hash = LoadConfig.getInstance().getConfig().getProperty("sha256Hash2");
+		final String addictionalUrl = LoadConfig.replace(LoadConfig.replace(LoadConfig.getInstance().getConfig().getProperty("base.json.addictional-price.url"), "id", id), "sha256Hash2", sha256Hash);
 		final StringBuilder sb = new StringBuilder();
 		System.setProperty("java.net.useSystemProxies", "true");
 		final OkHttpClient client = new OkHttpClient().newBuilder()

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 
 import it.home.psn.SistemaPreferiti;
 import it.home.psn.Utils;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -85,12 +86,15 @@ public class LoadConfig {
 	}
 
 	public static CoppiaUrl getCoppia(String id) {
-		final String sha256Hash = getInstance().config.getProperty("sha256Hash");
+		final String sha256Hash1 = getInstance().config.getProperty("sha256Hash1");
+		final String sha256Hash2 = getInstance().config.getProperty("sha256Hash2");
+		final String sha256Hash3 = getInstance().config.getProperty("sha256Hash3");
 		final String jsonUrl = replace(getInstance().config.getProperty("base.json.url"), "id", id);
 		final String targetUrl = replace(getInstance().config.getProperty("base.html.url"), "id", id);
-		final String priceUrl = replace(replace(getInstance().config.getProperty("base.json.price.url"), "id", id), "sha256Hash", sha256Hash);
-		final String addictionalUrl = replace(replace(getInstance().config.getProperty("base.json.addictional.url"), "id", id), "sha256Hash", sha256Hash);
-		return new CoppiaUrl(id, targetUrl, jsonUrl, priceUrl, addictionalUrl);
+		final String priceUrl = replace(replace(getInstance().config.getProperty("base.json.price.url"), "id", id), "sha256Hash1", sha256Hash1);
+		final String addictionalUrl = replace(replace(getInstance().config.getProperty("base.json.addictional-price.url"), "id", id), "sha256Hash2", sha256Hash2);
+		final String imageUrl = replace(replace(getInstance().config.getProperty("base.json.addictional-image.url"), "id", id), "sha256Hash3", sha256Hash3);
+		return new CoppiaUrl(id, targetUrl, jsonUrl, priceUrl, addictionalUrl, imageUrl);
 	}
 	
 	public static String replace(String target, String label, String value) {
@@ -189,6 +193,15 @@ public class LoadConfig {
 		private final String jsonUrl;
 		private final String priceJsonUrl;
 		private final String addictionalJsonUrl;
+		@Getter(value = AccessLevel.PRIVATE)
+		private final String imageJsonUrl;
+		
+		public String getImageJsonUrl(Videogame videogame) {
+			if (videogame != null && videogame.getConceptId() != null) {
+				return imageJsonUrl.replace("{conceptId}", videogame.getConceptId());
+			}
+			return "";
+		}
 
 		@Override
 		public int hashCode() {
