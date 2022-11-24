@@ -31,6 +31,14 @@ public class LoadConfig {
 		try {
 			load(getInstance().config, "config.properties");
 			load(getInstance().ricerche, "ricerche.properties");
+			
+			loadProp(getInstance().gameGenre, "decode/game_genre.properties");
+			loadProp(getInstance().gameSubgenre, "decode/game_subgenre.properties");
+			loadProp(getInstance().primaryClassification, "decode/primary_classification.properties");
+			loadProp(getInstance().secondaryClassification, "decode/secondary_classification.properties");
+			loadProp(getInstance().tertiaryClassification, "decode/tertiary_classification.properties");
+			
+			
 			load(getInstance().preferiti, new File(SistemaPreferiti.root, "preferiti.properties"));
 			load(getInstance().preferiti, new File(SistemaPreferiti.root, "posseduti-demo.properties"));
 			load(getInstance().preferiti, new File(SistemaPreferiti.root, "posseduti-digitale.properties"));
@@ -134,48 +142,34 @@ public class LoadConfig {
 			create.getFiles().add(file.getName());
 		}
 	}
+	
+	private static void loadProp(final Map<String, String> map, final String fileName) throws IOException {
+		Properties prop = new Properties();
+		final ClassLoader classLoader = LoadConfig.class.getClassLoader();
+		try (final InputStream inStream = classLoader.getResourceAsStream(fileName)) {
+			prop.load(inStream);
+		}
+		prop.entrySet().forEach(row -> map.put(row.getKey().toString(), row.getValue().toString()));
+	}
 
-	public static String subGenDecode(final String key) {
-		final Map<String, String> decode = Utils.createMap();
-		decode.put("RUN_AND_GUN", "Corri e Spara");
-		decode.put("STEALTH", "Action stealth");
-		decode.put("VEHICULAR_COMBAT", "Combattimento veicoli");
-		decode.put("MYSTERY", "Mistero");
-		decode.put("GRAPHIC_ADVENTURE", "Avventura grafica");
-		decode.put("BASEBALL", "Baseball");
-		decode.put("SOCCER", "Calcio");
-		decode.put("PHYSICS_GAME", "Gioco di fisica");
-		decode.put("TURN_BASED_STRATEGY", "Strategia a turni");
-		decode.put("TACTICAL", "Tattico");
-		decode.put("2D_FIGHTING", "Combattimento 2D");
-		decode.put("THIRD_PERSON_SHOOTER", "Sparatutto in 3^ pers.");
-		decode.put("PLATFORMER", "Piattaforme");
-		decode.put("DUNGEON_CRAWLER", "GDR dungeon crawler");
-		decode.put("DANCE", "Danza");
-		decode.put("REAL_TIME_STRATEGY", "Strategia in tempo reale");
-		decode.put("SHOOT_EM_UP", "Sparatutto");
-		decode.put("STRATEGY_ROLE_PLAYING_GAME", "GDR Strategico");
-		decode.put("ART/EXPERIMENTAL", "Artistico sperimentale");
-		decode.put("3D_FIGHTING", "Combattimento 3D");
-		decode.put("BOARD_GAME", "Gioco da tavolo");
-		decode.put("FANTASY", "Fantasy");
-		decode.put("TEAM_FIGHTING", "Combattimento a squadre");
-		decode.put("PINBALL", "Flipper");
-		decode.put("MASSIVELY_MULTIPLAYER_ONLINE_ROLE_PLAYING_GAME", "MMORPG");
-		decode.put("COMBAT", "Combattimento");
-		decode.put("EPIC", "Epico");
-		decode.put("TRIVIA/QUIZ", "Quiz");
-		decode.put("FLIGHT_COMBAT", "Combattimento aereo");
-		decode.put("HACK_AND_SLASH", "Hack and slash");
-		decode.put("BEAT_EM_UP", "Beat 'em up");
-		decode.put("TEXT_ADVENTURE", "Avventura testuale");
-		decode.put("FLIGHT_SIMULATION", "Simulatore di volo");
-		decode.put("DEVELOPMENT", "Sviluppo");
-		decode.put("CARD_GAME", "Gioco di carte");
-		decode.put("TOWER_DEFENSE", "Difesa della torre");
-		decode.put("FIRST_PERSON_SHOOTER", "Sparatutto in 1^ pers.");
-		decode.put("CHILDREN'S", "Per bambini");
-		return decode.containsKey(key) ? decode.get(key) : key;
+	public static String gameSubgenreDecode(final String key) {
+		return getInstance().gameSubgenre.containsKey(key) ? getInstance().gameSubgenre.get(key) : key;
+	}
+
+	public static String gameGenreDecode(final String key) {
+		return getInstance().gameGenre.containsKey(key) ? getInstance().gameGenre.get(key) : key;
+	}
+
+	public static String primaryClassificationDecode(final String key) {
+		return getInstance().primaryClassification.containsKey(key) ? getInstance().primaryClassification.get(key) : key;
+	}
+
+	public static String secondaryClassificationDecode(final String key) {
+		return getInstance().secondaryClassification.containsKey(key) ? getInstance().secondaryClassification.get(key) : key;
+	}
+
+	public static String tertiaryClassificationDecode(final String key) {
+		return getInstance().tertiaryClassification.containsKey(key) ? getInstance().tertiaryClassification.get(key) : key;
 	}
 
 	private final Map<String, CoppiaUrl> preferiti = Utils.createMap();
@@ -183,6 +177,11 @@ public class LoadConfig {
 	private final MyProperties config = new MyProperties();
 	private final MyProperties ricerche = new MyProperties();
 	private final Set<String> idPosseduti = Utils.createSet();
+	private final Map<String, String> gameSubgenre = Utils.createMap();
+	private final Map<String, String> gameGenre = Utils.createMap();
+	private final Map<String, String> primaryClassification = Utils.createMap();
+	private final Map<String, String> secondaryClassification = Utils.createMap();
+	private final Map<String, String> tertiaryClassification = Utils.createMap();
 
 	@Data
 	@RequiredArgsConstructor

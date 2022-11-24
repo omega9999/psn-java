@@ -1,24 +1,14 @@
 package it.home.psn;
 
-import static it.home.psn.Utils.add;
-import static it.home.psn.Utils.createList;
-import static it.home.psn.Utils.createMap;
-import static it.home.psn.Utils.createSet;
+import static it.home.psn.Utils.*;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
@@ -35,8 +25,8 @@ import it.home.psn.module.HtmlTemplate;
 import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
-import it.home.psn.module.Videogame.*;
-import lombok.AllArgsConstructor;
+import it.home.psn.module.Videogame.SottoSoglia;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import okhttp3.OkHttpClient;
@@ -77,6 +67,7 @@ public class Psn {
 		// String.valueOf(3 - 1));
 
 		Writer output = new Writer();
+		Statistiche statistiche = new Statistiche();
 		final Set<Videogame> videogames = createSet();
 		final long startTime = new Date().getTime();
 
@@ -162,50 +153,7 @@ public class Psn {
 			return a.compareTo(b);
 		});
 
-		final Map<String, Integer> tipo = createMap();
-		final Map<String, Integer> genere = createMap();
-		final Map<String, Integer> unKnownMetadata = createMap();
-		final Map<String, Integer> subgenere = createMap();
-		final Map<String, Integer> screenshot = createMap();
-		final Map<String, Integer> preview = createMap();
-		final Map<String, Integer> videos = createMap();
-		final Map<String, Integer> genericDataType = createMap();
-		final Map<String, Integer> genericDataSubType = createMap();
-		final Map<String, String> genericDataSubTypeUrl = createMap();
-		for (Videogame videogame : videogameSorted) {
-			for (Genere g : videogame.getGeneri()) {
-				add(genere, g.getName());
-			}
-			for (Genere g : videogame.getSubgeneri()) {
-				add(subgenere, g.getName());
-			}
-			for (Tipo t : videogame.getTipi()) {
-				add(tipo, t.getName());
-			}
-			for (Screenshot t : videogame.getScreenshots()) {
-				add(screenshot, t.getType());
-			}
-			for (Preview t : videogame.getPreviews()) {
-				add(preview, t.getType());
-			}
-			for (Video t : videogame.getVideos()) {
-				add(videos, t.getType()+"");
-			}
-			for (String t : videogame.getUnKnownMetadata()) {
-				add(unKnownMetadata, t);
-			}
 
-			final Set<AbstractUrl> data = createSet();
-			CollectionUtils.addAll(data, videogame.getScreenshots());
-			CollectionUtils.addAll(data, videogame.getVideos());
-			CollectionUtils.addAll(data, videogame.getPreviews());
-			for (AbstractUrl t : data) {
-				final String[] str = t.getUrl().split("\\.");
-				add(genericDataType, str[str.length - 1].toLowerCase());
-				add(genericDataSubType, t.getTypeData() + "_" + t.getSubTypeData());
-				genericDataSubTypeUrl.put(t.getTypeData() + "_" + t.getSubTypeData(), t.getUrl());
-			}
-		}
 		final List<Videogame> toHtml = Utils.createList();
 		final List<Videogame> toHtmlPosseduti = Utils.createList();
 		final List<Videogame> toHtmlPreferitiTmp = Utils.createList();
@@ -303,7 +251,8 @@ public class Psn {
 		}
 		output.htmlPreferiti(toHtmlPreferiti);
 
-
+		statistiche.elabora(videogameSorted);
+		
 		idErrori.forEach(id -> {
 			output.errori(id);
 			try {
@@ -322,15 +271,8 @@ public class Psn {
 		output.statistics("Total time: " + ((endTime - startTime) / 1000) + " s");
 		output.statistics("# threads: " + threads.keySet().size());
 		output.statistics("threads counters: " + threads);
-		output.statistics("Tipi: " + tipo);
-		output.statistics("Generi: " + genere);
-		output.statistics("SubGeneri: " + subgenere);
-		output.statistics("Tipo di immagini/video type: " + genericDataType);
-		output.statistics("Tipo di immagini sub type: " + genericDataSubType);
-		output.statistics("Screenshot type: " + screenshot);
-		output.statistics("Preview type: " + preview);
-		output.statistics("Unknown metadata: " + unKnownMetadata);
-		output.statistics("esempi di immagini:" + genericDataSubTypeUrl);
+		output.statistics("\nStatistiche conteggi");
+		statistiche.statistics(output.getStatistics());
 
 		output.close();
 
@@ -535,6 +477,7 @@ public class Psn {
 		}
 	}
 
+	@Getter
 	private static class Writer {
 		private final File root = new File("./z-OUTPUT");
 		private final File fileTest = new File(root, "./output.json");

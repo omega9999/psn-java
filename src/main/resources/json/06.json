@@ -1,0 +1,342 @@
+{
+  "Section5A_Character_Carousel" : [ {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-brok-sindri",
+    "assetalt" : "Brok e Sindri",
+    "assettitle" : "Brok e Sindri",
+    "assetdescription" : "Brok e Sindri, i fratelli Huldra, sono leggendari fabbri nanici. Sono rinomati in tutti i nove regni per la loro impressionante bravura, come dimostra la realizzazione di leggendarie armi per gli dèi. Avendo da poco ricucito il loro rapporto, i fratelli sono ora uniti nel sostenere da alleati la causa di Kratos e Atreus. Il Ragnarök metterà a dura prova la solidità del loro legame.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "https://www.playstation.com/it-it/ps-plus/",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-09-en-08sep21",
+      "assetalt" : "Sindri si rivolge a Kratos e Atreus davanti a un portone",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-09-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.playstation.com/it-it/",
+      "assetkey" : "Brok_Sindri_Image_1",
+      "assetcredit" : "Asset Credit123"
+    }, {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-10-en-08sep21",
+      "assetalt" : "Brok in una grotta con Atreus",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-10-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Brok_Sindri_Image_2",
+      "assetcredit" : "Credit 2"
+    } ],
+    "assetkey" : "Carousel_Item_1"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-tyr",
+    "assetalt" : "Týr",
+    "assettitle" : "Týr",
+    "assetdescription" : "Týr è il dio della guerra Aesir da tempo scomparso. Giramondo e amatissimo alleato dei giganti, Týr ha sempre cercato di mettere pace tra gli Aesir e gli Jötnar. Quando Odino spezzò la pace e dichiarò guerra a Jötunheim, Týr fu imprigionato.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "https://www.playstation.com/it-it/404/",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-05-en-08sep21",
+      "assetalt" : "Týr si rivolge a Kratos",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-05-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Tyr_Image_1",
+      "assetcredit" : "No Value Entered"
+    }, {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-06-en-08sep21",
+      "assetalt" : "Atreus trova Týr in pessimo stato ",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-06-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Tyr_Image_2",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Carousel_Item_2"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-angrboda",
+    "assetalt" : "Angrboda",
+    "assettitle" : "Angrboda",
+    "assetdescription" : "Angrboda è una delle ultime gigantesse rimaste al mondo. Sin dalla caduta di Jötunheim, si è nascosta per molti anni in attesa di compiere le profezie degli Jötnar.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-04-en-08sep21",
+      "assetalt" : "Angrboda con delle rupi sullo sfondo",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-04-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Angrboda_Image_1",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Carousel_Item_3"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-freya",
+    "assetalt" : "Freya",
+    "assettitle" : "Freya",
+    "assetdescription" : "Freya è una dea Vanir, precedentemente a capo delle Valchirie, ex moglie di Odino e un tempo regina degli Aesir. A seguito della morte dell'amato ma estraniato figlio Baldur, Freya giurò una vendetta violenta contro Kratos e Atreus.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-02-en-08sep21",
+      "assetalt" : "Freya che brandisce una spada",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-02-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Freya_Image_1",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Carousel_Item_4"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-kratos",
+    "assetalt" : "Kratos",
+    "assettitle" : "Kratos",
+    "assetdescription" : "Il dio della guerra spartano si è rifatto una vita a Midgard. Ora che è padre, Kratos ha nuove motivazioni. Tuttavia, il Ragnarök è all'orizzonte e la posta in gioco non è mai stata così alta. Kratos si trova davanti a una dura scelta: proteggere suo figlio e la vita che si è creato insieme a lui, o difendere i Nove regni da una guerra apocalittica.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-07-en-08sep21",
+      "assetalt" : "Kratos arriva a un villaggio",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-07-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Kratos_Image_1",
+      "assetcredit" : "No Value Entered"
+    }, {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-12-en-08sep21",
+      "assetalt" : "Kratos devia un colpo con il suo scudo",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-12-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Kratos_Image_2",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Carousel_Item_5"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-atreus",
+    "assetalt" : "Atreus",
+    "assettitle" : "Atreus",
+    "assetdescription" : "Atreus è il semidio adolescente, figlio di Kratos e della gigantessa Laufey. Il ragazzo è conosciuto dai giganti e dagli Aesir con il nome \"Loki\". Mentre il Ragnarök si avvicina, Atreus è impaziente di esplorare il mondo e di comprendere la sua vera identità. Si è allenato duramente con il padre e, nonostante il rapporto tra loro sia forte, Atreus non vede l'ora di intraprendere una strada tutta sua.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-08-en-08sep21",
+      "assetalt" : "Atreus con Kratos in barca",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-08-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Atreus_Image_1",
+      "assetcredit" : "No Value Entered"
+    }, {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-10-en-08sep21",
+      "assetalt" : "Atreus in una grotta con Brok",
+      "assetthumbnailpath" : "https://gmedia.playstation.com/is/image/SIEPDC/god-of-war-ragnarok-watermark-screenshot-10-en-08sep21-thumbnail",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Atreus_Image_2",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Carousel_Item_6"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-mimir",
+    "assetalt" : "Mimir",
+    "assettitle" : "Mimir",
+    "assetdescription" : "Per quanto sia una semplice testa mozzata che ha ritrovato il senno, Mimir mantiene per sé il titolo di uomo più sapiente del mondo. Quando Kratos e Atreus lo liberarono dalla prigione di corteccia di Odino, Mimir si unì alle loro peripezie e divenne un caro amico e fidato consigliere di padre e figlio. Mentre i Nove regni piombano nel caos, i due necessitano più che mai della sua saggezza.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetkey" : "Carousel_Item_7"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5a-characters-thor",
+    "assetalt" : "Thor",
+    "assettitle" : "Thor",
+    "assetdescription" : "Thor, il leggendario dio del tuono, è figlio di Odino e campione degli Aesir. I suoi figli, Magni e Modi, furono uccisi da Kratos e Atreus mentre combattevano al fianco di Baldur.",
+    "assetcallout" : "Scopri di più",
+    "assetcallouturl" : "No Value Entered",
+    "assetkey" : "Carousel_Item_8"
+  } ],
+  "Section5C_Family_Portraits" : [ {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-1",
+    "assetalt" : "Freya e Baldur insieme, ai piedi di un grande albero.",
+    "assettitle" : "Madre e figlio",
+    "assetdescription" : "Sono passati pochi inverni da quando suo figlio morì per mano di Kratos, e Freya ha giurato vendetta. Si è sacrificata molto per risfoderare la spada e passa le giornate a dare la caccia a Kratos e Atreus. Nonostante fosse un'anima persa che nutriva odio per la madre, Baldur era l'unico raggio di luce in una vita altrimenti oscura e traumatica. Kratos l'aveva privata di quella luce. Attraverso il dolore e la rabbia riesce a far rivivere in lei il suo feroce passato da guerriera. La sete di vendetta la rende forte e pericolosa.",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-1",
+      "assetalt" : "Freya e Baldur insieme, ai piedi di un grande albero.",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.instagram.com/jaeleeart/",
+      "assetkey" : "Portrait_1_Image_Large",
+      "assetcredit" : "Jae Lee"
+    } ],
+    "assetkey" : "Portrait_1"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-2",
+    "assetalt" : "Kratos e Atreus in piedi sotto a un grande orso.",
+    "assettitle" : "L'orso e il lupo",
+    "assetdescription" : "Il legame tra Kratos e Atreus rimane saldo, rinvigorito dal duro addestramento nel rigore del Fimbulwinter. Ma con il Ragnarök alle porte, il rapporto tra loro dovrà affrontare nuove, difficili sfide. Kratos, il grande orso, non vuole avere niente a che fare con la profezia degli Jötnar. È diventato un buon padre e non desidera altro che proteggere suo figlio. Atreus, il giovane lupo, è ormai adolescente e tormentato da molte domande. Il suo passato, la profezia di Loki, il destino dei giganti: le risposte sono tutte là fuori, sparse nei Nove regni, in attesa che lui le scopra.",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-2",
+      "assetalt" : "Kratos e Atreus in piedi sotto a un grande orso.",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.instagram.com/drewmerritt/",
+      "assetkey" : "Portrait_2_Image_Large",
+      "assetcredit" : "Drew Merritt"
+    } ],
+    "assetkey" : "Portrait_2"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-3",
+    "assetalt" : "Kratos, Atreus, Mimir, Brok, Sindri e Týr, con i cani da slitta.",
+    "assettitle" : "Gli eroi di Midgard",
+    "assetdescription" : "Questa famiglia d'elezione, questa banda variegata di eroi, è la migliore possibilità per Midgard di evitare una guerra apocalittica. È nei momenti di riposo, tra una battaglia e l'altra, che emergono al meglio le loro personalità così vivaci e disparate. In situazioni di pace, amano godere della compagnia gli uni degli altri, scambiarsi storie, mangiare insieme e rafforzare quei legami che li aiuteranno nei momenti più difficili della vita. La posta in gioco non è mai stata così alta, per affrontare il Ragnarök devono schierarsi tutti insieme su un fronte unito.",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-3",
+      "assetalt" : "Kratos, Atreus, Mimir, Brok, Sindri e Týr, con i cani da slitta.",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.instagram.com/missromayo/",
+      "assetkey" : "Portrait_3_Image_Large",
+      "assetcredit" : "Romina Tempest"
+    } ],
+    "assetkey" : "Portrait_3"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-4",
+    "assetalt" : "Una bella panoramica di Brok, Sindri, Durlin con Cena e Lunda con Helka.",
+    "assettitle" : "I nani",
+    "assetdescription" : "Il popolo dei nani vanta i più bravi artigiani dei Nove regni. I fratelli Huldra, Brok e Sindri, sono rinomati in tutto il mondo per le armi leggendarie che hanno forgiato per gli dèi, ma non sono gli unici a essere dotati di ottime qualità di fabbri. Nella loro patria, Svartalfheim, ci sono altri nani fabbri, come Lunda e la sua fida compagna Helka, che vantano grandi abilità alla forgia. Ciò che unisce tutti i nani, di qualsiasi estrazione sociale, è il loro imperituro spirito, perfino sotto il controllo tirannico degli Aesir.",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-4",
+      "assetalt" : "Una bella panoramica di Brok, Sindri, Durlin con Cena e Lunda con Helka.",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.instagram.com/emmartian/",
+      "assetkey" : "Portrait_4_Image_Large",
+      "assetcredit" : "Emma Ríos"
+    } ],
+    "assetkey" : "Portrait_4"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-5",
+    "assetalt" : "Gli Aesir riuniti evocano poteri magici intorno al fuoco.",
+    "assettitle" : "Gli Aesir",
+    "assetdescription" : "Gli Aesir sono gli dèi che risiedono ad Asgard e governano sui nove regni. In quanto patriarca, Odino ha regnato per molti anni. Il brutale passato degli Aesir è segnato da guerre e conquiste. Al centro di questa stirpe regale e divina, però, c'è sempre stata un'amorevole famiglia con un forte senso di lealtà gli uni verso gli altri. Odino, Baldur, Thor con i figli, Magni e Modi, sua moglie Sif, e la figlia Thrúd, si schierano sempre contro chiunque osi sfidare le volontà del Padre di tutti.",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section5c-portrait-5",
+      "assetalt" : "Gli Aesir riuniti evocano poteri magici intorno al fuoco.",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "No Value Entered",
+      "assetcallouturl" : "https://www.instagram.com/ishida_____sui/",
+      "assetkey" : "Portrait_5_Image_Large",
+      "assetcredit" : "Sui Ishida"
+    } ],
+    "assetkey" : "Portrait_5"
+  } ],
+  "Section6A_Interactive_Map" : [ {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm2",
+    "assetalt" : "Alfheim",
+    "assettitle" : "Alfheim",
+    "assetdescription" : "No Value Entered",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm2",
+      "assetalt" : "Kratos e Atreus pronti a combattere in una gola davanti a una grande struttura",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Alfheim è la patria degli elfi, da sempre lacerata dalla guerra. Da molto tempo infuria un conflitto tra elfi chiari e scuri per la conquista della grande luce di Alfheim, che è la chiave per il potere di Alfheim. Con l'avvicinarsi del Ragnarök, entrambe le fazioni devono fare i conti con una nuova minaccia: l'annientamento totale.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Alfheim",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 2"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm5",
+    "assetalt" : "Midgard",
+    "assettitle" : "Midgard",
+    "assetdescription" : "Midgard",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "https://www.playstation.com",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm5",
+      "assetalt" : "Kratos e Atreus con la loro slitta, in una terra coperta da ghiaccio e neve",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Midgard un tempo era il regno degli umani e dei mortali, ma ora è infestato da ogni sorta di creature e mostri. Il tempio di Týr si trova al centro del Lago dei Nove, dove riposa il grande Serpente del mondo, Jörmungandr. Midgard è anche la patria di Kratos e Atreus, così come quella di Freya, in seguito al suo esilio da Asgard. Il Fimbulwinter ha cambiato moltissimo il panorama di Midgard, facendo congelare il Lago dei Nove e coprendo il terreno di ghiaccio e neve.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Realm 5 Image",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 5"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm6",
+    "assetalt" : "Svartalfheim",
+    "assettitle" : "Svartalfheim",
+    "assetdescription" : "No Value Entered",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm6",
+      "assetalt" : "Kratos e Atreus all'ombra di una gola deserta",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Svartalfheim è il regno dei nani. I porti, le città e le miniere dei nani sono caratterizzati da un'architettura ben distinta e da grandi opere di ingegneria. I nani sono il popolo con le più grandi abilità di artigianato di tutti i Nove regni, e la passione e la dedizione che mettono nelle loro opere è evidente in tutto quello che realizzano. I nani sono testardi e instancabili, anche sotto il governo tirannico degli Aesir.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "No Value Entered",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 6"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm7",
+    "assetalt" : "Muspelheim",
+    "assettitle" : "Muspelheim",
+    "assetdescription" : "No Value Entered",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm7",
+      "assetalt" : "Kratos e Atreus davanti a una rupe carbonizzata con ceneri ardenti",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Muspelheim è il regno del fuoco e la fonte di calore per tutti i nove regni. Muspelheim è sede delle Sfide di Muspelheim, prove di forza per guerrieri coraggiosi. È anche la patria di Surtr l'Intrepido, il gigante del fuoco, e dei suoi seguaci. Secondo la profezia, durante il Ragnarök Surtr condurrà i giganti del fuoco ad Asgard e lo raderanno al suolo. Fino a quel momento, rimangono nascosti a Muspelheim.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Realm 7",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 7"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm8",
+    "assetalt" : "Niflheim",
+    "assettitle" : "Niflheim",
+    "assetdescription" : "No Value Entered",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm8",
+      "assetalt" : "Kratos e Atreus che esplorano un ambiente immacolato",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Niflheim, il regno della nebbia, era un tempo una terra di foschia e neve, ed è qui che si trovava il laboratorio del grande alchimista nanico Ivaldi. Quando le ambizioni di Ivaldi rappresentarono una minaccia per il suo potere, Odino intervenne. Nella lotta per il potere che ne seguì, Ivaldi avvelenò inavvertitamente la sconfinata nebbia di Niflheim, trasformando il regno in una desolata terra deserta.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Realm 8",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 8"
+  }, {
+    "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm9",
+    "assetalt" : "Helheim",
+    "assettitle" : "Helheim",
+    "assetdescription" : "No Value Entered",
+    "assetcallout" : "No Value Entered",
+    "assetcallouturl" : "No Value Entered",
+    "assetmedia" : [ {
+      "assetpath" : "https://gmedia.playstation.com/is/image/SIEPDC/section6a-screenshot-realm9",
+      "assetalt" : "Kratos e Atreus esplorano dei ruderi sotto un inquietante cielo verde",
+      "assetthumbnailpath" : "No Value Entered",
+      "assetcallout" : "Helheim è il luogo in cui vengono mandate le anime di chi muore di morte disonorevole. Legioni di questi guerrieri non-morti, gli Hel-walker, sono costrette ad arrancare nell'ambiente ghiacciato e infernale di Helheim, sotto l'occhio attento della grande aquila, Hræsvelgr. Si dice che chi attraversa il ponte dei dannati non possa più tornare indietro.",
+      "assetcallouturl" : "No Value Entered",
+      "assetkey" : "Realm 9",
+      "assetcredit" : "No Value Entered"
+    } ],
+    "assetkey" : "Realm 9"
+  } ]
+}

@@ -1,0 +1,108 @@
+{
+  "msg_games" : [ {
+    "label" : "Indie ",
+    "link" : "https://www.playstation.com/it-it/games/indies/",
+    "newWindow" : false
+  }, {
+    "label" : "Titoli per PS4 su PS5",
+    "link" : "https://www.playstation.com/it-it/editorial/this-month-on-playstation/great-ps4-games-upgraded-for-ps5/",
+    "newWindow" : false
+  }, {
+    "label" : "Free to Play",
+    "link" : "https://www.playstation.com/it-it/editorial/this-month-on-playstation/great-free-to-play-games-on-playstation-4/",
+    "newWindow" : false
+  }, {
+    "label" : "PlayStation su PC",
+    "link" : "https://www.playstation.com/it-it/games/pc-games/",
+    "newWindow" : false
+  }, {
+    "label" : "Promozioni e offerte",
+    "link" : "https://store.playstation.com/deals",
+    "newWindow" : false
+  } ],
+  "msg_hardware" : [ {
+    "label" : "Controller wireless DualSense",
+    "link" : "https://www.playstation.com/it-it/accessories/dualsense-wireless-controller/",
+    "newWindow" : false
+  }, {
+    "label" : "Cuffie wireless con microfono Pulse 3D",
+    "link" : "https://www.playstation.com/it-it/accessories/pulse-3d-wireless-headset/",
+    "newWindow" : false
+  }, {
+    "label" : "Controller wireless DUALSHOCK 4",
+    "link" : "https://www.playstation.com/it-it/accessories/dualshock-4-wireless-controller/",
+    "newWindow" : false
+  }, {
+    "label" : "Accessori per PS5 e PS4",
+    "link" : "https://www.playstation.com/it-it/accessories/",
+    "newWindow" : false
+  }, {
+    "label" : "PlayStation VR",
+    "link" : "https://www.playstation.com/it-it/ps-vr/",
+    "newWindow" : false
+  } ],
+  "msg_services" : [ {
+    "label" : "Intrattenimento per PS5",
+    "link" : "https://www.playstation.com/ps5/ps5-entertainment/",
+    "newWindow" : false
+  }, {
+    "label" : "Intrattenimento per PS4",
+    "link" : "https://www.playstation.com/ps4/ps4-entertainment/",
+    "newWindow" : false
+  } ],
+  "msg_news" : [ {
+    "label" : "Gamer Board",
+    "link" : "https://www.playstation.com/it-it/local/playstation-gamer-board/",
+    "newWindow" : false
+  }, {
+    "label" : "Accessibilità",
+    "link" : "https://www.playstation.com/it-it/accessibility/",
+    "newWindow" : false
+  }, {
+    "label" : "Privacy e sicurezza",
+    "link" : "https://www.playstation.com/it-it/privacy-security-safety/",
+    "newWindow" : false
+  } ],
+  "msg_shop" : [ {
+    "label" : "Ultime uscite",
+    "link" : "https://store.playstation.com/pages/latest",
+    "newWindow" : false
+  }, {
+    "label" : "Nuovi sconti",
+    "link" : "https://store.playstation.com/pages/deals",
+    "newWindow" : false
+  }, {
+    "label" : "Raccolte",
+    "link" : "https://store.playstation.com/collections",
+    "newWindow" : false
+  }, {
+    "label" : "Acquista carta regalo",
+    "link" : "https://www.playstation.com/it-it/playstation-gift-cards/",
+    "newWindow" : false
+  }, {
+    "label" : "Abbonamento a PS Plus",
+    "link" : "https://www.playstation.com/it-it/ps-plus/",
+    "newWindow" : false
+  } ],
+  "msg_support" : [ {
+    "label" : "Account",
+    "link" : "https://www.playstation.com/it-it/support/account/",
+    "newWindow" : false
+  }, {
+    "label" : "Acquisti",
+    "link" : "https://www.playstation.com/it-it/support/store/",
+    "newWindow" : false
+  }, {
+    "label" : "Abbonamenti",
+    "link" : "https://www.playstation.com/it-it/support/subscriptions/",
+    "newWindow" : false
+  }, {
+    "label" : "Giochi",
+    "link" : "https://www.playstation.com/it-it/support/games/",
+    "newWindow" : false
+  }, {
+    "label" : "Hardware",
+    "link" : "https://www.playstation.com/it-it/support/hardware/",
+    "newWindow" : false
+  } ]
+}

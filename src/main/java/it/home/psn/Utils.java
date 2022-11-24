@@ -42,6 +42,13 @@ public class Utils {
 			mappa.put(key, counter + 1);
 		}
 	}
+
+	public static <K> void add(final Map<K,Map<K,Integer>> mappa, final K keyExternal, final K keyInternal) {
+		if (!mappa.containsKey(keyExternal)) {
+			mappa.put(keyExternal, createMap());
+		}
+		add(mappa.get(keyExternal), keyInternal);
+	}
 	
 	public static <T extends Comparable<T>> int compare(T obj1, T obj2) {
 		if (Objects.equals(obj1, obj2)) {
@@ -182,7 +189,7 @@ public class Utils {
 		switch (type) {
 		case "VIDEO":
 			Video video = new Video();
-			video.setType(prefix + "-" + role);
+			video.setType(role);
 			video.setUrl(url);
 			videogame.getVideos().add(video);
 			break;
@@ -190,7 +197,7 @@ public class Utils {
 		default:
 			if ("SCREENSHOT".equalsIgnoreCase(role)) {
 				Screenshot image = new Screenshot();
-				image.setType(prefix + "-" + type + "-" + role);
+				image.setType(type + "-" + role);
 				image.setUrl(url);
 				//image.setTypeData(TypeData.IMAGE);
 				//image.setSubTypeData(String.valueOf(type));
@@ -198,7 +205,7 @@ public class Utils {
 			}
 			else {
 				Preview image = new Preview();
-				image.setType(prefix + "-" + type + "-" + role);
+				image.setType(type + "-" + role);
 				image.setUrl(url);
 				//image.setTypeData(TypeData.IMAGE);
 				//image.setSubTypeData(String.valueOf(type));
@@ -361,14 +368,47 @@ public class Utils {
 						videogame.getGeneri().add(genere);
 					}
 					break;
-				case "subgenre":
+				case "game_genre":
 					for (String str : list) {
 						final Genere genere = new Genere();
-						genere.setName(LoadConfig.subGenDecode(str));
+						genere.setName(LoadConfig.gameGenreDecode(str));
+						genere.setKey(str);
+						videogame.getGeneri().add(genere);
+					}
+					break;
+				case "subgenre":
+				case "game_subgenre":
+					for (String str : list) {
+						final Genere genere = new Genere();
+						genere.setName(LoadConfig.gameSubgenreDecode(str));
+						genere.setKey(str);
 						videogame.getSubgeneri().add(genere);
 					}
 					break;
-
+				case "primary_classification":
+					for (String str : list) {
+						final Tipo tipo = new Tipo();
+						tipo.setName(LoadConfig.primaryClassificationDecode(str));
+						tipo.setKey(str);
+						videogame.getTipi().add(tipo);
+					}
+					break;
+				case "secondary_classification":
+					for (String str : list) {
+						final Tipo tipo = new Tipo();
+						tipo.setName(LoadConfig.secondaryClassificationDecode(str));
+						tipo.setKey(str);
+						videogame.getTipi().add(tipo);
+					}
+					break;
+				case "tertiary_classification":
+					for (String str : list) {
+						final Tipo tipo = new Tipo();
+						tipo.setName(LoadConfig.tertiaryClassificationDecode(str));
+						tipo.setKey(str);
+						videogame.getTipi().add(tipo);
+					}
+					break;
 				case "cn_vrEnabled":
 					videogame.setEnableVr(elaboraBooleanMetadata(list));
 					break;
@@ -384,13 +424,15 @@ public class Utils {
 				case "playable_platform":
 					videogame.getPlatform().addAll(list);
 					break;
-					
 				default:
-					videogame.getUnKnownMetadata().add(tag);
-					videogame.getUnKnownMetadataValues().put(tag, list);
+					videogame.getAllMetadataValues().putIfAbsent("UNKNOWN-TAG", Utils.createList());
+					List<String> tmp = videogame.getAllMetadataValues().get("UNKNOWN-TAG");
+					tmp.add(tag);
+					videogame.getAllMetadataValues().put("UNKNOWN-TAG", tmp);
 					break;
 				}
-
+				videogame.getAllMetadata().add(tag);
+				videogame.getAllMetadataValues().put(tag, list);
 			}
 		}
 	}

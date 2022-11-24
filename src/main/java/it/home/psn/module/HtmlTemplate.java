@@ -100,13 +100,13 @@ public class HtmlTemplate {
 			tooltip.add("Online opzionale");
 		}
 		
-		if (!videogame.getUnKnownMetadataValues().isEmpty()) {
+		if (!videogame.getAllMetadataValues().isEmpty()) {
 			visibile.append("[?] ");
 			if (!tooltip.isEmpty()) {
 				tooltip.add("");
 				tooltip.add("Altri metadati:");
 			}
-			for(Entry<String,List<String>>entry:videogame.getUnKnownMetadataValues().entrySet()) {
+			for(Entry<String,List<String>>entry:videogame.getAllMetadataValues().entrySet()) {
 				tooltip.add(entry.getKey() + ": " + String.join(", ", entry.getValue().toArray(new String[0])));
 			}
 		}
