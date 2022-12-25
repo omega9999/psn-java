@@ -38,6 +38,7 @@ import okhttp3.Request;
 @Log4j
 public class Psn {
 	private static final BigDecimal SOGLIA = new BigDecimal("20.00");
+	private static final BigDecimal SCONTO = new BigDecimal("50.00");
 
 	public static void main(String[] args) throws Exception {
 		log.info("Inizio");
@@ -174,7 +175,9 @@ public class Psn {
 			if (videogame.getJson().contains(".mp4")) {
 				// output.mp4(videogame.getJson());
 			}
-			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(SOGLIA)) {
+			if (SottoSoglia.TRUE == videogame.prezzoSottoSoglia(SOGLIA)
+					|| SottoSoglia.TRUE == videogame.prezzoSottoSconto(SCONTO)
+					) {
 				if (!firstSeparatore && !videogamePrec.getPosseduto() && videogame.getPosseduto()) {
 					toHtml.addAll(separatore);
 					firstSeparatore = true;

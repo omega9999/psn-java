@@ -1,18 +1,10 @@
 package it.home.psn.module;
 
-import static it.home.psn.Utils.compare;
-import static it.home.psn.Utils.createList;
-import static it.home.psn.Utils.createMap;
-import static it.home.psn.Utils.createSet;
+import static it.home.psn.Utils.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -340,6 +332,18 @@ public class Videogame implements Comparable<Videogame> {
 		}
 		for (final Sconto sconto : sconti) {
 			if (!sconto.isPlus && !sconto.isEAAccess && sconto.getPrice().compareTo(soglia) < 0) {
+				return SottoSoglia.TRUE;
+			}
+		}
+		return SottoSoglia.FALSE;
+	}
+	
+	public SottoSoglia prezzoSottoSconto(final BigDecimal scontoSoglia) {
+		if (priceFull != null && priceFull.compareTo(BigDecimal.ZERO) == 0) {
+			return SottoSoglia.ZERO;
+		}
+		for (final Sconto sconto : sconti) {
+			if (!sconto.isPlus && !sconto.isEAAccess && BigDecimal.ONE.subtract(sconto.getPrice().divide(priceFull, RoundingMode.HALF_UP)).compareTo(scontoSoglia.divide(new BigDecimal(100),  RoundingMode.HALF_UP)) >= 0) {
 				return SottoSoglia.TRUE;
 			}
 		}
