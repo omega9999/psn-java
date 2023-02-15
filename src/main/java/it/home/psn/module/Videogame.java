@@ -508,6 +508,7 @@ public class Videogame implements Comparable<Videogame> {
 		private String url;
 		private TypeData typeData;
 		private String subTypeData;
+		private String info;
 	}
 
 	@Data

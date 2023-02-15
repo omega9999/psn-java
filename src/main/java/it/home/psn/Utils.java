@@ -191,6 +191,7 @@ public class Utils {
 			Video video = new Video();
 			video.setType(role);
 			video.setUrl(url);
+			video.setInfo(prefix+"-"+role+"-"+type);
 			videogame.getVideos().add(video);
 			break;
 
@@ -199,6 +200,7 @@ public class Utils {
 				Screenshot image = new Screenshot();
 				image.setType(type + "-" + role);
 				image.setUrl(url);
+				image.setInfo(prefix+"-"+role+"-"+type);
 				//image.setTypeData(TypeData.IMAGE);
 				//image.setSubTypeData(String.valueOf(type));
 				videogame.getScreenshots().add(image);
@@ -207,6 +209,7 @@ public class Utils {
 				Preview image = new Preview();
 				image.setType(type + "-" + role);
 				image.setUrl(url);
+				image.setInfo(prefix+"-"+role+"-"+type);
 				//image.setTypeData(TypeData.IMAGE);
 				//image.setSubTypeData(String.valueOf(type));
 				videogame.getPreviews().add(image);
@@ -261,6 +264,7 @@ public class Utils {
 				image.setType("image");
 				image.setTypeData(TypeData.IMAGE);
 				image.setSubTypeData(String.valueOf(type));
+				image.setInfo("type-"+type);
 				image.setUrl(url);
 				if (url != null) {
 					list.add(image);
@@ -290,6 +294,7 @@ public class Utils {
 				final JSONObject obj = promomedia.optJSONObject(index);
 				final Video video = new Video();
 				video.setTypeData(TypeData.PROMEDIA);
+				video.setInfo("video-type-index"+index);
 				video.setUrl(obj.optString("url"));
 				if (!StringUtils.isBlank(video.getUrl())) {
 					videogame.getVideos().add(video);
@@ -311,6 +316,7 @@ public class Utils {
 					screenshot.setTypeId(obj.optString("typeId"));
 					screenshot.setUrl(obj.optString("url"));
 					screenshot.setTypeData(TypeData.SCREENSHOT);
+					screenshot.setInfo("screenshot-"+screenshot.getType());
 					screenshot.setSubTypeData(screenshot.getTypeId());
 					videogame.getScreenshots().add(screenshot);
 				}
@@ -327,10 +333,12 @@ public class Utils {
 					preview.setTypeId(obj.optString("typeId"));
 					preview.setUrl(obj.optString("url"));
 					preview.setTypeData(TypeData.PREVIEW);
+					preview.setInfo("preview-"+preview.getType());
 					preview.setSubTypeData(preview.getTypeId());
 					
 					final Video video = new Video();
 					video.setTypeData(TypeData.PREVIEW);
+					video.setInfo("preview-video-index-"+index);
 					video.setUrl(obj.optString("url"));
 					if (!StringUtils.isBlank(video.getUrl())) {
 						videogame.getVideos().add(video);
@@ -342,6 +350,7 @@ public class Utils {
 							final Screenshot screenshot = new Screenshot();
 							screenshot.setUrl(shots.getString(j));
 							screenshot.setTypeData(TypeData.SHOT);
+							screenshot.setInfo("screenshot-preview-index"+index+"-"+j);
 							screenshot.setSubTypeData(String.valueOf(j));
 							preview.getShots().add(screenshot);
 						}

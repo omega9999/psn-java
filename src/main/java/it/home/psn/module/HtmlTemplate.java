@@ -261,6 +261,7 @@ public class HtmlTemplate {
 			sb.append(this.immagineTemplate
 					.replace(ID_RIGA_REF, id)
 					.replace("{IMMAGINE_TYPE_REF}", url.getTypeData()+url.getSubTypeData())
+					.replace("{IMMAGINE_TOOLTIP}", url.getInfo())
 					.replace("{IMMAGINE_REF}", url.getUrl()));
 		}
 		return sb.toString();
