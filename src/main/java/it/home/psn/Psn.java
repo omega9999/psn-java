@@ -26,6 +26,7 @@ import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
 import it.home.psn.module.Videogame.SottoSoglia;
+import it.home.psn.module.Videogame.Tipo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -157,6 +158,7 @@ public class Psn {
 
 		final List<Videogame> toHtml = Utils.createList();
 		final List<Videogame> toHtmlPosseduti = Utils.createList();
+		final List<Videogame> toHtmlNonPosseduti = Utils.createList();
 		final List<Videogame> toHtmlPreferitiTmp = Utils.createList();
 		final List<Videogame> toHtmlPreferiti = Utils.createList();
 		final List<Videogame> toHtmlSconto = Utils.createList();
@@ -202,21 +204,34 @@ public class Psn {
 			if (videogame.getPosseduto()) {
 				toHtmlPosseduti.add(videogame);
 			}
+			else {
+				Set<Tipo> whiteList = new HashSet<>(videogame.getTipi());
+				whiteList.retainAll(List.of(new Tipo("Bundle"), new Tipo("Gioco completo")));
+				Set<Tipo> blackList = new HashSet<>(videogame.getTipi());
+				blackList.retainAll(List.of(new Tipo("Add-on")));
+				if (!whiteList.isEmpty() && blackList.isEmpty()) {
+					toHtmlNonPosseduti.add(videogame);
+				}
+			}
 		}
 
-		Collections.sort(toHtmlSconto, (a, b) -> a.getSconto().compareTo(b.getSconto()));
+		Collections.sort(toHtmlSconto, (a, b) -> compare(a.getSconto(),b.getSconto()));
 		output.htmlSconto(toHtmlSconto);
 
-		Collections.sort(toHtmlScontoDlc, (a, b) -> a.getSconto().compareTo(b.getSconto()));
-		Collections.sort(toHtmlScontoDlc, (a, b) -> -1 * a.getScontoPerc().compareTo(b.getScontoPerc()));
+		Collections.sort(toHtmlScontoDlc, (a, b) -> compare(a.getSconto(),b.getSconto()));
+		Collections.sort(toHtmlScontoDlc, (a, b) -> -1 * compare(a.getScontoPerc(),b.getScontoPerc()));
 		output.htmlScontoDlc(toHtmlScontoDlc);
 
 		log.info("videogameSorted " + videogameSorted.size() + " toHtmlPosseduti " + toHtmlPosseduti.size());
 
 		output.html(toHtml);
 
-		Collections.sort(toHtmlPosseduti, (a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
+		Collections.sort(toHtmlPosseduti, (a, b) -> compare(a.getName().toLowerCase(),b.getName().toLowerCase()));
 		output.htmlPosseduti(toHtmlPosseduti);
+
+		Collections.sort(toHtmlNonPosseduti, (a, b) -> compare(a.getName().toLowerCase(),b.getName().toLowerCase()));
+		Collections.sort(toHtmlNonPosseduti, (a, b) -> compare(a.getPriceFull(),b.getPriceFull()));
+		output.htmlNonPosseduti(toHtmlNonPosseduti);
 
 		Collections.sort(toHtmlPreferitiTmp, (a, b) -> {
 			int tmp;
@@ -490,6 +505,7 @@ public class Psn {
 		private final PrintWriter outputMp4;
 		private final PrintWriter outputHtml;
 		private final PrintWriter outputHtmlPosseduti;
+		private final PrintWriter outputHtmlNonPosseduti;
 		private final PrintWriter outputHtmlPreferiti;
 		private final PrintWriter outputHtmlSconto;
 		private final PrintWriter outputHtmlScontoDlc;
@@ -512,6 +528,7 @@ public class Psn {
 			erroriJsonResponse = new PrintWriter(new File(root, "./errori-response.json"));
 			outputHtml = new PrintWriter(new File(root, "./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File(root, "./output-posseduti.html"));
+			outputHtmlNonPosseduti = new PrintWriter(new File(root, "./output-non-posseduti.html"));
 			outputHtmlPreferiti = new PrintWriter(new File(root, "./output-preferiti.html"));
 			outputHtmlSconto = new PrintWriter(new File(root, "./output-sconto.html"));
 			outputHtmlScontoDlc = new PrintWriter(new File(root, "./output-sconto-dlc.html"));
@@ -521,6 +538,7 @@ public class Psn {
 		public void close() {
 			outputHtml.close();
 			outputHtmlPosseduti.close();
+			outputHtmlNonPosseduti.close();
 			outputHtmlPreferiti.close();
 			outputHtmlSconto.close();
 			outputHtmlScontoDlc.close();
@@ -545,6 +563,10 @@ public class Psn {
 
 		public synchronized void htmlPosseduti(final List<Videogame> list) {
 			outputHtmlPosseduti.println(htmlTemplate.createHtml(list, "Posseduti"));
+		}
+
+		public synchronized void htmlNonPosseduti(final List<Videogame> list) {
+			outputHtmlNonPosseduti.println(htmlTemplate.createHtml(list, "Non Posseduti"));
 		}
 
 		public synchronized void htmlPreferiti(final List<Videogame> list) {
@@ -582,7 +604,7 @@ public class Psn {
 
 			final List<Videogame> tmp = createList();
 			tmp.addAll(list);
-			Collections.sort(tmp, (a, b) -> a.getId().compareTo(b.getId()));
+			Collections.sort(tmp, (a, b) -> compare(a.getId(),b.getId()));
 			objectMapper.writer(printer).writeValue(serializzato, tmp);
 		}
 
@@ -622,6 +644,26 @@ public class Psn {
 			return array;
 		}
 
+	}
+	
+	private static <T extends Comparable<? super T>> int compare(T a, T b) {
+		return new SafeComparator<T>().compare(a, b);
+	}
+	
+	private static class SafeComparator<T extends Comparable<? super T>> implements Comparator<T> {
+
+	    @Override
+	    public int compare(T o1, T o2) {
+	        if (o1 == null && o2 == null) {
+	            return 0; // entrambi null, considerati uguali
+	        } else if (o1 == null) {
+	            return -1; // o1 è null, considerato minore di o2
+	        } else if (o2 == null) {
+	            return 1; // o2 è null, considerato maggiore di o1
+	        } else {
+	            return o1.compareTo(o2); // confronto normale dei valori non null
+	        }
+	    }
 	}
 
 	private final Map<Long, Integer> threads = createMap();

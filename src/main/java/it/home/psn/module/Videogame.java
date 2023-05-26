@@ -81,8 +81,8 @@ public class Videogame implements Comparable<Videogame> {
 	@JsonIgnore
 	private final Set<String> platform = createSet();
 	@JsonIgnore
-	private final Set<String> AllMetadata = createSet();
-	private final Map<String, List<String>> AllMetadataValues = createMap();
+	private final Set<String> allMetadata = createSet();
+	private final Map<String, List<String>> allMetadataValues = createMap();
 	private String displayPrizeFull;
 	private BigDecimal priceFull;
 	@JsonIgnore
@@ -136,12 +136,12 @@ public class Videogame implements Comparable<Videogame> {
 	}
 
 	public List<String> getAllMetadataList() {
-		return format(this.AllMetadata);
+		return format(this.allMetadata);
 	}
 
 	public Map<String, List<String>> getAllMetadataValues() {
-		this.AllMetadataValues.values().forEach(Collections::sort);
-		return this.AllMetadataValues;
+		this.allMetadataValues.values().forEach(Collections::sort);
+		return this.allMetadataValues;
 	}
 
 	public List<Sconto> getScontiList() {
