@@ -153,8 +153,8 @@ public class HtmlTemplate {
 		tmp = tmp.replace("●", "• ");
 		tmp = tmp.replace("<br/>", "<br>");
 		tmp = tmp.replace("<br />", "<br>");
-		tmp = tmp.replace("\s+<br>", "<br>");
-		tmp = tmp.replaceAll("<br>\s+", "<br>");
+		tmp = tmp.replace("\\s+<br>", "<br>");
+		tmp = tmp.replaceAll("<br>\\s+", "<br>");
 		tmp = removeDuplicate(tmp,"<br><br><br>", "<br><br>");
 		tmp = trimHtml(tmp, "<br>");
 		return tmp;
