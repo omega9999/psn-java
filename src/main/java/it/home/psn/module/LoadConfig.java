@@ -85,12 +85,15 @@ public class LoadConfig {
 	}
 
 	public static CoppiaUrl create(final String urlObj) {
+		return getCoppia(extractId(urlObj));
+	}
+
+	public static String extractId(final String urlObj){
 		final String[] str = urlObj.split("\\?");
 		String s = str[0].trim();
 		s = s.endsWith("/") ? s.substring(0, s.length() - 1) : s;
 		final String[] ss = s.split("/");
-		final String id = ss[ss.length - 1];
-		return getCoppia(id);
+		return ss[ss.length - 1];
 	}
 
 	public static CoppiaUrl getCoppia(String id) {

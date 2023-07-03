@@ -1,6 +1,8 @@
 package it.home.psn;
 
 import static it.home.psn.Utils.createSet;
+import static it.home.psn.module.Connection.getCatenaProp;
+import static it.home.psn.module.LoadConfig.replace;
 
 import java.io.*;
 import java.util.*;
@@ -14,6 +16,7 @@ import it.home.psn.module.LoadConfig;
 import it.home.psn.module.LoadConfig.CoppiaUrl;
 import it.home.psn.module.Videogame;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONObject;
 
 
 @Log4j
@@ -40,6 +43,7 @@ public class SistemaPreferiti {
 		load(config, "config.properties");
 		List<String> list = new ArrayList<>();
 		try (final BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String oldLine = null;
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.isBlank()) {
@@ -47,7 +51,12 @@ public class SistemaPreferiti {
 				}
 				line = line.replace("__", "_");
 				line = line.replaceFirst("_=", "=");
-				elaboraLinea(list, line);
+				line = line.trim();
+
+				if (oldLine == null || !oldLine.equals(line)){
+					elaboraLinea(list, line);
+				}
+				oldLine = line;
 			}
 		}
 		
@@ -132,13 +141,40 @@ public class SistemaPreferiti {
 	}
 
 	private String trasforma(String line) throws IOException {
-		final CoppiaUrl coppia = getUrls(line);
-		final Videogame videogame = connection.get().getVideogame(coppia);
-		return videogame != null ? trasformaNome(videogame)+"="+line : "# "+line;
+		if (isConcept(line)){
+			String id = LoadConfig.extractId(line);
+			var conf = LoadConfig.getInstance().getConfig();
+			String sha256Hash4 = conf.getProperty("sha256Hash4");
+			final String conceptUrl = replace(replace(conf.getProperty("base.json.concept.url"), "id", id), "sha256Hash4", sha256Hash4);
+			JSONObject json = connection.get().createJson(conceptUrl);
+			String newId = getCatenaProp(json, "data", "conceptRetrieve", "defaultProduct", "id");
+			if (newId != null){
+				final CoppiaUrl coppia = LoadConfig.getCoppia(newId);
+				String name = getCatenaProp(json, "data", "conceptRetrieve", "defaultProduct", "name");
+				return name != null ? trasformaNome(name)+"="+coppia.getOriginUrl() : "# "+line;
+			}
+			else{
+				return "# " + line;
+			}
+		}
+		else{
+			final CoppiaUrl coppia = getUrls(line);
+			final Videogame videogame = connection.get().getVideogame(coppia);
+			return videogame != null ? trasformaNome(videogame)+"="+line : "# "+line;
+		}
+	}
+
+	private boolean isConcept(String line){
+		final String targetUrl = replace(LoadConfig.getInstance().getConfig().getProperty("base.html.concept.url"), "id", "");
+		return line.contains(targetUrl);
 	}
 
 	private String trasformaNome(final Videogame videogame) {
-		String str = videogame.getName().replaceAll("[^a-zA-Z\\d]", "_");
+		return trasformaNome(videogame.getName());
+	}
+
+	private String trasformaNome(final String name) {
+		String str = name.replaceAll("[^a-zA-Z\\d]", "_");
 		String old = "";
 		while(!str.equals(old)) {
 			old = str;

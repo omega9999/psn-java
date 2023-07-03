@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -26,6 +27,34 @@ import okhttp3.Request;
 @Log4j
 @RequiredArgsConstructor
 public class Connection {
+
+	@SneakyThrows
+	public JSONObject createJson(String url){
+		randomSleep();
+		try {
+			String json = getJson(url);
+			return new JSONObject(json);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static String getCatenaProp(JSONObject json, String ... properties){
+		JSONObject res = json;
+		for (int index = 0; index < properties.length; index++) {
+			String prop = properties[index];
+			if (res == null){
+				return null;
+			}
+			if (index < properties.length - 1){
+				res = res.optJSONObject(prop);
+			}
+			else{
+				return res.optString(prop);
+			}
+		}
+		return null;
+	}
 
 	public Videogame getVideogame(final CoppiaUrl url) throws IOException{
 		randomSleep();

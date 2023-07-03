@@ -14,3 +14,5 @@ buildNumber.properties
 ~$elenco.xlsx
 /.idea/
 psn-java.iml
+.classpath
+.settings/org.eclipse.jdt.core.prefs
