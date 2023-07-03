@@ -433,10 +433,15 @@ public class Videogame implements Comparable<Videogame> {
 	}
 
 	@Data
+	@NoArgsConstructor
 	public static class Genere implements Comparable<Genere> {
 		private String name;
 		private int count;
 		private String key;
+
+		public Genere(String name){
+			this.name = name;
+		}
 
 		@Override
 		public String toString() {

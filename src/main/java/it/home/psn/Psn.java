@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -269,6 +270,8 @@ public class Psn {
 		}
 		output.htmlPreferiti(toHtmlPreferiti);
 
+		output.htmlAdult(toHtmlPreferiti.stream().filter(row->row.getGeneriList().contains(new Videogame.Genere("Per adulti"))).collect(Collectors.toList()));
+
 		statistiche.elabora(videogameSorted);
 		
 		idErrori.forEach(id -> {
@@ -506,6 +509,7 @@ public class Psn {
 		private final PrintWriter outputHtml;
 		private final PrintWriter outputHtmlPosseduti;
 		private final PrintWriter outputHtmlNonPosseduti;
+		private final PrintWriter outputHtmlAdult;
 		private final PrintWriter outputHtmlPreferiti;
 		private final PrintWriter outputHtmlSconto;
 		private final PrintWriter outputHtmlScontoDlc;
@@ -529,6 +533,7 @@ public class Psn {
 			outputHtml = new PrintWriter(new File(root, "./output.html"));
 			outputHtmlPosseduti = new PrintWriter(new File(root, "./output-posseduti.html"));
 			outputHtmlNonPosseduti = new PrintWriter(new File(root, "./output-non-posseduti.html"));
+			outputHtmlAdult = new PrintWriter(new File(root, "./output-adult.html"));
 			outputHtmlPreferiti = new PrintWriter(new File(root, "./output-preferiti.html"));
 			outputHtmlSconto = new PrintWriter(new File(root, "./output-sconto.html"));
 			outputHtmlScontoDlc = new PrintWriter(new File(root, "./output-sconto-dlc.html"));
@@ -539,6 +544,7 @@ public class Psn {
 			outputHtml.close();
 			outputHtmlPosseduti.close();
 			outputHtmlNonPosseduti.close();
+			outputHtmlAdult.close();
 			outputHtmlPreferiti.close();
 			outputHtmlSconto.close();
 			outputHtmlScontoDlc.close();
@@ -567,6 +573,10 @@ public class Psn {
 
 		public synchronized void htmlNonPosseduti(final List<Videogame> list) {
 			outputHtmlNonPosseduti.println(htmlTemplate.createHtml(list, "Non Posseduti"));
+		}
+
+		public synchronized void htmlAdult(final List<Videogame> list) {
+			outputHtmlAdult.println(htmlTemplate.createHtml(list, "Adult"));
 		}
 
 		public synchronized void htmlPreferiti(final List<Videogame> list) {
