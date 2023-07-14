@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lombok.SneakyThrows;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +43,7 @@ public class HtmlTemplate {
 	public String createHtml(final List<Videogame> videogames, final String titolo) {
 		return this.template
 				.replace("{TITOLO_REF}", titolo)
+				.replace("{DATA_RIF}", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 				.replace("{REPLACE_RIGHE_REF}", generaRighe(videogames));
 	}
 	
@@ -143,14 +148,15 @@ public class HtmlTemplate {
 		}
 		return sb.toString().trim();
 	}
-	
+
+	@SneakyThrows
 	private String clearDesctipton(final String description) {
 		//StringEscapeUtils.escapeHtml4
 		String tmp = description;
 		for(final String str : REMOVE_DESCRIPTION) {
 			tmp = tmp.replace(str, "");
 		}
-		tmp = tmp.replace("●", "• ");
+		tmp = tmp.replace(new String(Hex.decodeHex("E2978F".toCharArray()), StandardCharsets.UTF_8), "• ");
 		tmp = tmp.replace("<br/>", "<br>");
 		tmp = tmp.replace("<br />", "<br>");
 		tmp = tmp.replace("\\s+<br>", "<br>");

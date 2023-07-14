@@ -1,25 +1,9 @@
 package it.home.psn;
 
-import static it.home.psn.Utils.*;
-
-import java.io.*;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import it.home.psn.Constants.Test;
 import it.home.psn.module.Connection;
 import it.home.psn.module.HtmlTemplate;
@@ -30,25 +14,46 @@ import it.home.psn.module.Videogame.SottoSoglia;
 import it.home.psn.module.Videogame.Tipo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static it.home.psn.Utils.*;
 
 /**
  * https://www.baeldung.com/guide-to-okhttp
  */
-@Log4j
-public class Psn {
+@Slf4j
+public class Psn implements Runnable {
 	private static final BigDecimal SOGLIA = new BigDecimal("20.00");
 	private static final BigDecimal SCONTO = new BigDecimal("50.00");
 
-	public static void main(String[] args) throws Exception {
-		log.info("Inizio");
+	public static void main(String[] args) {
 		final Psn psn = new Psn();
-		psn.preferitiInSconto();
+		psn.run();
+	}
+
+	@SneakyThrows
+	@Override
+	public void run() {
+		log.info("Inizio");
+		this.preferitiInSconto();
 		// psn.elenco();
 		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-		psn.connection.remove();
+		this.connection.remove();
 		log.info("Fine");
 	}
 
@@ -667,9 +672,9 @@ public class Psn {
 	        if (o1 == null && o2 == null) {
 	            return 0; // entrambi null, considerati uguali
 	        } else if (o1 == null) {
-	            return -1; // o1 è null, considerato minore di o2
+	            return -1; // o1 e' null, considerato minore di o2
 	        } else if (o2 == null) {
-	            return 1; // o2 è null, considerato maggiore di o1
+	            return 1; // o2 e' null, considerato maggiore di o1
 	        } else {
 	            return o1.compareTo(o2); // confronto normale dei valori non null
 	        }

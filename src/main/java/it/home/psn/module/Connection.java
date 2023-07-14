@@ -1,5 +1,18 @@
 package it.home.psn.module;
 
+import it.home.psn.Constants;
+import it.home.psn.Utils;
+import it.home.psn.module.LoadConfig.CoppiaUrl;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,22 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import it.home.psn.Constants;
-import it.home.psn.SistemaPreferiti;
-import it.home.psn.Utils;
-import it.home.psn.module.LoadConfig.CoppiaUrl;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-
-@Log4j
+@Slf4j
 @RequiredArgsConstructor
 public class Connection {
 

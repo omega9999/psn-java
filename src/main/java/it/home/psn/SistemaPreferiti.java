@@ -1,25 +1,25 @@
 package it.home.psn;
 
-import static it.home.psn.Utils.createSet;
-import static it.home.psn.module.Connection.getCatenaProp;
-import static it.home.psn.module.LoadConfig.replace;
+import it.home.psn.module.Connection;
+import it.home.psn.module.LoadConfig;
+import it.home.psn.module.LoadConfig.CoppiaUrl;
+import it.home.psn.module.Videogame;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
-
-import it.home.psn.module.Connection;
-import it.home.psn.module.LoadConfig;
-import it.home.psn.module.LoadConfig.CoppiaUrl;
-import it.home.psn.module.Videogame;
-import lombok.extern.log4j.Log4j;
-import org.json.JSONObject;
+import static it.home.psn.Utils.createSet;
+import static it.home.psn.module.Connection.getCatenaProp;
+import static it.home.psn.module.LoadConfig.replace;
 
 
-@Log4j
+@Slf4j
 public class SistemaPreferiti {
 
 	public static final File root = new File("./preferiti/");
@@ -32,12 +32,10 @@ public class SistemaPreferiti {
 	
 	
 	public static void main(String[] args) throws IOException {
-		for(String fileName : FILES) {
-			SistemaPreferiti s = new SistemaPreferiti(new File(root,fileName));
-			s.connection.remove();
-		}
+		Work work = new Work();
+		work.run();
 	}
-	
+
 
 	private SistemaPreferiti(File file) throws IOException {
 		load(config, "config.properties");
@@ -199,4 +197,16 @@ public class SistemaPreferiti {
 	private final ThreadLocal<Connection> connection = ThreadLocal.withInitial(() -> new Connection(idErrori));
 	private final ClassLoader classLoader = getClass().getClassLoader();
 	private final Properties config = new Properties();
+
+	public static class Work implements Runnable{
+
+		@SneakyThrows
+		@Override
+		public void run() {
+			for(String fileName : FILES) {
+				SistemaPreferiti s = new SistemaPreferiti(new File(root,fileName));
+				s.connection.remove();
+			}
+		}
+	}
 }

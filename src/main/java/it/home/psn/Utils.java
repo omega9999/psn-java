@@ -1,5 +1,14 @@
 package it.home.psn;
-import static it.home.psn.module.Videogame.Problema.*;
+
+import it.home.psn.module.LoadConfig;
+import it.home.psn.module.Videogame;
+import it.home.psn.module.Videogame.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -7,18 +16,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import static it.home.psn.module.Videogame.Problema.*;
 
-import it.home.psn.module.LoadConfig;
-import it.home.psn.module.Videogame;
-import it.home.psn.module.Videogame.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j;
-
-@Log4j
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 	public static <T> Set<T> createSet() {
@@ -231,7 +231,7 @@ public class Utils {
 		final String name = response.optString("name");
 		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(name)) {
 			if (Constants.DEBUG) {
-				log.error(response);
+				log.error(response.toString());
 			}
 			return null;
 		}
@@ -476,7 +476,7 @@ public class Utils {
 					videogame.getParentUrls().add(LoadConfig.getCoppia(relatedId).getOriginUrl());
 				} else {
 					if (Constants.DEBUG) {
-						log.error(obj);
+						log.error(obj.toString());
 					}
 				}
 			}
@@ -493,7 +493,7 @@ public class Utils {
 					videogame.getOtherIds().add(relatedId);
 				} else {
 					if (Constants.DEBUG) {
-						log.error(obj);
+						log.error(obj.toString());
 					}
 				}
 			}
