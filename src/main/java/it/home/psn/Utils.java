@@ -163,7 +163,9 @@ public class Utils {
 				if (products != null) {
 					for (int index = 0; index < products.length(); index++) {
 						final JSONObject product = products.optJSONObject(index);
-						setMedias(videogame, "product-media",  product.optJSONArray("media"));
+						if (product != null){
+							setMedias(videogame, "product-media",  product.optJSONArray("media"));
+						}
 					}
 				}
 			}
