@@ -111,7 +111,7 @@ public class Utils {
 					JSONObject price = webcta.optJSONObject("price");
 					String type = webcta.optString("type");
 					if (List.of("DOWNLOAD_TRIAL", "UPSELL_PS_PLUS_GAME_CATALOG", "UPSELL_PS_PLUS_FREE",
-							"UPSELL_PS_PLUS_CLASSIC_GAME_COLLECTION", "UPSELL_EA_ACCESS_FREE").contains(type)) {
+							"UPSELL_PS_PLUS_CLASSIC_GAME_COLLECTION", "UPSELL_EA_ACCESS_FREE").contains(type) || type.startsWith("UPSELL_")) {
 						// non considero questi sconti
 						continue;
 					}
