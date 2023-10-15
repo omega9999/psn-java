@@ -343,7 +343,12 @@ public class Videogame implements Comparable<Videogame> {
 			return SottoSoglia.ZERO;
 		}
 		for (final Sconto sconto : sconti) {
-			if (!sconto.isPlus && !sconto.isEAAccess && BigDecimal.ONE.subtract(sconto.getPrice().divide(priceFull, RoundingMode.HALF_UP)).compareTo(scontoSoglia.divide(new BigDecimal(100),  RoundingMode.HALF_UP)) >= 0) {
+			if (!sconto.isPlus
+					&& !sconto.isEAAccess
+					&& sconto.getPrice() != null
+					&& priceFull != null
+					&& scontoSoglia != null
+					&& BigDecimal.ONE.subtract(sconto.getPrice().divide(priceFull, RoundingMode.HALF_UP)).compareTo(scontoSoglia.divide(new BigDecimal(100),  RoundingMode.HALF_UP)) >= 0) {
 				return SottoSoglia.TRUE;
 			}
 		}
