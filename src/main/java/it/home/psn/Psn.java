@@ -71,8 +71,7 @@ public class Psn implements Runnable {
 
 	private void preferitiInSconto() throws Exception {
 		System.clearProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-		// System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
-		// String.valueOf(3 - 1));
+		System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(3 - 1));
 
 		Writer output = new Writer();
 		Statistiche statistiche = new Statistiche();
@@ -319,6 +318,7 @@ public class Psn implements Runnable {
 		
 		final Request request = new Request.Builder().url(addictionalUrl).method("GET", null)
 				.addHeader("x-psn-store-locale-override", "IT-IT")
+				.addHeader("content-type", "application/json")
 				.build();
 		final InputStream stream = client.newCall(request).execute().body().byteStream();
 

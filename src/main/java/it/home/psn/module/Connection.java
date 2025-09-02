@@ -89,6 +89,15 @@ public class Connection {
 	}
 
 	private static String getJson(final String url) throws IOException {
+
+
+
+		// EP1063-PPSA07528_00-YSIXMONSTRNOXPS5
+		//https://web.np.playstation.com/api/graphql/v1/op?operationName=productRetrieveForGameTitle&variables=%7B%22productId%22%3A%22EP1063-PPSA07528_00-YSIXMONSTRNOXPS5%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22c3430a44a96f0ff81d211df11f86156f35b87ea2dc1807bce6b173c840b4e611%22%7D%7D
+		//{"errors":[{"message":"This operation has been blocked as a potential Cross-Site Request Forgery (CSRF). Please either specify a 'content-type' header (with a type that is not one of application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight\n","extensions":{}}]}
+
+
+
 		final StringBuilder sb = new StringBuilder();
 		System.setProperty("java.net.useSystemProxies", "true");
 		final OkHttpClient client = new OkHttpClient().newBuilder()
@@ -100,6 +109,7 @@ public class Connection {
 		
 		final Request request = new Request.Builder().url(url).method("GET", null)
 				.addHeader("x-psn-store-locale-override", "IT-IT")
+				.addHeader("content-type", "application/json")
 				.build();
 		final InputStream stream = client.newCall(request).execute().body().byteStream();
 
@@ -124,7 +134,10 @@ public class Connection {
 		final StringBuilder sb = new StringBuilder();
 		System.setProperty("java.net.useSystemProxies", "true");
 		final OkHttpClient client = new OkHttpClient().newBuilder().build();
-		final Request request = new Request.Builder().url(url).method("GET", null).build();
+		final Request request = new Request.Builder().url(url).method("GET", null)
+				.addHeader("x-psn-store-locale-override", "IT-IT")
+				.addHeader("content-type", "application/json")
+				.build();
 		final InputStream stream = client.newCall(request).execute().body().byteStream();
 
 		final BufferedReader br = new BufferedReader(new InputStreamReader(stream, "utf-8"));
